@@ -39,9 +39,12 @@ public class Echo : WebSocketBehavior
 		Text debugText = debugTextGO.GetComponent<Text> () as Text;
 		debugText.text = e.Data;
 
-		if (e.Data == "move") {
+		if (e.Data == "forward") {
 			GameObject hitCube = GameObject.Find ("HitCube") as GameObject;
-			hitCube.transform.Translate (1, 0, 0);
+			hitCube.transform.Translate (0.1f, 0, 0);
+		} else if (e.Data == "backward") {
+			GameObject hitCube = GameObject.Find ("HitCube") as GameObject;
+			hitCube.transform.Translate (-0.1f, 0, 0);
 		}
 
 		Sessions.Broadcast(e.Data);
