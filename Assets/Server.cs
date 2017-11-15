@@ -6,6 +6,9 @@ using WebSocketSharp.Net;
 using WebSocketSharp.Server;
 using UnityEngine.UI;
 
+using System;
+using System.Linq;
+
 public class Server : MonoBehaviour {
 	WebSocketServer server;
 
@@ -35,18 +38,27 @@ public class Echo : WebSocketBehavior
 	{
 		Debug.Log ("OnMessage:" + e.Data);
 
+		char[] separator = new char[] {':'};
+		string[] splitted = e.Data.Split(separator);
+
 		GameObject debugTextGO = GameObject.Find("DebugText") as GameObject;
 		Text debugText = debugTextGO.GetComponent<Text> () as Text;
 		debugText.text = e.Data;
 
-		if (e.Data == "forward") {
+		if (splitted[0] == "translate_x") {
+			float x = float.Parse(splitted[1]);
 			GameObject hitCube = GameObject.Find ("HitCube") as GameObject;
-			hitCube.transform.Translate (0.1f, 0, 0);
-		} else if (e.Data == "backward") {
+			hitCube.transform.Translate (x, 0, 0);
+		} else if (splitted[0] == "translate_y") {
+			float y = float.Parse(splitted[1]);
 			GameObject hitCube = GameObject.Find ("HitCube") as GameObject;
-			hitCube.transform.Translate (-0.1f, 0, 0);
+			hitCube.transform.Translate (0, y, 0);
+		} else if (splitted[0] == "translate_z") {
+			float z = float.Parse(splitted[1]);
+			GameObject hitCube = GameObject.Find ("HitCube") as GameObject;
+			hitCube.transform.Translate (0, 0, z);
 		}
 
-		Sessions.Broadcast(e.Data);
+//		Sessions.Broadcast(e.Data);
 	}
 }
