@@ -28,6 +28,16 @@
     ws.onclose = function(){ connected = false; };
   }
 
+  ext.reset = function() {
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      ws.send("reset");
+    }
+    ws.onopen = function(){ connected = true; ws.send("reset"); };
+    ws.onclose = function(){ connected = false; };
+  }
+
   ext.set_ip = function(str) {
     ip = str;
   };
@@ -38,17 +48,13 @@
       set_ip: '接続先IPを %s に設定する',
       set_cube: 'x座標を %n 、y座標を %n 、z座標を %n にブロックを置く',
       set_color: 'ブロックの色を r: %n g: %n b: %n に変える',
-      translate_x: 'x座標を %n ずつ変える',
-      translate_y: 'y座標を %n ずつ変える',
-      translate_z: 'z座標を %n ずつ変える'
+      reset: 'リセット'
     },
     en: {
       set_ip: 'Set IP address to %s',
       set_cube: 'set cube at x: %n y: %n z: %n',
       set_color: 'set color to r: %n g: %n b: %n',
-      translate_x: 'change x by %n',
-      translate_y: 'change y by %n',
-      translate_z: 'change z by %n',
+      reset: 'reset'
     },
   }
 
@@ -57,9 +63,7 @@
       [' ', locale[lang].set_ip, 'set_ip', ip],
       [' ', locale[lang].set_cube, 'set_cube', 0.01, 0.01, 0.01],
       [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
-      [' ', locale[lang].translate_x, 'translate_x', 0.01],
-      [' ', locale[lang].translate_y, 'translate_y', 0.01],
-      [' ', locale[lang].translate_z, 'translate_z', 0.01]
+      [' ', locale[lang].reset, 'reset']
     ]
   };
 
