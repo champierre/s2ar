@@ -6,10 +6,8 @@ namespace UnityEngine.XR.iOS
 	public class UnityARHitTestExample : MonoBehaviour
 	{
 		public Transform m_HitTransform;
-		private bool hitOnce;
 
 		void Start() {
-			hitOnce = false;
 		}
 
         bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes)
@@ -29,9 +27,8 @@ namespace UnityEngine.XR.iOS
 		
 		// Update is called once per frame
 		void Update () {
-			if (Input.touchCount > 0 && m_HitTransform != null && !hitOnce)
+			if (Input.touchCount > 0 && m_HitTransform != null)
 			{
-				hitOnce = true;
 				var touch = Input.GetTouch(0);
 				if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 				{

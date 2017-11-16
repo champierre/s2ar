@@ -1,5 +1,6 @@
 (function(ext) {
   var ip = "";
+  var connected = false;
 
   ext._shutdown = function() {};
 
@@ -8,29 +9,24 @@
   };
 
   ext.set_cube = function(x, y, z) {
-    var ws = new WebSocket('ws://' + ip + ':3000');
-    ws.onopen = function(){ ws.send("set_cube:" + x + ":" + y + ":" + z); };
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      ws.send("set_cube:" + x + ":" + y + ":" + z);
+    }
+    ws.onopen = function(){ connected = true; ws.send("set_cube:" + x + ":" + y + ":" + z); };
+    ws.onclose = function(){ connected = false; };
   }
 
   ext.set_color = function(r, g, b) {
-    var ws = new WebSocket('ws://' + ip + ':3000');
-    ws.onopen = function(){ ws.send("set_color:" + r + ":" + g + ":" + b); };
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      ws.send("set_color:" + r + ":" + g + ":" + b);
+    }
+    ws.onopen = function(){ connected = true; ws.send("set_color:" + r + ":" + g + ":" + b); };
+    ws.onclose = function(){ connected = false; };
   }
-
-  ext.translate_x = function(value) {
-    var ws = new WebSocket('ws://' + ip + ':3000');
-    ws.onopen = function(){ ws.send("translate_x:" + value); };
-  };
-
-  ext.translate_y = function(value) {
-    var ws = new WebSocket('ws://' + ip + ':3000');
-    ws.onopen = function(){ ws.send("translate_y:" + value); };
-  };
-
-  ext.translate_z = function(value) {
-    var ws = new WebSocket('ws://' + ip + ':3000');
-    ws.onopen = function(){ ws.send("translate_z:" + value); };
-  };
 
   ext.set_ip = function(str) {
     ip = str;
