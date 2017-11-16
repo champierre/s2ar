@@ -15,9 +15,7 @@ public class Server : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		Debug.Log ("Start()");
 		server = new WebSocketServer (3000);
-
 		server.AddWebSocketService<Echo> ("/");
 		server.Start ();
 	}
@@ -42,9 +40,9 @@ public class Echo : WebSocketBehavior
 		char[] separator = new char[] {':'};
 		string[] splitted = e.Data.Split(separator);
 
-		GameObject debugTextGO = GameObject.Find("DebugText") as GameObject;
-		Text debugText = debugTextGO.GetComponent<Text> () as Text;
-		debugText.text = e.Data;
+		GameObject debugGO = GameObject.Find("Debug") as GameObject;
+		Text debug = debugGO.GetComponent<Text> () as Text;
+		debug.text = e.Data;
 
 		GameObject cubeMaker = GameObject.Find ("CubeMaker") as GameObject;
 
