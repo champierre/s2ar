@@ -1,4 +1,4 @@
-# Scratch2ARKit
+# S2AR(Scratch2ARKit)
 
 Demo Movie
 https://www.youtube.com/watch?v=P9t2iPcgGGw
@@ -11,4 +11,4 @@ Sorry no documentation yet. Planning to document and release the app to App Stor
 
 - Open ScratchX(http://scratchx.org/) on the browser.
 
-- Click "Open Extension URL", paste https://champierre.github.io/scratch2arkit/extension/scratch2arkit.js in URL field.
+- Click "Open Extension URL", paste https://champierre.github.io/s2ar/extension/s2ar.js in URL field.
