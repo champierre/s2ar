@@ -45,9 +45,9 @@ public class Echo : WebSocketBehavior
 		GameObject cubeMaker = GameObject.Find ("CubeMaker") as GameObject;
 
 		if (splitted [0] == "set_cube") {
-			float x = float.Parse (splitted [1]);
-			float y = float.Parse (splitted [2]);
-			float z = float.Parse (splitted [3]);
+			float x = float.Parse (splitted [1]) / 100.0f;
+			float y = float.Parse (splitted [2]) / 100.0f;
+			float z = float.Parse (splitted [3]) / 100.0f;
 
 			GameObject origin = GameObject.Find ("Origin") as GameObject;
 			Vector3 atPosition = new Vector3 (x, y, z);
