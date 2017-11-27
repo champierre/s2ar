@@ -35,12 +35,10 @@ public class Echo : WebSocketBehavior
 {
 	protected override void OnMessage(MessageEventArgs e)
 	{
-		Debug.Log ("OnMessage:" + e.Data);
-
 		char[] separator = new char[] {':'};
 		string[] splitted = e.Data.Split(separator);
 
-		GameObject debugGO = GameObject.Find("Debug") as GameObject;
+		GameObject debugGO = GameObject.Find("DebugMessage") as GameObject;
 		Text debug = debugGO.GetComponent<Text> () as Text;
 		debug.text = e.Data;
 
