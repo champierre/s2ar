@@ -61,7 +61,7 @@
   var descriptor = {
     blocks: [
       [' ', locale[lang].set_ip, 'set_ip', ip],
-      [' ', locale[lang].set_cube, 'set_cube', 0.01, 0.01, 0.01],
+      [' ', locale[lang].set_cube, 'set_cube', 1, 1, 1],
       [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
       [' ', locale[lang].reset, 'reset']
     ]
