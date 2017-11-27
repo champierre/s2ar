@@ -1,13 +1,20 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace UnityEngine.XR.iOS
 {
 	public class UnityARHitTestExample : MonoBehaviour
 	{
 		public Transform m_HitTransform;
+		bool locked;
 
 		void Start() {
+			locked = false;
+		}
+
+		public void Unlock() {
+			locked = false;
 		}
 
         bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes)
@@ -27,11 +34,16 @@ namespace UnityEngine.XR.iOS
 		
 		// Update is called once per frame
 		void Update () {
-			if (Input.touchCount > 0 && m_HitTransform != null)
+			if (Input.touchCount > 0 && m_HitTransform != null && !locked)
 			{
 				var touch = Input.GetTouch(0);
 				if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 				{
+					locked = true;
+					GameObject setOriginButton = GameObject.Find ("SetOriginButton");
+					Button button = setOriginButton.GetComponent<Button> ();
+					button.interactable = true;
+
 					var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
 					ARPoint point = new ARPoint {
 						x = screenPosition.x,
