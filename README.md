@@ -23,6 +23,7 @@ https://www.youtube.com/watch?v=P9t2iPcgGGw
 ![](images/origin.png)
 8. On ScratchX, drag "set cube at x:1 y: 0 z: 1" block to Scripts Area, then click the block. You will see a black block is set near to the origin point.
 ![](images/set_cube_at.png)
+![](images/set_cube_s2ar.png)
 9. Use "set color to" block to change the block color.
 ![](images/set_color.png)
 10. Use "reset" to delete all blocks.
