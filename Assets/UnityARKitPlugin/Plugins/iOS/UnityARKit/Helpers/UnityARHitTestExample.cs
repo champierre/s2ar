@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
 
 namespace UnityEngine.XR.iOS
 {
@@ -8,14 +7,6 @@ namespace UnityEngine.XR.iOS
 	{
 		public Transform m_HitTransform;
 		bool locked;
-
-		void Start() {
-			locked = false;
-		}
-
-		public void Unlock() {
-			locked = false;
-		}
 
         bool HitTestWithResultType (ARPoint point, ARHitTestResultType resultTypes)
         {
@@ -31,7 +22,15 @@ namespace UnityEngine.XR.iOS
             }
             return false;
         }
-		
+
+		void Start() {
+			locked = false;
+		}
+
+		public void Unlock() {
+			locked = false;
+		}
+
 		// Update is called once per frame
 		void Update () {
 			if (Input.touchCount > 0 && m_HitTransform != null && !locked)
@@ -39,11 +38,6 @@ namespace UnityEngine.XR.iOS
 				var touch = Input.GetTouch(0);
 				if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 				{
-					locked = true;
-					GameObject setOriginButton = GameObject.Find ("SetOriginButton");
-					Button button = setOriginButton.GetComponent<Button> ();
-					button.interactable = true;
-
 					var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
 					ARPoint point = new ARPoint {
 						x = screenPosition.x,
@@ -52,13 +46,13 @@ namespace UnityEngine.XR.iOS
 
                     // prioritize reults types
                     ARHitTestResultType[] resultTypes = {
-                        ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent, 
+                        ARHitTestResultType.ARHitTestResultTypeExistingPlaneUsingExtent,
                         // if you want to use infinite planes use this:
                         //ARHitTestResultType.ARHitTestResultTypeExistingPlane,
-                        ARHitTestResultType.ARHitTestResultTypeHorizontalPlane, 
+                        ARHitTestResultType.ARHitTestResultTypeHorizontalPlane,
                         ARHitTestResultType.ARHitTestResultTypeFeaturePoint
-                    }; 
-					
+                    };
+
                     foreach (ARHitTestResultType resultType in resultTypes)
                     {
                         if (HitTestWithResultType (point, resultType))
@@ -70,7 +64,6 @@ namespace UnityEngine.XR.iOS
 			}
 		}
 
-	
+
 	}
 }
-
