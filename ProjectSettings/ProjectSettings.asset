@@ -355,8 +355,8 @@ PlayerSettings:
   enableInternalProfiler: 0
   logObjCUncaughtExceptions: 1
   enableCrashReportAPI: 0
-  cameraUsageDescription: We use the camera to display blocks on the floor around
-    you.
+  cameraUsageDescription: We use the camera to virtually display blocks on the floor
+    around you.
   locationUsageDescription: 
   microphoneUsageDescription: 
   switchNetLibKey: 
