@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace UnityEngine.XR.iOS
 {
@@ -38,6 +39,11 @@ namespace UnityEngine.XR.iOS
 				var touch = Input.GetTouch(0);
 				if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved)
 				{
+					locked = true;
+					GameObject setOriginButton = GameObject.Find ("SetOriginButton");
+					Button button = setOriginButton.GetComponent<Button> ();
+					button.interactable = true;
+
 					var screenPosition = Camera.main.ScreenToViewportPoint(touch.position);
 					ARPoint point = new ARPoint {
 						x = screenPosition.x,
