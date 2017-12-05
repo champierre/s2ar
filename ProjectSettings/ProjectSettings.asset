@@ -154,7 +154,7 @@ PlayerSettings:
     iOS: com.tsukurusha.s2ar
     tvOS: com.Company.ProductName
   buildNumber:
-    iOS: 4
+    iOS: 5
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
