@@ -222,7 +222,7 @@ PlayerSettings:
   metalEditorSupport: 0
   metalAPIValidation: 0
   iOSRenderExtraFrameOnPause: 1
-  appleDeveloperTeamID: 
+  appleDeveloperTeamID: ZU6A5F3825
   iOSManualSigningProvisioningProfileID: 
   tvOSManualSigningProvisioningProfileID: 
   appleEnableAutomaticSigning: 1
@@ -599,7 +599,7 @@ PlayerSettings:
   webGLCompressionFormat: 1
   scriptingDefineSymbols: {}
   platformArchitecture:
-    iOS: 2
+    iOS: 1
   scriptingBackend:
     Android: 0
     Metro: 2
