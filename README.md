@@ -22,7 +22,7 @@ https://www.youtube.com/watch?v=P9t2iPcgGGw
 
   ![](images/scratchx.png)
 
-4. On ScratchX website, click "Open Extension URL", paste "https://champierre.github.io/s2ar/extension/s2ar.js" in URL field and click "Open".
+4. On ScratchX website, click "Open Extension URL", paste https://champierre.github.io/s2ar/extension/s2ar.js in URL field and click "Open".
 
   ![](images/scratchx1.png)
 
