@@ -2,7 +2,11 @@
 
 S2AR(Scratch2ARKit) connects Scratch* (more specifically ScratchX) and ARKit, then enables anyone to program building blocks in Augmented Reality world.
 
-* Scratch is developed by the Lifelong Kindergarten Group at the MIT Media Lab. See http://scratch.mit.edu
+\* Scratch is developed by the Lifelong Kindergarten Group at the MIT Media Lab. See http://scratch.mit.edu
+
+S2AR is available at [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8).
+
+[![](images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8)
 
 Demo Movie
 https://www.youtube.com/watch?v=P9t2iPcgGGw
