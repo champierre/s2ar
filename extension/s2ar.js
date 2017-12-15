@@ -40,6 +40,13 @@
 
   ext.set_ip = function(str) {
     ip = str;
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      ws.send("connect");
+    }
+    ws.onopen = function(){ connected = true; ws.send("connect"); };
+    ws.onclose = function(){ connected = false; };
   };
 
   var lang = ((navigator.language || navigator.userLanguage) == 'ja') ? 'ja' : 'en';
