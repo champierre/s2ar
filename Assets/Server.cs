@@ -43,7 +43,7 @@ public class S2AR : WebSocketBehavior
 
 		GameObject cubeMaker = GameObject.Find ("CubeMaker") as GameObject;
 
-		if (splitted[0] == "set_cube")
+		if (splitted[0] == "set_square")
 		{
 			float x = float.Parse(splitted[1]) / 100.0f;
 			float y = float.Parse(splitted[2]) / 100.0f;
