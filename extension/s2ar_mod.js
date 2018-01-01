@@ -1,7 +1,7 @@
 (function(ext) {
   var ip = "";
   var connected = false;
-  var i, j, k, x0, y0, z0, str;
+  var i, j, k, x0, y0, z0, r0, str;
   var letters_object = {
     'space' : '0000000000000000000000000000000000000000000000000000000000000000',
     '!' : '0001100000111100001111000001100000011000000000000001100000000000',
@@ -7078,11 +7078,15 @@
     ws.onopen = function(){ connected = true; ws.send("set_cube:" + x + ":" + y + ":" + z); };
     ws.onclose = function(){ connected = false; };
   }
+  
 
   ext.set_box = function(x, y, z, w, d, h) {
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
+      x = Number(x);
+      y = Number(y);
+      z = Number(z);
       for (k = 0; k < d; k++) {
         z0 = z + k;
         for (j = 0; j < h; j++) {
@@ -7102,49 +7106,100 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
-      switch (a) {
-        case 'x':
-          for (k = - r; k <= r; k++) {
-            for (j = - r; j <= r; j++) {
-              for (i =  0 ; i < h; i++) {
-                if (j * j + k * k <= (r + 0.5) * (r + 0.5)) {
-                  x0 = x + i;
-                  y0 = y + j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+      x = Number(x);//関数内で計算結果が正しくなるようにする
+      y = Number(y);
+      z = Number(z);
+      if (r % 1 == 0.5) {//半径 r の小数点が 5 の時
+        switch (a) {
+          case 'x':
+            for (k = - r; k <= r; k++) {
+              for (j = - r; j <= r; j++) {
+                for (i =  0 ; i < h; i++) {
+                  if (j * j + k * k < r * r) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
               }
             }
-          }
-          break;
-        case 'z':
-          for (k = 0; k < h; k++) {
-            for (j = - r; j <= r; j++) {
-              for (i = - r; i <= r; i++) {
-                if (i * i + j * j <= (r + 0.5) * (r + 0.5)) {
-                  x0 = x + i;
-                  y0 = y + j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            break;
+          case 'z':
+            for (k = 0; k < h; k++) {
+              for (j = - r; j <= r; j++) {
+                for (i = - r; i <= r; i++) {
+                  if (i * i + j * j < r * r) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
               }
             }
-          }
-          break;
-        default:
-          for (k = - r; k <= r; k++) {
-            for (j = 0; j < h; j++) {
-              for (i = - r; i <= r; i++) {
-                if (i * i + k * k <= (r + 0.5) * (r + 0.5)) {
-                  x0 = x + i;
-                  y0 = y + j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            break;
+          default:
+            for (k = - r; k <= r; k++) {
+              for (j = 0; j < h; j++) {
+                for (i = - r; i <= r; i++) {
+                  if (i * i + k * k < r * r) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
               }
             }
-          }
-          break;
+            break;
+        }
+      } else {
+        r0 = Math.ceil(r);//半径 r が小数の場合の対応
+        switch (a) {
+          case 'x':
+            for (k = - r0; k <= r0; k++) {
+              for (j = - r0; j <= r0; j++) {
+                for (i =  0 ; i < h; i++) {
+                  if (j * j + k * k < r * r) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+            }
+            break;
+          case 'z':
+            for (k = 0; k < h; k++) {
+              for (j = - r0; j <= r0; j++) {
+                for (i = - r0; i <= r0; i++) {
+                  if (i * i + j * j < r * r) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+            }
+            break;
+          default:
+            for (k = - r0; k <= r0; k++) {
+              for (j = 0; j < h; j++) {
+                for (i = - r0; i <= r0; i++) {
+                  if (i * i + k * k < r * r) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+            }
+            break;
+        }
       }
     }
     ws.onopen = function(){ connected = true; ws.send("set_cylinder:" + x + ":" + y + ":" + z + ":" + r + ":" + a); };
@@ -7155,10 +7210,14 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
+      x = Number(x);
+      y = Number(y);
+      z = Number(z);
+      r0 = Math.ceil(r);//半径 r が小数の場合の対応
       switch (a) {
         case 'x':
-          for (k = 0; k <= r; k++) {
-            for (j = 0; j <= r ; j++) {
+          for (k = 0; k <= r0; k++) {
+            for (j = 0; j <= r0 ; j++) {
               for (i = 0; i < h; i++) {
                 if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * k + Math.tan(Math.PI / 3) * r)) {
                   x0 = x + i;
@@ -7181,8 +7240,8 @@
           break;
         case 'z':
           for (k = 0; k < h; k++) {
-            for (j = 0; j <= r; j++) {
-              for (i = 0; i <= r ; i++) {
+            for (j = 0; j <= r0; j++) {
+              for (i = 0; i <= r0 ; i++) {
                 if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
                   x0 = x + i;
                   y0 = y + j;
@@ -7203,9 +7262,9 @@
           }
           break;
         default:
-          for (k = 0; k <= r; k++) {
+          for (k = 0; k <= r0; k++) {
             for (j = 0; j < h; j++) {
-              for (i = 0; i <= r; i++) {
+              for (i = 0; i <= r0; i++) {
                 if ((k <= Math.cos(Math.PI / 6) * r) && (k <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
                   x0 = x + i;
                   y0 = y + j;
@@ -7235,11 +7294,18 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
-      for (k = z - r; k <= z + r; k++) {
-        for (j = y - r; j <= y + r; j++) {
-          for (i =  x - r; i <= x + r; i++) {
-            if ((i - x) * (i - x) + (j - y) * (j - y) + (k - z) * (k - z) < (r + 0.5) * (r + 0.5)) {
-              ws.send("set_cube:" + i + ":" + j + ":" + k);
+      x = Number(x);
+      y = Number(y);
+      z = Number(z);
+      r0 = Math.ceil(r);//半径 r が小数の場合の対応
+      for (k = - r0; k <= r0; k++) {
+        for (j = - r0; j <= r0; j++) {
+          for (i = - r0; i <= r0; i++) {
+            if (i * i + j * j + k * k < r * r) {
+              x0 = x + i;
+              y0 = y + j;
+              z0 = z + k;
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
             }
           }
         }
@@ -7253,6 +7319,9 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
+      x = Number(x);
+      y = Number(y);
+      z = Number(z);
       k = 0;
       switch (a) {
         case 'x':
@@ -7307,6 +7376,9 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
+      x = Number(x);
+      y = Number(y);
+      z = Number(z);
       switch (a) {
         case 'x':
           if (w % 2 == 0){
@@ -7540,7 +7612,7 @@
 
   var descriptor = {
     blocks: [
-      [' ', locale[lang].set_ip, 'set_ip', '100.76.35.43'],//my ip adress
+      [' ', locale[lang].set_ip, 'set_ip', '100.93.34.117'],//my ip adress
       [' ', locale[lang].set_cube, 'set_cube', 1, 0, 1],
       [' ', locale[lang].set_box, 'set_box', 2, 0, 2, 2, 2, 2],
       [' ', locale[lang].set_cylinder, 'set_cylinder', 3, 0, 3, 4, 4, 'y'],
