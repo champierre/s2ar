@@ -3,7 +3,7 @@
   var connected = false;
   var i, j, k, x0, y0, z0, r0, str;
   var letters_object = {
-    'space' : '0000000000000000000000000000000000000000000000000000000000000000',
+    '_' : '0000000000000000000000000000000000000000000000000000000000000000',
     '!' : '0001100000111100001111000001100000011000000000000001100000000000',
     '"' : '0110110001101100000000000000000000000000000000000000000000000000',
     '#' : '0110110001101100111111100110110011111110011011000110110000000000',
@@ -16,7 +16,7 @@
     '*' : '0000000001100110001111001111111100111100011001100000000000000000',
     '+' : '0000000000110000001100001111110000110000001100000000000000000000',
     ',' : '0000000000000000000000000000000000000000001100000011000001100000',
-    '-' : '0000000000000000000000001111110000000000000000000000000000000000',
+    //'-' : '0000000000000000000000001111110000000000000000000000000000000000',
     '.' : '0000000000000000000000000000000000000000001100000011000000000000',
     '/' : '0000011000001100000110000011000001100000110000001000000000000000',
     '0' : '0111110011000110110011101101111011110110111001100111110000000000',
@@ -7062,7 +7062,6 @@
     '熙' : '1111011010100110110101101010010011110110000000001010101000000000', 
   };
 
-
   ext._shutdown = function() {};
 
   ext._getStatus = function() {
@@ -7078,7 +7077,6 @@
     ws.onopen = function(){ connected = true; ws.send("set_cube:" + x + ":" + y + ":" + z); };
     ws.onclose = function(){ connected = false; };
   }
-  
 
   ext.set_box = function(x, y, z, w, d, h) {
     if (!connected) {
@@ -7087,14 +7085,77 @@
       x = Number(x);
       y = Number(y);
       z = Number(z);
-      for (k = 0; k < d; k++) {
+      w = Number(w);
+      d = Number(d);
+      h = Number(h);
+      for (k = 0; k < Math.floor(d); k++) {
         z0 = z + k;
-        for (j = 0; j < h; j++) {
+        for (j = 0; j < Math.floor(h); j++) {
           y0 = y + j;
-          for (i = 0; i < w; i++) {
+          for (i = 0; i < Math.floor(w); i++) {
             x0 = x + i;
             ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
           }
+        }
+      }
+      if (w % 1 != 0){
+        x0 = x + w - 1;
+        for (j = 0; j < Math.floor(h); j++) {
+          y0 = y + j;
+          for (k = 0; k < Math.floor(d); k++) {
+            z0 = z + k;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
+        }
+      }
+      if (h % 1 != 0){
+        y0 = y + h - 1;
+        for (k = 0; k < Math.floor(d); k++) {
+          z0 = z + k;
+          for (i = 0; i < Math.floor(w); i++) {
+            x0 = x + i;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
+        }
+      }
+      if (d % 1 != 0){
+        z0 = z + d - 1;
+        for (i = 0; i < Math.floor(w); i++) {
+          x0 = x + i;
+          for (j = 0; j < Math.floor(h); j++) {
+            y0 = y + j;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
+        }
+      }
+      if ((w % 1 != 0) && (d % 1 != 0) && (h % 1 != 0)) {
+        x0 = x + w - 1;
+        y0 = y + h - 1;
+        z0 = z + d - 1;
+        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+      }
+      if ((w % 1 != 0) && (h % 1 != 0)) {
+        x0 = x + w - 1;
+        y0 = y + h - 1;
+        for (k = 0; k < Math.floor(d); k++) {
+          z0 = z + k;
+          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+        }
+      }
+      if ((h % 1 != 0) && (d % 1 != 0)) {
+        y0 = y + h - 1;
+        z0 = z + d - 1;
+        for (i = 0; i < Math.floor(w); i++) {
+          x0 = x + i;
+          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+        }
+      }
+      if ((d % 1 != 0) && (w % 1 != 0)) {
+        z0 = z + d - 1;
+        x0 = x + w - 1;
+        for (j = 0; j < Math.floor(h); j++) {
+          y0 = y + j;
+          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
         }
       }
     }
@@ -7372,6 +7433,74 @@
     ws.onclose = function(){ connected = false; };
   }
 
+  ext.draw_line = function(x1, y1, z1, x2, y2, z2) {
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      x1 = Number(x1);
+      y1 = Number(y1);
+      z1 = Number(z1);
+      x2 = Number(x2);
+      y2 = Number(y2);
+      z2 = Number(z2);
+      ws.send("set_cube:" + x1 + ":" + y1 + ":" + z1);
+      ws.send("set_cube:" + x2 + ":" + y2 + ":" + z2);
+      var vector = [x2 - x1, y2 - y1, z2 -z1];
+      var vector2 = [Math.abs(x2 - x1), Math.abs(y2 -y1), Math.abs(z2 -z1)];
+      var index = vector2.indexOf(Math.max.apply(null, vector2));
+      
+      switch (index) {
+        case 0:
+          for (i = 0; i < vector2[0]; i++) {
+            if (x2 > x1) {
+              x0 = x1 + i;
+              y0 = y1 + vector[1] * i / vector[0];
+              z0 = z1 + vector[2] * i / vector[0];
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            } else {
+              x0 = x2 + i;
+              y0 = y2 + vector[1] * i / vector[0];
+              z0 = z2 + vector[2] * i / vector[0];
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            }
+          }
+          break;
+        case 1:
+          for (i = 0; i < vector2[1]; i++) {
+            if (y2 > y1) {
+              x0 = x1 + vector[0] * i / vector[1];
+              y0 = y1 + i;
+              z0 = z1 + vector[2] * i / vector[1];
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            } else {
+              x0 = x2 + vector[0] * i / vector[1];
+              y0 = y2 + i;
+              z0 = z2 + vector[2] * i / vector[1]
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            }
+          }
+          break;
+        default:
+          for (i = 0; i < vector2[2]; i++) {
+            if (z2 > z1) {
+              x0 = x1 + vector[0] * i / vector[2];
+              y0 = y1 + vector[1] * i / vector[2];
+              z0 = z1 + i;
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            } else {
+              x0 = x2 + vector[0] * i / vector[2];
+              y0 = y2 + vector[1] * i / vector[2];
+              z0 = z2 + i;
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            }
+          }
+          break;
+      }
+    }
+    ws.onopen = function(){ connected = true; ws.send("draw_line:" + x1 + ":" + y1 + ":" + z1 + ":" + x2 + ":" + y2 + ":" + z2); };
+    ws.onclose = function(){ connected = false; };
+  }
+
   ext.build_roof = function(x, y, z, w, d, h, a) {
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
@@ -7586,13 +7715,14 @@
   var locale = {
     ja: {
       set_ip: '接続先IPを %s に設定する',
-      set_cube: 'x座標を %n 、y座標を %n 、z座標を %n にブロックを置く',
-      set_box: 'x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n に箱を置く',
-      set_cylinder: 'x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %s 軸に円柱を置く',
-      set_hexagon: 'x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %s 軸に六角柱を置く',
-      set_sphere: 'x座標を %n 、y座標を %n 、z座標を %n 、半径を %n に球を置く',
-      draw_letter: 'x座標を %n 、y座標を %n 、z座標を %n 、文字 %s を、 %s 軸に書く',
-      build_roof: 'x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n 、 %s 軸に屋根を建築する',
+      set_cube: 'ブロックを１個置く。x座標を %n 、y座標を %n 、z座標を %n',
+      set_box: '直方体を置く。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n',
+      set_cylinder: '円柱を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %s 軸',
+      set_hexagon: '六角柱を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %s 軸',
+      set_sphere: '球を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n',
+      draw_letter: '文字を書く。x座標を %n 、y座標を %n 、z座標を %n 、文字 %s 、 %s 軸',
+      draw_line: '２点間に線を引く。x1 を %n 、y1 を %n 、z1 を %n 、x2 を %n 、y2 を %n 、z2を %n',
+      build_roof: '屋根を作る。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n 、 %s 軸に',
       set_color: 'ブロックの色を r: %n g: %n b: %n に変える',
       reset: 'リセット'
     },
@@ -7604,6 +7734,7 @@
       set_hexagon: 'set hexagon at x: %n y: %n z: %n radius: %n height: %n axis: %s',
       set_sphere: 'set sphere at x: %n y: %n z: %n radius: %n',
       draw_letter: 'draw_letter at x: %n y: %n z: %n letter: %s axis: %s',
+      draw_line: 'draw_line between x1: %n y1: %n z1: %n to x2: %n y2: %n z2: %n',
       build_roof: 'build_roof at x: %n y: %n z: %n wide: %n depth: %n height: %n axis: %s',
       set_color: 'set color to r: %n g: %n b: %n',
       reset: 'reset'
@@ -7612,13 +7743,14 @@
 
   var descriptor = {
     blocks: [
-      [' ', locale[lang].set_ip, 'set_ip', '100.93.34.117'],//my ip adress
+      [' ', locale[lang].set_ip, 'set_ip', '100.69.83.60'],//my ip adress
       [' ', locale[lang].set_cube, 'set_cube', 1, 0, 1],
       [' ', locale[lang].set_box, 'set_box', 2, 0, 2, 2, 2, 2],
       [' ', locale[lang].set_cylinder, 'set_cylinder', 3, 0, 3, 4, 4, 'y'],
       [' ', locale[lang].set_hexagon, 'set_hexagon', 4, 10, 10, 6, 4, 'y'],
       [' ', locale[lang].set_sphere, 'set_sphere', 4, 4, 4, 4],
       [' ', locale[lang].draw_letter, 'draw_letter', 0, 0, 10, 'A', 'y'],
+      [' ', locale[lang].draw_line, 'draw_line', 0, 0, 0, 10, 10, 10],
       [' ', locale[lang].build_roof, 'build_roof', 0, 3, 0, 14, 10, 7, 'z'],
       [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
       [' ', locale[lang].reset, 'reset']
