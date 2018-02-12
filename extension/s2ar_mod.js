@@ -7088,73 +7088,53 @@
       w = Number(w);
       d = Number(d);
       h = Number(h);
-      for (k = 0; k < Math.floor(d); k++) {
-        z0 = z + k;
-        for (j = 0; j < Math.floor(h); j++) {
-          y0 = y + j;
-          for (i = 0; i < Math.floor(w); i++) {
-            x0 = x + i;
-            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-          }
-        }
-      }
-      if (w % 1 != 0){
-        x0 = x + w - 1;
-        for (j = 0; j < Math.floor(h); j++) {
-          y0 = y + j;
-          for (k = 0; k < Math.floor(d); k++) {
-            z0 = z + k;
-            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-          }
-        }
-      }
-      if (h % 1 != 0){
-        y0 = y + h - 1;
-        for (k = 0; k < Math.floor(d); k++) {
+      if (d > 1) {
+        for (k = 0; k < d - 1; k++) {
           z0 = z + k;
-          for (i = 0; i < Math.floor(w); i++) {
-            x0 = x + i;
+          if (h > 1) {
+            for (j = 0; j < h - 1; j++) {
+              y0 = y + j;
+              if (w > 1) {
+                for (i = 0; i < w - 1; i++) {
+                  x0 = x + i;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                }
+              }
+              x0 = x + w - 1;
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            }
+            y0 = y + h - 1;
+            if (w > 1) {
+              for (i = 0; i < w - 1; i++) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w - 1;
             ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
           }
         }
-      }
-      if (d % 1 != 0){
         z0 = z + d - 1;
-        for (i = 0; i < Math.floor(w); i++) {
-          x0 = x + i;
-          for (j = 0; j < Math.floor(h); j++) {
+        if (h > 1) {
+          for (j = 0; j < h - 1; j++) {
             y0 = y + j;
+            if (w > 1) {
+              for (i = 0; i < w - 1; i++) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w - 1;
             ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
           }
-        }
-      }
-      if ((w % 1 != 0) && (d % 1 != 0) && (h % 1 != 0)) {
-        x0 = x + w - 1;
-        y0 = y + h - 1;
-        z0 = z + d - 1;
-        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-      }
-      if ((w % 1 != 0) && (h % 1 != 0)) {
-        x0 = x + w - 1;
-        y0 = y + h - 1;
-        for (k = 0; k < Math.floor(d); k++) {
-          z0 = z + k;
-          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-        }
-      }
-      if ((h % 1 != 0) && (d % 1 != 0)) {
-        y0 = y + h - 1;
-        z0 = z + d - 1;
-        for (i = 0; i < Math.floor(w); i++) {
-          x0 = x + i;
-          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-        }
-      }
-      if ((d % 1 != 0) && (w % 1 != 0)) {
-        z0 = z + d - 1;
-        x0 = x + w - 1;
-        for (j = 0; j < Math.floor(h); j++) {
-          y0 = y + j;
+          y0 = y + h - 1;
+          if (w > 1) {
+            for (i = 0; i < w - 1; i++) {
+              x0 = x + i;
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            }
+          }
+          x0 = x + w - 1;
           ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
         }
       }
@@ -7170,92 +7150,119 @@
       x = Number(x);//関数内で計算結果が正しくなるようにする
       y = Number(y);
       z = Number(z);
-      if (r % 1 == 0.5) {//半径 r の小数点が 5 の時
+      r = Number(r);
+      h = Number(h);
+      if (0 <= r % 1 && r % 1 < 0.5) {
+        r0 = Math.floor(r) + 0.5;
         switch (a) {
           case 'x':
-            for (k = - r; k <= r; k++) {
-              for (j = - r; j <= r; j++) {
-                for (i =  0 ; i < h; i++) {
-                  if (j * j + k * k < r * r) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            for (k = - r0; k <= r0; k++) {
+              for (j = - r0; j <= r0; j++) {
+                if (j * j + k * k < r * r) {
+                  y0 = y + j;
+                  z0 = z + k;
+                  if (h > 1) {
+                    for (i =  0 ; i < h - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
             break;
           case 'z':
-            for (k = 0; k < h; k++) {
-              for (j = - r; j <= r; j++) {
-                for (i = - r; i <= r; i++) {
-                  if (i * i + j * j < r * r) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            for (j = - r0; j <= r0; j++) {
+              for (i = - r0; i <= r0; i++) {
+                if (i * i + j * j < r * r) {
+                  x0 = x + i;
+                  y0 = y + j;
+                  if (h > 1) {
+                    for (k = 0; k < h - 1; k++) {
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  z0 = z + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
             break;
           default:
-            for (k = - r; k <= r; k++) {
-              for (j = 0; j < h; j++) {
-                for (i = - r; i <= r; i++) {
-                  if (i * i + k * k < r * r) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            for (k = - r0; k <= r0; k++) {
+              for (i = - r0; i <= r0; i++) {
+                if (i * i + k * k < r * r) {
+                  x0 = x + i;
+                  z0 = z + k;
+                  if (h > 1) {
+                    for (j = 0; j < h - 1; j++) {
+                      y0 = y + j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  y0 = y + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
             break;
         }
       } else {
-        r0 = Math.ceil(r);//半径 r が小数の場合の対応
+        r0 = Math.ceil(r);
         switch (a) {
           case 'x':
             for (k = - r0; k <= r0; k++) {
               for (j = - r0; j <= r0; j++) {
-                for (i =  0 ; i < h; i++) {
-                  if (j * j + k * k < r * r) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (j * j + k * k < r * r) {
+                  y0 = y + j;
+                  z0 = z + k;
+                  if (h > 0) {
+                    for (i =  0 ; i < h - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
             break;
           case 'z':
-            for (k = 0; k < h; k++) {
-              for (j = - r0; j <= r0; j++) {
-                for (i = - r0; i <= r0; i++) {
-                  if (i * i + j * j < r * r) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            for (j = - r0; j <= r0; j++) {
+              for (i = - r0; i <= r0; i++) {
+                if (i * i + j * j < r * r) {
+                  x0 = x + i;
+                  y0 = y + j;
+                  if (h > 0) {
+                    for (k = 0; k < h - 1; k++) {
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  z0 = z + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
             break;
           default:
             for (k = - r0; k <= r0; k++) {
-              for (j = 0; j < h; j++) {
-                for (i = - r0; i <= r0; i++) {
-                  if (i * i + k * k < r * r) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              for (i = - r0; i <= r0; i++) {
+                if (i * i + k * k < r * r) {
+                  x0 = x + i;
+                  z0 = z + k
+                  if (h > 1) {
+                    for (j = 0; j < h - 1; j++) {
+                      y0 = y + j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  y0 = y + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7274,73 +7281,120 @@
       x = Number(x);
       y = Number(y);
       z = Number(z);
+      r = Number(r);
+      h = Number(h);
       r0 = Math.ceil(r);//半径 r が小数の場合の対応
       switch (a) {
         case 'x':
           for (k = 0; k <= r0; k++) {
             for (j = 0; j <= r0 ; j++) {
-              for (i = 0; i < h; i++) {
-                if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * k + Math.tan(Math.PI / 3) * r)) {
-                  x0 = x + i;
-                  y0 = y + j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  y0 = y - j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  y0 = y - j;
-                  z0 = z - k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  y0 = y + j;
-                  z0 = z - k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * k + Math.tan(Math.PI / 3) * r)) {
+                if ( h > 1) {
+                  for (i = 0; i < h - 1; i++) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    y0 = y - j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    y0 = y - j;
+                    z0 = z - k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    y0 = y + j;
+                    z0 = z - k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + h - 1;
+                y0 = y + j;
+                z0 = z + k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                y0 = y - j;
+                z0 = z + k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                y0 = y - j;
+                z0 = z - k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                y0 = y + j;
+                z0 = z - k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
           break;
         case 'z':
-          for (k = 0; k < h; k++) {
-            for (j = 0; j <= r0; j++) {
-              for (i = 0; i <= r0 ; i++) {
-                if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
-                  x0 = x + i;
-                  y0 = y + j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  x0 = x - i;
-                  y0 = y + j;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  x0 = x - i;
-                  y0 = y - j;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  x0 = x + i;
-                  y0 = y - j;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          for (j = 0; j <= r0; j++) {
+            for (i = 0; i <= r0 ; i++) {
+              if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
+                if ( h > 1) {
+                  for (k = 0; k < h - 1; k++) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    x0 = x - i;
+                    y0 = y + j;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    x0 = x - i;
+                    y0 = y - j;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    x0 = x + i;
+                    y0 = y - j;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + i;
+                y0 = y + j;
+                z0 = z + h - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x - i;
+                y0 = y + j;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x - i;
+                y0 = y - j;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x + i;
+                y0 = y - j;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
           break;
         default:
           for (k = 0; k <= r0; k++) {
-            for (j = 0; j < h; j++) {
-              for (i = 0; i <= r0; i++) {
-                if ((k <= Math.cos(Math.PI / 6) * r) && (k <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
-                  x0 = x + i;
-                  y0 = y + j;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  x0 = x - i;
-                  z0 = z + k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  x0 = x - i;
-                  z0 = z - k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                  x0 = x + i;
-                  z0 = z - k;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            for (i = 0; i <= r0; i++) {
+              if ((k <= Math.cos(Math.PI / 6) * r) && (k <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
+                if (h > 1) {
+                  for (j = 0; j < h - 1; j++) {
+                    x0 = x + i;
+                    y0 = y + j;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    x0 = x - i;
+                    z0 = z + k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    x0 = x - i;
+                    z0 = z - k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    x0 = x + i;
+                    z0 = z - k;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + i;
+                y0 = y +  h - 1;
+                z0 = z + k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x - i;
+                z0 = z + k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x - i;
+                z0 = z - k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x + i;
+                z0 = z - k;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7358,6 +7412,7 @@
       x = Number(x);
       y = Number(y);
       z = Number(z);
+      r = Number(r);
       r0 = Math.ceil(r);//半径 r が小数の場合の対応
       for (k = - r0; k <= r0; k++) {
         for (j = - r0; j <= r0; j++) {
@@ -7508,6 +7563,9 @@
       x = Number(x);
       y = Number(y);
       z = Number(z);
+      w = Number(w);
+      d = Number(d);
+      h = Number(h);
       switch (a) {
         case 'x':
           if (w % 2 == 0){
@@ -7519,9 +7577,14 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 2);
                 }
-                for (i = x; i < x + d; i++) {
-                  ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
@@ -7531,9 +7594,14 @@
                   ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
                 }
                 z0 = z - (w - 2) * j / (2 * (h - 1)) + w - 1;
-                for (i = x; i < x + d; i++) {
-                  ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           } else {
@@ -7545,21 +7613,36 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 1);
                 }
-                for (i = x; i < x + d; i++) {
-                  ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
                 y0 = y + j;
                 z0 = z + (w - 1) * j / (2 * (h - 1));
-                for (i = x; i < x + d; i++) {
-                  ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 z0 = z - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
-                for (i = x; i < x + d; i++) {
-                  ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7574,9 +7657,14 @@
                 } else {
                   z0 = z - 2 * (h - 1) * (j - w + 1) / (w - 2);
                 }
-                for (i = y; i < y + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                y0 = y + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
@@ -7586,9 +7674,14 @@
                   ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
                 }
                 x0 = x - (w - 2) * j / (2 * (h - 1)) + w - 1;
-                for (i = y; i < y + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                y0 = y + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           } else {
@@ -7600,21 +7693,34 @@
                 } else {
                   z0 = z - 2 * (h - 1) * (j - w + 1) / (w - 1);
                 }
-                for (i = y; i < y + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                y0 = y + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
                 z0 = z + j;
                 x0 = x + (w - 1) * j / (2 * (h - 1));
-                for (i = y; i < y + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                y0 = y + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 x0 = x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
-                for (i = y; i < y + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
+                for (i = 0; i < d - 1; i++) {
+                  y0 = y + i;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
+                y0 = y + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7629,9 +7735,14 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 2);
                 }
-                for (i = z; i < z + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    z0 = z + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                z0 = z + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
@@ -7641,9 +7752,14 @@
                   ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
                 }
                 x0 = x - (w - 2) * j / (2 * (h - 1)) + w - 1;
-                for (i = z; i < z + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    z0 = z + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                z0 = z + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           } else {
@@ -7655,21 +7771,34 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 1);
                 }
-                for (i = z; i < z + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    z0 = z + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                z0 = z + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
                 y0 = y + j;
                 x0 = x + (w - 1) * j / (2 * (h - 1));
-                for (i = z; i < z + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
+                for (i = 0; i < d - 1; i++) {
+                  z0 = z + i;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
+                z0 = z + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 x0 = x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
-                for (i = z; i < z + d; i++) {
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
+                if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    z0 = z + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                z0 = z + d - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
