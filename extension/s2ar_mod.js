@@ -7082,18 +7082,12 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
-      x = Number(x);
-      y = Number(y);
-      z = Number(z);
-      w = Number(w);
-      d = Number(d);
-      h = Number(h);
-      if (d > 1) {
-        for (k = 0; k < d - 1; k++) {
-          z0 = z + k;
-          if (h > 1) {
-            for (j = 0; j < h - 1; j++) {
-              y0 = y + j;
+      if (h > 1) {
+        for (k = 0; k < h - 1; k++) {
+          y0 = y + k;
+          if (d > 1) {
+            for (j = 0; j < d - 1; j++) {
+              z0 = z + j;
               if (w > 1) {
                 for (i = 0; i < w - 1; i++) {
                   x0 = x + i;
@@ -7103,31 +7097,8 @@
               x0 = x + w - 1;
               ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
             }
-            y0 = y + h - 1;
-            if (w > 1) {
-              for (i = 0; i < w - 1; i++) {
-                x0 = x + i;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-              }
-            }
-            x0 = x + w - 1;
-            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
           }
-        }
-        z0 = z + d - 1;
-        if (h > 1) {
-          for (j = 0; j < h - 1; j++) {
-            y0 = y + j;
-            if (w > 1) {
-              for (i = 0; i < w - 1; i++) {
-                x0 = x + i;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-              }
-            }
-            x0 = x + w - 1;
-            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-          }
-          y0 = y + h - 1;
+          z0 = z + d - 1;
           if (w > 1) {
             for (i = 0; i < w - 1; i++) {
               x0 = x + i;
@@ -7138,6 +7109,29 @@
           ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
         }
       }
+      y0 = y + h - 1;
+      if (d > 1) {
+        for (j = 0; j < d - 1; j++) {
+          z0 = z + j;
+          if (w > 1) {
+            for (i = 0; i < w - 1; i++) {
+              x0 = x + i;
+              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+            }
+          }
+          x0 = x + w - 1;
+          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+        }
+      }
+      z0 = z + d - 1;
+      if (w > 1) {
+        for (i = 0; i < w - 1; i++) {
+          x0 = x + i;
+          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+        }
+      }
+      x0 = x + w - 1;
+      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
     }
     ws.onopen = function(){ connected = true; ws.send("set_box:" + x + ":" + y + ":" + z + ":" + w + ":" + d + ":" + h); };
     ws.onclose = function(){ connected = false; };
