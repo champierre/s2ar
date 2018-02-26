@@ -7082,56 +7082,391 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
-      if (h > 1) {
-        for (k = 0; k < h - 1; k++) {
-          y0 = y + k;
+      x = Number(x);//関数内で計算結果が正しくなるようにする
+      y = Number(y);
+      z = Number(z);
+      w = Number(w);
+      d = Number(d);
+      h = Number(h);
+      if (h >= 0) {
+        if (h > 1) {
+          for (k = 0; k < h - 1; k++) {
+            y0 = y + k;
+            if (d >= 0) {
+              if (d > 1) {
+                for (j = 0; j < d - 1; j++) {
+                  z0 = z + j;
+                  if (w >= 0) {
+                    if (w > 1) {
+                      for (i = 0; i < w - 1; i++) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (w < -1) {
+                      for (i = -1; i > w; i--) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w ;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+              z0 = z + d - 1;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            } else {
+              if (d < -1) {
+                for (j = -1; j > d; j--) {
+                  z0 = z + j;
+                  if (w >= 0) {
+                    if (w > 1) {
+                      for (i = 0; i < w - 1; i++) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (w < -1) {
+                      for (i = -1; i > w; i--) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w ;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+              z0 = z + d;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+          }
+        }
+        y0 = y + h - 1;
+        if (d >= 0) {
           if (d > 1) {
             for (j = 0; j < d - 1; j++) {
               z0 = z + j;
-              if (w > 1) {
-                for (i = 0; i < w - 1; i++) {
-                  x0 = x + i;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
                 }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
-              x0 = x + w - 1;
-              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
             }
           }
           z0 = z + d - 1;
-          if (w > 1) {
-            for (i = 0; i < w - 1; i++) {
-              x0 = x + i;
-              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          if (w >= 0) {
+            if (w > 1) {
+              for (i = 0; i < w - 1; i++) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w - 1;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          } else {
+            if (w < -1) {
+              for (i = -1; i > w; i--) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w ;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
+        } else {
+          if (d < -1) {
+            for (j = -1; j > d; j--) {
+              z0 = z + j;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
             }
           }
-          x0 = x + w - 1;
-          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          z0 = z + d;
+          if (w >= 0) {
+            if (w > 1) {
+              for (i = 0; i < w - 1; i++) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w - 1;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          } else {
+            if (w < -1) {
+              for (i = -1; i > w; i--) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w ;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
         }
-      }
-      y0 = y + h - 1;
-      if (d > 1) {
-        for (j = 0; j < d - 1; j++) {
-          z0 = z + j;
-          if (w > 1) {
-            for (i = 0; i < w - 1; i++) {
-              x0 = x + i;
-              ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+      } else {
+        if (h <= 0) {
+          for (k = -1; k > h; k--) {
+            y0 = y + k;
+            if (d >= 0) {
+              if (d > 1) {
+                for (j = 0; j < d - 1; j++) {
+                  z0 = z + j;
+                  if (w >= 0) {
+                    if (w > 1) {
+                      for (i = 0; i < w - 1; i++) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (w < -1) {
+                      for (i = -1; i > w; i--) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w ;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+              z0 = z + d - 1;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            } else {
+              if (d < -1) {
+                for (j = -1; j > d; j--) {
+                  z0 = z + j;
+                  if (w >= 0) {
+                    if (w > 1) {
+                      for (i = 0; i < w - 1; i++) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (w < -1) {
+                      for (i = -1; i > w; i--) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + w ;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+              }
+              z0 = z + d;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
             }
           }
-          x0 = x + w - 1;
-          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+        }
+        y0 = y + h;
+        if (d >= 0) {
+          if (d > 1) {
+            for (j = 0; j < d - 1; j++) {
+              z0 = z + j;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+          }
+          z0 = z + d - 1;
+          if (w >= 0) {
+            if (w > 1) {
+              for (i = 0; i < w - 1; i++) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w - 1;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          } else {
+            if (w < -1) {
+              for (i = -1; i > w; i--) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w ;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
+        } else {
+          if (d < -1) {
+            for (j = -1; j > d; j--) {
+              z0 = z + j;
+              if (w >= 0) {
+                if (w > 1) {
+                  for (i = 0; i < w - 1; i++) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w - 1;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              } else {
+                if (w < -1) {
+                  for (i = -1; i > w; i--) {
+                    x0 = x + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                x0 = x + w ;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+          }
+          z0 = z + d;
+          if (w >= 0) {
+            if (w > 1) {
+              for (i = 0; i < w - 1; i++) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w - 1;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          } else {
+            if (w < -1) {
+              for (i = -1; i > w; i--) {
+                x0 = x + i;
+                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+              }
+            }
+            x0 = x + w ;
+            ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+          }
         }
       }
-      z0 = z + d - 1;
-      if (w > 1) {
-        for (i = 0; i < w - 1; i++) {
-          x0 = x + i;
-          ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-        }
-      }
-      x0 = x + w - 1;
-      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
     }
     ws.onopen = function(){ connected = true; ws.send("set_box:" + x + ":" + y + ":" + z + ":" + w + ":" + d + ":" + h); };
     ws.onclose = function(){ connected = false; };
@@ -7145,6 +7480,9 @@
       y = Number(y);
       z = Number(z);
       r = Number(r);
+      if (r < 0) {
+        r = - r;
+      }
       h = Number(h);
       if (0 <= r % 1 && r % 1 < 0.5) {
         r0 = Math.floor(r) + 0.5;
@@ -7155,14 +7493,25 @@
                 if (j * j + k * k < r * r) {
                   y0 = y + j;
                   z0 = z + k;
-                  if (h > 1) {
-                    for (i =  0 ; i < h - 1; i++) {
-                      x0 = x + i;
-                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  if (h >= 0) {
+                    if (h > 1) {
+                      for (i =  0 ; i < h - 1; i++) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
                     }
+                    x0 = x + h - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (h < -1) {
+                      for (i = -1 ; i > h; i--) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + h;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
-                  x0 = x + h - 1;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7173,14 +7522,25 @@
                 if (i * i + j * j < r * r) {
                   x0 = x + i;
                   y0 = y + j;
-                  if (h > 1) {
-                    for (k = 0; k < h - 1; k++) {
-                      z0 = z + k;
-                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  if (h >= 0) {
+                    if (h > 1) {
+                      for (k = 0; k < h - 1; k++) {
+                        z0 = z + k;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
                     }
+                    z0 = z + h - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (h < -1) {
+                      for (k = -1; k > h; k--) {
+                        z0 = z + k;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    z0 = z + h;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
-                  z0 = z + h - 1;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7191,14 +7551,25 @@
                 if (i * i + k * k < r * r) {
                   x0 = x + i;
                   z0 = z + k;
-                  if (h > 1) {
-                    for (j = 0; j < h - 1; j++) {
-                      y0 = y + j;
-                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  if (h >= 0) {
+                    if (h > 1) {
+                      for (j = 0; j < h - 1; j++) {
+                        y0 = y + j;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
                     }
+                    y0 = y + h - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (h < -1) {
+                      for (j = -1; j < h; j--) {
+                        y0 = y + j;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    y0 = y + h;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
-                  y0 = y + h - 1;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7213,14 +7584,25 @@
                 if (j * j + k * k < r * r) {
                   y0 = y + j;
                   z0 = z + k;
-                  if (h > 0) {
-                    for (i =  0 ; i < h - 1; i++) {
-                      x0 = x + i;
-                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  if (h >= 0) {
+                    if (h > 1) {
+                      for (i =  0 ; i < h - 1; i++) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
                     }
+                    x0 = x + h - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (h < -1) {
+                      for (i = -1 ; i > h; i--) {
+                        x0 = x + i;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    x0 = x + h;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
-                  x0 = x + h - 1;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7231,14 +7613,25 @@
                 if (i * i + j * j < r * r) {
                   x0 = x + i;
                   y0 = y + j;
-                  if (h > 0) {
-                    for (k = 0; k < h - 1; k++) {
-                      z0 = z + k;
-                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  if (h >= 0) {
+                    if (h > 1) {
+                      for (k = 0; k < h - 1; k++) {
+                        z0 = z + k;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
                     }
+                    z0 = z + h - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (h < -1) {
+                      for (k = -1; k > h; k--) {
+                        z0 = z + k;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    z0 = z + h;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
-                  z0 = z + h - 1;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7248,15 +7641,26 @@
               for (i = - r0; i <= r0; i++) {
                 if (i * i + k * k < r * r) {
                   x0 = x + i;
-                  z0 = z + k
-                  if (h > 1) {
-                    for (j = 0; j < h - 1; j++) {
-                      y0 = y + j;
-                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  z0 = z + k;
+                  if (h >= 0) {
+                    if (h > 1) {
+                      for (j = 0; j < h - 1; j++) {
+                        y0 = y + j;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
                     }
+                    y0 = y + h - 1;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  } else {
+                    if (h < -1) {
+                      for (j = -1; j < h; j--) {
+                        y0 = y + j;
+                        ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      }
+                    }
+                    y0 = y + h;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
-                  y0 = y + h - 1;
-                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
               }
             }
@@ -7276,6 +7680,9 @@
       y = Number(y);
       z = Number(z);
       r = Number(r);
+      if (r < 0) {
+        r = -r;
+      }
       h = Number(h);
       r0 = Math.ceil(r);//半径 r が小数の場合の対応
       switch (a) {
@@ -7283,36 +7690,69 @@
           for (k = 0; k <= r0; k++) {
             for (j = 0; j <= r0 ; j++) {
               if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * k + Math.tan(Math.PI / 3) * r)) {
-                if ( h > 1) {
-                  for (i = 0; i < h - 1; i++) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    y0 = y - j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    y0 = y - j;
-                    z0 = z - k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    y0 = y + j;
-                    z0 = z - k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if ( h >= 0) {
+                  if ( h > 1) {
+                    for (i = 0; i < h - 1; i++) {
+                      x0 = x + i;
+                      y0 = y + j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      y0 = y - j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      y0 = y - j;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      y0 = y + j;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + h - 1;
+                  y0 = y + j;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y - j;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y - j;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y + j;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if ( h < -1) {
+                    for (i = -1; i > h; i--) {
+                      x0 = x + i;
+                      y0 = y + j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      y0 = y - j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      y0 = y - j;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      y0 = y + j;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + h;
+                  y0 = y + j;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y - j;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y - j;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y + j;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + h - 1;
-                y0 = y + j;
-                z0 = z + k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                y0 = y - j;
-                z0 = z + k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                y0 = y - j;
-                z0 = z - k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                y0 = y + j;
-                z0 = z - k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7321,36 +7761,69 @@
           for (j = 0; j <= r0; j++) {
             for (i = 0; i <= r0 ; i++) {
               if ((j <= Math.cos(Math.PI / 6) * r) && (j <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
-                if ( h > 1) {
-                  for (k = 0; k < h - 1; k++) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    x0 = x - i;
-                    y0 = y + j;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    x0 = x - i;
-                    y0 = y - j;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    x0 = x + i;
-                    y0 = y - j;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+               if (h >= 0) {
+                  if ( h > 1) {
+                    for (k = 0; k < h - 1; k++) {
+                      x0 = x + i;
+                      y0 = y + j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      y0 = y + j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      y0 = y - j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x + i;
+                      y0 = y - j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + i;
+                  y0 = y + j;
+                  z0 = z + h - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  y0 = y + j;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  y0 = y - j;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x + i;
+                  y0 = y - j;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if ( h < -1) {
+                    for (k = -1; k > h; k--) {
+                      x0 = x + i;
+                      y0 = y + j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      y0 = y + j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      y0 = y - j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x + i;
+                      y0 = y - j;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + i;
+                  y0 = y + j;
+                  z0 = z + h;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  y0 = y + j;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  y0 = y - j;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x + i;
+                  y0 = y - j;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + i;
-                y0 = y + j;
-                z0 = z + h - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x - i;
-                y0 = y + j;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x - i;
-                y0 = y - j;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x + i;
-                y0 = y - j;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7359,36 +7832,69 @@
           for (k = 0; k <= r0; k++) {
             for (i = 0; i <= r0; i++) {
               if ((k <= Math.cos(Math.PI / 6) * r) && (k <= - Math.tan(Math.PI / 3) * i + Math.tan(Math.PI / 3) * r)) {
-                if (h > 1) {
-                  for (j = 0; j < h - 1; j++) {
-                    x0 = x + i;
-                    y0 = y + j;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    x0 = x - i;
-                    z0 = z + k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    x0 = x - i;
-                    z0 = z - k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                    x0 = x + i;
-                    z0 = z - k;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (h >= 0) {
+                  if (h > 1) {
+                    for (j = 0; j < h - 1; j++) {
+                      x0 = x + i;
+                      y0 = y + j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x + i;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + i;
+                  y0 = y +  h - 1;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x + i;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (h < -1) {
+                    for (j = -1; j > h; j--) {
+                      x0 = x + i;
+                      y0 = y + j;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      z0 = z + k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x - i;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                      x0 = x + i;
+                      z0 = z - k;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + i;
+                  y0 = y +  h;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  z0 = z + k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x - i;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  x0 = x + i;
+                  z0 = z - k;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + i;
-                y0 = y +  h - 1;
-                z0 = z + k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x - i;
-                z0 = z + k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x - i;
-                z0 = z - k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x + i;
-                z0 = z - k;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7408,6 +7914,9 @@
       z = Number(z);
       r = Number(r);
       r0 = Math.ceil(r);//半径 r が小数の場合の対応
+      if (r0 < 0) {
+        r0 = - r0;
+      }
       for (k = - r0; k <= r0; k++) {
         for (j = - r0; j <= r0; j++) {
           for (i = - r0; i <= r0; i++) {
@@ -7571,14 +8080,25 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 2);
                 }
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    x0 = x + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
@@ -7588,14 +8108,25 @@
                   ws.send("set_cube:" + i + ":" + y0 + ":" + z0);
                 }
                 z0 = z - (w - 2) * j / (2 * (h - 1)) + w - 1;
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    x0 = x + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           } else {
@@ -7607,36 +8138,69 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 1);
                 }
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    x0 = x + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
                 y0 = y + j;
                 z0 = z + (w - 1) * j / (2 * (h - 1));
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    x0 = x + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 z0 = z - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    x0 = x + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  x0 = x + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      x0 = x + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  x0 = x + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                x0 = x + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
@@ -7651,14 +8215,25 @@
                 } else {
                   z0 = z - 2 * (h - 1) * (j - w + 1) / (w - 2);
                 }
-                if (d > 1) {
+                if (d >= 0) {
+                  if (d > 1) {
                   for (i = 0; i < d - 1; i++) {
                     y0 = y + i;
                     ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
                 }
-                y0 = y + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                  for (i = -1; i > d; i--) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                  y0 = y + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                }
               }
             } else {
               for (j = 0; j < h; j++) {
@@ -7668,14 +8243,25 @@
                   ws.send("set_cube:" + x0 + ":" + i + ":" + z0);
                 }
                 x0 = x - (w - 2) * j / (2 * (h - 1)) + w - 1;
-                if (d > 1) {
+                if (d >= 0) {
+                  if (d > 1) {
                   for (i = 0; i < d - 1; i++) {
                     y0 = y + i;
                     ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
                 }
-                y0 = y + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                  for (i = -1; i > d; i--) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                  y0 = y + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                }
               }
             }
           } else {
@@ -7687,34 +8273,69 @@
                 } else {
                   z0 = z - 2 * (h - 1) * (j - w + 1) / (w - 1);
                 }
-                if (d > 1) {
+                if (d >= 0) {
+                  if (d > 1) {
                   for (i = 0; i < d - 1; i++) {
                     y0 = y + i;
                     ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
                 }
-                y0 = y + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  y0 = y + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                  for (i = -1; i > d; i--) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                  y0 = y + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                }
               }
             } else {
               for (j = 0; j < h; j++) {
                 z0 = z + j;
                 x0 = x + (w - 1) * j / (2 * (h - 1));
-                if (d > 1) {
+                if (d >= 0) {
+                  if (d > 1) {
                   for (i = 0; i < d - 1; i++) {
                     y0 = y + i;
                     ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                   }
                 }
-                y0 = y + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
-                x0 = x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
-                for (i = 0; i < d - 1; i++) {
-                  y0 = y + i;
+                  y0 = y + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                  for (i = -1; i > d; i--) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                  y0 = y + d;
                   ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                y0 = y + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                x0 = x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
+                if (d >= 0) {
+                  if (d > 1) {
+                  for (i = 0; i < d - 1; i++) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                  y0 = y + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                  for (i = -1; i > d; i--) {
+                    y0 = y + i;
+                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                  }
+                }
+                  y0 = y + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                }
               }
             }
           }
@@ -7729,14 +8350,25 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 2);
                 }
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    z0 = z + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  z0 = z + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  z0 = z + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                z0 = z + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
@@ -7746,14 +8378,25 @@
                   ws.send("set_cube:" + x0 + ":" + y0 + ":" + i);
                 }
                 x0 = x - (w - 2) * j / (2 * (h - 1)) + w - 1;
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    z0 = z + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  z0 = z + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  z0 = z + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                z0 = z + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           } else {
@@ -7765,34 +8408,69 @@
                 } else {
                   y0 = y - 2 * (h - 1) * (j - w + 1) / (w - 1);
                 }
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    z0 = z + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  z0 = z + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  z0 = z + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                z0 = z + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             } else {
               for (j = 0; j < h; j++) {
                 y0 = y + j;
                 x0 = x + (w - 1) * j / (2 * (h - 1));
-                for (i = 0; i < d - 1; i++) {
-                  z0 = z + i;
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  z0 = z + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  z0 = z + d;
                   ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                z0 = z + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 x0 = x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1));
-                if (d > 1) {
-                  for (i = 0; i < d - 1; i++) {
-                    z0 = z + i;
-                    ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                if (d >= 0) {
+                  if (d > 1) {
+                    for (i = 0; i < d - 1; i++) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
                   }
+                  z0 = z + d - 1;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                } else {
+                  if (d < -1) {
+                    for (i = -1; i > d; i--) {
+                      z0 = z + i;
+                      ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
+                    }
+                  }
+                  z0 = z + d;
+                  ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
                 }
-                z0 = z + d - 1;
-                ws.send("set_cube:" + x0 + ":" + y0 + ":" + z0);
               }
             }
           }
