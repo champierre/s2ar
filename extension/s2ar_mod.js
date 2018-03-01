@@ -8485,6 +8485,9 @@
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
     } else {
+      r = Number(r);
+      g = Number(g);
+      b = Number(b);
       ws.send("set_color:" + r + ":" + g + ":" + b);
     }
     ws.onopen = function(){ connected = true; ws.send("set_color:" + r + ":" + g + ":" + b); };
