@@ -22,14 +22,19 @@ public class CubeMaker : MonoBehaviour {
 	}
 
 	public void CreateCube(Vector3 atPosition) {
-		GameObject cubeGO = Instantiate (cubePrefab, atPosition, Quaternion.identity);
+		GameObject cubeGO = Instantiate(cubePrefab, atPosition, Quaternion.identity);
 		cubeGO.GetComponent<MeshRenderer>().material.SetColor("_Color", _color);
-		cubes.Add (cubeGO);
+		cubes.Add(cubeGO);
 	}
 
 	public void Reset() {
 		foreach (GameObject cubeGO in cubes){
-			GameObject.Destroy(cubeGO);
+			
+            if (cubeGO != null)
+			{
+				cubeGO.SetActive(false);
+			}
 		}
+		cubes.Clear();
 	}
 }
