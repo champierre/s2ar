@@ -8481,6 +8481,59 @@
     ws.onclose = function(){ connected = false; };
   }
 
+  ext.polygon_file_format = function(x0, y0, z0, s1, s2, s3) {
+    x0 = Number(x0);
+    y0 = Number(y0);
+    z0 = Number(z0);
+    var x, y ,z, x1, y1, z1;
+    var vertex1 = s1.split(' ');
+    var vertex2 = s2.split(' ');
+    var vertex3 = s3.split(' ');
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      ws.send("set_color:" + vertex1[3] + ":" + vertex1[4] + ":" + vertex1[5]);
+    }
+    ws.onopen = function(){ connected = true; ws.send("set_color:" + vertex1[3] + ":" + vertex1[4] + ":" + vertex1[5]); };
+    ws.onclose = function(){ connected = false; };
+    
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      if (vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0]) {//y-z plane
+        y = Math.min(parseInt(vertex1[1]), parseInt(vertex2[1]), parseInt(vertex3[1]));
+        z = Math.min(parseInt(vertex1[2]), parseInt(vertex2[2]), parseInt(vertex3[2]));
+        if (vertex1[1] == vertex2[1]) {
+          x = parseInt(vertex1[0]);
+        } else {
+          x = parseInt(vertex1[0]) - 1;
+        }
+      } else if (vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1]) {//z-x plane
+        z = Math.min(parseInt(vertex1[2]), parseInt(vertex2[2]), parseInt(vertex3[2]));
+        x = Math.min(parseInt(vertex1[0]), parseInt(vertex2[0]), parseInt(vertex3[0]));
+        if (vertex1[2] == vertex2[2]) {
+          y = parseInt(vertex1[1]);
+        } else {
+          y = parseInt(vertex1[1]) - 1;
+        }
+      } else {//x-y plane
+        x = Math.min(parseInt(vertex1[0]), parseInt(vertex2[0]), parseInt(vertex3[0]));
+        y = Math.min(parseInt(vertex1[1]), parseInt(vertex2[1]), parseInt(vertex3[1]));
+        if (vertex1[0] == vertex2[0]) {
+          z = parseInt(vertex1[2]);
+        } else {
+          z = parseInt(vertex1[2]) - 1;
+        }
+      }
+      x1 = x0 + x;
+      y1 = y0 + z;
+      z1 = z0 + y;
+      ws.send("set_cube:" + x1 + ":" + y1 + ":" + z1);
+    }
+    ws.onopen = function(){ connected = true; ws.send("set_cube:" + x1 + ":" + y1 + ":" + z1); };
+    ws.onclose = function(){ connected = false; };
+  }
+
   ext.set_color = function(r, g, b) {
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
@@ -8527,6 +8580,7 @@
       draw_letter: '文字を書く。x座標を %n 、y座標を %n 、z座標を %n 、文字 %s 、 %s 軸',
       draw_line: '２点間に線を引く。x1 を %n 、y1 を %n 、z1 を %n 、x2 を %n 、y2 を %n 、z2を %n',
       build_roof: '屋根を作る。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n 、 %s 軸に',
+      polygon_file_format: 'PLYファイル。x座標を %n 、y座標を %n 、z座標を %n 、頂点1: %s 頂点2: %s 頂点3: %s',
       set_color: 'ブロックの色を r: %n g: %n b: %n に変える',
       reset: 'リセット'
     },
@@ -8540,6 +8594,7 @@
       draw_letter: 'draw_letter at x: %n y: %n z: %n letter: %s axis: %s',
       draw_line: 'draw_line between x1: %n y1: %n z1: %n to x2: %n y2: %n z2: %n',
       build_roof: 'build_roof at x: %n y: %n z: %n wide: %n depth: %n height: %n axis: %s',
+      polygon_file_format: 'ply file at x: %n y: %n z: %n vertex1: %s vertex2: %s vertex3: %s',
       set_color: 'set color to r: %n g: %n b: %n',
       reset: 'reset'
     },
@@ -8547,7 +8602,7 @@
 
   var descriptor = {
     blocks: [
-      [' ', locale[lang].set_ip, 'set_ip', '192.168.10.106'],//my ip adress
+      [' ', locale[lang].set_ip, 'set_ip', '192.168.10.103'],//my ip adress
       [' ', locale[lang].set_cube, 'set_cube', 1, 0, 1],
       [' ', locale[lang].set_box, 'set_box', 2, 0, 2, 2, 2, 2],
       [' ', locale[lang].set_cylinder, 'set_cylinder', 3, 0, 3, 4, 4, 'y'],
@@ -8556,6 +8611,7 @@
       [' ', locale[lang].draw_letter, 'draw_letter', 0, 0, 10, 'A', 'y'],
       [' ', locale[lang].draw_line, 'draw_line', 0, 0, 0, 10, 10, 10],
       [' ', locale[lang].build_roof, 'build_roof', 0, 3, 0, 14, 10, 7, 'z'],
+      [' ', locale[lang].polygon_file_format, 'polygon_file_format', 5, 5, 5, '0 -1 0 102 0 0', '0 0 0 102 0 0', '0 0 1 102 0 0'],
       [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
       [' ', locale[lang].reset, 'reset']
     ]
