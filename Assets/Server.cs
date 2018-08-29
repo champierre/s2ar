@@ -53,6 +53,33 @@ public class S2AR : WebSocketBehavior
 			Vector3 atPosition = new Vector3(x, y, z);
 			cubeMaker.SendMessage("CreateCube", origin.transform.position + atPosition);
 		}
+		else if (splitted[0] == "set_sphere")
+		{
+			int x = Int32.Parse(splitted[1]);
+			int y = Int32.Parse(splitted[2]);
+			int z = Int32.Parse(splitted[3]);
+			int r = Int32.Parse(splitted[4]);
+
+			GameObject origin = GameObject.Find("Origin") as GameObject;
+
+			for (int k = -r; k <= r; k++)
+			{
+				for (int j = -r; j <= r; j++)
+				{
+					for (int i = -r; i <= r; i++)
+					{
+						if (i * i + j * j + k * k < r * r)
+						{
+							float fx = (x + i) / 100.0f;
+							float fy = (y + j) / 100.0f;
+							float fz = (z + k) / 100.0f;
+							Vector3 atPosition = new Vector3(fx, fy, fz);
+							cubeMaker.SendMessage("CreateCube", origin.transform.position + atPosition);
+						}
+					}
+				}
+			}
+		}
 		else if (splitted[0] == "set_color")
 		{
 			int r = int.Parse(splitted[1]);

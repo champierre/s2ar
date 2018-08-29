@@ -28,6 +28,14 @@
     ws.onclose = function(){ connected = false; };
   }
 
+  ext.set_sphere = function(x, y, z, r) {
+    if (!connected) {
+      ws = new WebSocket('ws://' + ip + ':3000');
+    } else {
+      ws.send("set_sphere:" + x + ":" + y + ":" + z + ":" + r);
+    }
+  }
+
   ext.reset = function() {
     if (!connected) {
       ws = new WebSocket('ws://' + ip + ':3000');
@@ -54,12 +62,14 @@
     ja: {
       set_ip: '接続先IPを %s に設定する',
       set_cube: 'x座標を %n 、y座標を %n 、z座標を %n にブロックを置く',
+      set_sphere: '球を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n',
       set_color: 'ブロックの色を r: %n g: %n b: %n に変える',
       reset: 'リセット'
     },
     en: {
       set_ip: 'Set IP address to %s',
       set_cube: 'set cube at x: %n y: %n z: %n',
+      set_sphere: 'set sphere at x: %n y: %n z: %n radius: %n',
       set_color: 'set color to r: %n g: %n b: %n',
       reset: 'reset'
     },
@@ -69,6 +79,7 @@
     blocks: [
       [' ', locale[lang].set_ip, 'set_ip', ip],
       [' ', locale[lang].set_cube, 'set_cube', 1, 0, 1],
+      [' ', locale[lang].set_sphere, 'set_sphere', 4, 4, 4, 4],
       [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
       [' ', locale[lang].reset, 'reset']
     ]
