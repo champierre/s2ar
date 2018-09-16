@@ -35,7 +35,7 @@ Demo Movies
 
   ![](images/connect.png)
 
-6. Back to S2AR on iOS device, tap "Set origin" in the right bottom corner, find any surface(yellow dots should appear), then tap on it. A small red square should appear there. This will be origin point(x:0, y:0, z:0).
+6. Back to S2AR on iOS device, find any surface then tap on it. Coordinate axes should appear there. This will be origin point(x:0, y:0, z:0).
 
   ![](images/origin.png)
 
