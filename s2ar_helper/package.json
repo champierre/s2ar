@@ -1,0 +1,17 @@
+{
+	"name": "s2ar-helper",
+	"version": "0.1.0",
+	"description": "S2AR Helper",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+    "socket.io": "*"
+	},
+	"keywords": [
+		"node",
+		"s2ar"
+	],
+	"license": "MIT"
+}
