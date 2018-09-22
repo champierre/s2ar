@@ -418,6 +418,55 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
+    func polygonFileFormat(x: Int, y: Int, z: Int, file_name: String) {
+        if (originPosition == nil) {
+            return
+        }
+        // Read ply file from iTunes File Sharing
+        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+            let path_file_name = dir.appendingPathComponent( file_name )
+            do {
+                let ply = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
+                print( ply )
+                let arr = ply.components(separatedBy: "\n")
+                let roop = arr[11].components(separatedBy: " ")
+                let _roop = Int(roop[2])!
+                var vertex1: [String]
+                var vertex2: [String]
+                var vertex3: [String]
+                for i in 0..<_roop {
+                    vertex1 = arr[4 * i + 14].components(separatedBy: " ")
+                    print(i)
+                    print(vertex1)
+                    vertex2 = arr[4 * i + 15].components(separatedBy: " ")
+                    vertex3 = arr[4 * i + 16].components(separatedBy: " ")
+                    self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
+                    if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
+                        if vertex1[1] == vertex2[1] {
+                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                        } else {
+                            self.setCube(x: x + Int(Double(vertex1[0])!) - 1, y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                        }
+                    } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
+                        if vertex1[2] == vertex2[2] {
+                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                        } else {
+                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!) + 1)
+                        }
+                    } else {//x-y plane
+                        if vertex1[0] == vertex2[0] {
+                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                        } else {
+                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!) - 1, z: z - Int(Double(vertex1[1])!))
+                        }
+                    }
+                }
+            } catch {
+                //エラー処理
+            }
+        }
+    }
+    
     func setColor(r: Int, g: Int, b: Int) {
         if (originPosition == nil) {
             return
@@ -589,6 +638,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let h = Int(units[6])
                     let a = units[7]
                     self.setRoof(_x: x!, _y: y!, _z: z!, w: w!, d: d!, h: h!, a: a)
+                case "polygon_file_format":
+                    let x = Int(units[1])
+                    let y = Int(units[2])
+                    let z = Int(units[3])
+                    let file_name = units[4]
+                    self.polygonFileFormat(x: x!, y: y!, z: z!, file_name: file_name)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])
