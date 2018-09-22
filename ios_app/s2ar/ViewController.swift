@@ -434,6 +434,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 var vertex1: [String]
                 var vertex2: [String]
                 var vertex3: [String]
+                var _x: Int
+                var _y: Int
+                var _z: Int
                 for i in 0..<_roop {
                     vertex1 = arr[4 * i + 14].components(separatedBy: " ")
                     print(i)
@@ -443,21 +446,57 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
                     if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
                         if vertex1[1] == vertex2[1] {
-                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                            _x = x + Int(Double(vertex1[0])!)
+                            _y = y + Int(Double(vertex1[2])!)
+                            _z = z - Int(Double(vertex1[1])!)
+                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                                // does notcontains key
+                                self.setCube(x: _x, y: _y, z: _z)
+                            }
                         } else {
-                            self.setCube(x: x + Int(Double(vertex1[0])!) - 1, y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                            _x = x + Int(Double(vertex1[0])!) - 1
+                            _y = y + Int(Double(vertex1[2])!)
+                            _z = z - Int(Double(vertex1[1])!)
+                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                                // does notcontains key
+                                self.setCube(x: _x, y: _y, z: _z)
+                            }
                         }
                     } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
                         if vertex1[2] == vertex2[2] {
-                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                            _x = x + Int(Double(vertex1[0])!)
+                            _y = y + Int(Double(vertex1[2])!)
+                            _z = z - Int(Double(vertex1[1])!)
+                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                                // does notcontains key
+                                self.setCube(x: _x, y: _y, z: _z)
+                            }
                         } else {
-                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!) + 1)
+                            _x = x + Int(Double(vertex1[0])!)
+                            _y = y + Int(Double(vertex1[2])!)
+                            _z = z - Int(Double(vertex1[1])!) + 1
+                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                                // does notcontains key
+                                self.setCube(x: _x, y: _y, z: _z)
+                            }
                         }
                     } else {//x-y plane
                         if vertex1[0] == vertex2[0] {
-                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!), z: z - Int(Double(vertex1[1])!))
+                            _x = x + Int(Double(vertex1[0])!)
+                            _y = y + Int(Double(vertex1[2])!)
+                            _z = z - Int(Double(vertex1[1])!)
+                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                                // does notcontains key
+                                self.setCube(x: _x, y: _y, z: _z)
+                            }
                         } else {
-                            self.setCube(x: x + Int(Double(vertex1[0])!), y: y + Int(Double(vertex1[2])!) - 1, z: z - Int(Double(vertex1[1])!))
+                            _x = x + Int(Double(vertex1[0])!)
+                            _y = y + Int(Double(vertex1[2])!) - 1
+                            _z = z - Int(Double(vertex1[1])!)
+                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                                // does notcontains key
+                                self.setCube(x: _x, y: _y, z: _z)
+                            }
                         }
                     }
                 }
