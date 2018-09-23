@@ -36,6 +36,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var roomId: String = "0000 0000"
     let CUBE_SIZE: Float = 0.02
     
+    var timer = Timer()
+    
     @IBOutlet var roomIDLabel: UILabel!
     
     @IBOutlet var togglePlanesButton: UIButton!
@@ -44,19 +46,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if (originPosition == nil) {
             return
         }
-        
-        let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
-        cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1)
-        cubeNode = SCNNode(geometry: cube)
-        cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-        let position = SCNVector3Make(
-            originPosition.x + Float(x) * CUBE_SIZE,
-            originPosition.y + Float(y) * CUBE_SIZE,
-            originPosition.z + Float(z) * CUBE_SIZE
-        )
-        cubeNode.position = position
-        sceneView.scene.rootNode.addChildNode(cubeNode)
-        cubeNodes[String(x) + "_" + String(y) + "_" + String(z)] = cubeNode
+        func setCubeMethod(x: Int, y: Int, z: Int) {
+            let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
+            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1)
+            cubeNode = SCNNode(geometry: cube)
+            cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
+            let position = SCNVector3Make(
+                originPosition.x + Float(x) * CUBE_SIZE,
+                originPosition.y + Float(y) * CUBE_SIZE,
+                originPosition.z + Float(z) * CUBE_SIZE
+            )
+            cubeNode.position = position
+            sceneView.scene.rootNode.addChildNode(cubeNode)
+            cubeNodes[String(x) + "_" + String(y) + "_" + String(z)] = cubeNode
+        }
+        if cubeNodes.keys.contains(String(x) + "_" + String(y) + "_" + String(z)) {
+            // remove cube if contains
+            self.removeCube(x: x, y: y, z: z)
+            Thread.sleep(forTimeInterval: 0.01)
+            // set cube
+            setCubeMethod(x: x, y: y, z: z)
+        } else {
+            // set cube
+            setCubeMethod(x: x, y: y, z: z)
+        }
     }
     
     func setBox(x: Int, y: Int, z: Int, w: Int, d: Int, h: Int) {
@@ -427,8 +440,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let path_file_name = dir.appendingPathComponent( file_name )
             do {
                 let ply = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
-                print( ply )
-                let arr = ply.components(separatedBy: "\n")
+                let arr = ply.components(separatedBy: "\r\n")
                 let roop = arr[11].components(separatedBy: " ")
                 let _roop = Int(roop[2])!
                 var vertex1: [String]
@@ -439,8 +451,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 var _z: Int
                 for i in 0..<_roop {
                     vertex1 = arr[4 * i + 14].components(separatedBy: " ")
-                    print(i)
-                    print(vertex1)
                     vertex2 = arr[4 * i + 15].components(separatedBy: " ")
                     vertex3 = arr[4 * i + 16].components(separatedBy: " ")
                     self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
@@ -450,7 +460,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             _y = y + Int(Double(vertex1[2])!)
                             _z = z - Int(Double(vertex1[1])!)
                             if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does notcontains key
+                                // does not contains key
                                 self.setCube(x: _x, y: _y, z: _z)
                             }
                         } else {
@@ -506,6 +516,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
+    func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, times: Int, files: String) {
+        if (originPosition == nil) {
+            return
+        }
+        let plys = files.components(separatedBy: ",")
+        var i = 0
+        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: { (timer) in
+            self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, file_name: plys[i % plys.count])
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+                // Put your code which should be executed with a delay here
+                self.reset()
+            })
+            i += 1
+            if (i >= times) {
+                timer.invalidate()
+            }
+        })
+    }
+    
     func setColor(r: Int, g: Int, b: Int) {
         if (originPosition == nil) {
             return
@@ -527,6 +556,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     
         cubeNode?.removeFromParentNode()
+        print("remove_cube")
     }
     
     func reset() {
@@ -537,6 +567,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         for (id, cubeNode) in cubeNodes {
             cubeNode.removeFromParentNode()
         }
+        cubeNodes = [:]
     }
     
     @IBAction func togglePlanesButtonTapped(_ sender: UIButton) {
@@ -683,6 +714,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Int(units[3])
                     let file_name = units[4]
                     self.polygonFileFormat(x: x!, y: y!, z: z!, file_name: file_name)
+                case "animation":
+                    let x = Int(units[1])
+                    let y = Int(units[2])
+                    let z = Int(units[3])
+                    let differenceX = Int(units[4])
+                    let differenceY = Int(units[5])
+                    let differenceZ = Int(units[6])
+                    let times = Int(units[7])
+                    let files = units[8]
+                    self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, times: times!, files: files)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])
