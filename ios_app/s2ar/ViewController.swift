@@ -63,9 +63,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if cubeNodes.keys.contains(String(x) + "_" + String(y) + "_" + String(z)) {
             // remove cube if contains
             self.removeCube(x: x, y: y, z: z)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                // set cube
+                setCubeMethod(x: x, y: y, z: z)
+            }
+                /*
             Thread.sleep(forTimeInterval: 0.01)
             // set cube
             setCubeMethod(x: x, y: y, z: z)
+            */
         } else {
             // set cube
             setCubeMethod(x: x, y: y, z: z)
@@ -516,18 +522,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, times: Int, files: String) {
+    func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, time: Double, times: Int, files: String) {
         if (originPosition == nil) {
             return
         }
         let plys = files.components(separatedBy: ",")
         var i = 0
-        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: { (timer) in
+        timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { (timer) in
             self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, file_name: plys[i % plys.count])
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + time * 4 / 5) {
                 // Put your code which should be executed with a delay here
                 self.reset()
-            })
+            }
             i += 1
             if (i >= times) {
                 timer.invalidate()
@@ -644,6 +650,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         socket.on("from_server") { data, ack in
+            self.roomIDLabel.text = "Connected !"
             if let msg = data[0] as? String {
                 print(msg)
                 let units = msg.components(separatedBy: ":")
@@ -721,9 +728,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let differenceX = Int(units[4])
                     let differenceY = Int(units[5])
                     let differenceZ = Int(units[6])
-                    let times = Int(units[7])
-                    let files = units[8]
-                    self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, times: times!, files: files)
+                    let time = Double(units[7])
+                    let times = Int(units[8])
+                    let files = units[9]
+                    self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: times!, files: files)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])
