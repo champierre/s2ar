@@ -446,7 +446,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let path_file_name = dir.appendingPathComponent( file_name )
             do {
                 let ply = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
-                let arr = ply.components(separatedBy: "\r\n")
+                var arr = ply.components(separatedBy: "\r\n")
+                if arr.count == 1 {
+                    arr = ply.components(separatedBy: "\n")
+                }
                 let roop = arr[11].components(separatedBy: " ")
                 let _roop = Int(roop[2])!
                 var vertex1: [String]
