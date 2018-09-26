@@ -520,7 +520,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     }
                 }
             } catch {
-                //エラー処理
+                //error message
+                self.roomIDLabel.text = "Not such a file"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    // Put your code which should be executed with a delay here
+                    self.roomIDLabel.text = "Connected !"
+                }
             }
         }
     }
@@ -542,6 +547,92 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 timer.invalidate()
             }
         })
+    }
+    
+    func map(csv_name: String, size_x: Int, size_z: Int, magnification: Double, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int) {
+        if (originPosition == nil) {
+            return
+        }
+        print("mapping...")
+        var height: Int
+        var map: [String]
+        
+        func heightSetColor(y: Int) {
+            var _r = Int(r1 + y * (r2 - r1) / 10)
+            var _g = Int(g1 + y * (g2 - g1) / 10)
+            var _b = Int(b1 + y * (b2 - b1) / 10)
+            _r = _r > r2 ? r2 : _r
+            _g = _g > g2 ? g2 : _g
+            _b = _b > b2 ? b2 : _b
+            setColor(r: _r, g: _g, b: _b)
+        }
+        
+        func drawMap(i: Int, j: Int, height: Int) {
+            let _x = Int(size_x / 2) - i
+            let _y = height
+            let _z = j - Int(size_z / 2)
+            if _y > 0 {
+                heightSetColor(y: _y)
+                self.setCube(x: _x, y: _y, z: _z)
+                if _y > 1 {
+                    heightSetColor(y: _y - 1)
+                    self.setCube(x: _x, y: _y - 1, z: _z)
+                    if _y > 2 {
+                        heightSetColor(y: _y - 2)
+                        self.setCube(x: _x, y: _y - 2, z: _z)
+                        if _y > 3 {
+                            heightSetColor(y: _y - 3)
+                            self.setCube(x: _x, y: _y - 3, z: _z)
+                            if _y > 4 {
+                                heightSetColor(y: _y - 4)
+                                self.setCube(x: _x, y: _y - 4, z: _z)
+                                if _y > 5 {
+                                    heightSetColor(y: _y - 5)
+                                    self.setCube(x: _x, y: _y - 5, z: _z)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Read ply file from iTunes File Sharing
+        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+            let path_file_name = dir.appendingPathComponent( csv_name )
+            do {
+                let map_data = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
+                var maps = map_data.components(separatedBy: "\r\n")
+                if maps.count == 1 {
+                    maps = map_data.components(separatedBy: "\n")
+                }
+                if maps.count == 1 {
+                    maps = map_data.components(separatedBy: ",")
+                    for i in 0..<size_z {
+                        for j in 0..<size_x {
+                            if Double(maps[size_x * i + j])! > 0 {
+                                height = Int(Double(maps[size_x * i + j])! * magnification) + 1
+                                drawMap(i: i, j: j, height: height)
+                            }
+                        }
+                    }
+                } else {
+                    for i in 0..<size_z {
+                        map = maps[i].components(separatedBy: ",")
+                        for j in 0..<size_x {
+                            height = Int(Double(map[j])! * magnification)
+                            drawMap(i: i, j: j, height: height)
+                        }
+                    }
+                }
+            } catch {
+                //error message
+                self.roomIDLabel.text = "Not such a file"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    // Put your code which should be executed with a delay here
+                    self.roomIDLabel.text = "Connected !"
+                }
+            }
+        }
     }
     
     func setColor(r: Int, g: Int, b: Int) {
@@ -735,6 +826,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let times = Int(units[8])
                     let files = units[9]
                     self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: times!, files: files)
+                case "map":
+                    let csv_name = units[1]
+                    let size_x = Int(units[2])
+                    let size_z = Int(units[3])
+                    let magnification = Double(units[4])
+                    let r1 = Int(units[5])
+                    let g1 = Int(units[6])
+                    let b1 = Int(units[7])
+                    let r2 = Int(units[8])
+                    let g2 = Int(units[9])
+                    let b2 = Int(units[10])
+                    self.map(csv_name: csv_name, size_x: size_x!, size_z: size_z!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])
