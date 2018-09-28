@@ -48,8 +48,8 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
-      ext.polygon_file_format = function(x, y, z, s , repeat) {
-        let command = "polygon_file_format:" + x + ":" + y + ":" + z + ":" + s+ ":" + repeat;
+      ext.polygon_file_format = function(x, y, z, s) {
+        let command = "polygon_file_format:" + x + ":" + y + ":" + z + ":" + s;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
@@ -106,7 +106,7 @@
           set_char: '文字を書く。x座標を %n 、y座標を %n 、z座標を %n 、文字 %s 、 %s 軸',
           set_line: '２点間に線を引く。x1 を %n 、y1 を %n 、z1 を %n 、x2 を %n 、y2 を %n 、z2を %n',
           set_roof: '屋根を作る。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n 、 %s 軸に',
-          polygon_file_format: '3Dモデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、PLYファイル %s （繰り返し回数を %s.）',
+          polygon_file_format: '3Dモデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、PLYファイル %s',
           animation: 'アニメーション。x座標を %n 、y座標を %n 、z座標を %n 、差分Xを %n 、 差分Yを %n 、 差分Zを %n 、 時間を %n 、回数を %n 、モデルデータを %s',
           map: '地図を作成。地図データを %s 、横を %n 、縦を %n 、拡大倍率を %n 、（低地の色を r1: %n g1: %n b1: %n ）、（高地の色を r2: %n g2: %n b2: %n ）',
           set_color: 'ブロックの色を r: %n g: %n b: %n に変える',
@@ -124,7 +124,7 @@
           set_char: 'set char at x: %n y: %n z: %n letter: %s axis: %s',
           set_line: 'set line between x1: %n y1: %n z1: %n and x2: %n y2: %n z2: %n',
           set_roof: 'set roof at x: %n y: %n z: %n wide: %n depth: %n height: %n axis: %s',
-          polygon_file_format: 'create 3d model at x: %n y: %n z: %n ply file: %s (repeat count: %n )',
+          polygon_file_format: 'create 3d model at x: %n y: %n z: %n ply file: %s',
           animation: 'animation at x: %n y: %n z: %n diffX: %n diffY: %n diffZ: %n time: %n times: %n models: %s',
           map: 'draw map from csv: %s width: %n height: %n magnification: %n (lowland r1: %n g1: %n b1: %n ) (highland r2: %n g2: %n b2: %n )',
           set_color: 'set color to r: %n g: %n b: %n',
@@ -145,7 +145,7 @@
           [' ', locale[lang].set_char, 'set_char', 0, 0, 10, 'A', 'y'],
           [' ', locale[lang].set_line, 'set_line', 0, 0, 0, 10, 10, 10],
           [' ', locale[lang].set_roof, 'set_roof', 0, 3, 0, 14, 10, 7, 'z'],
-          [' ', locale[lang].polygon_file_format, 'polygon_file_format', 0, 0, 0, 'model.ply', 0],
+          [' ', locale[lang].polygon_file_format, 'polygon_file_format', 0, 0, 0, 'model.ply'],
           [' ', locale[lang].animation, 'animation', 0, 0, 0, 1, 0, 0, 2.0, 100, 'model1.ply,model2.ply,model3.ply'],
           [' ', locale[lang].map, 'map', 'map_data.csv', 257, 257, 100, 0, 255, 0, 124, 96, 53],
           [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
