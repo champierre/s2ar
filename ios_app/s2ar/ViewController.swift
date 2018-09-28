@@ -807,6 +807,106 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
+    func molecular_structure(x: Double, y: Double, z: Double, magnification: Double, mld_file: String) {
+        if (originPosition == nil) {
+            return
+        }
+        let roop1: Int
+        let roop2: Int
+        var position = [[String]]()
+        var line = [[String]]()
+        
+        func createStructure() {
+            var _x: Int
+            var _y: Int
+            var _z: Int
+            var _r: Int
+            var _x1: Int
+            var _y1: Int
+            var _z1: Int
+            var _x2: Int
+            var _y2: Int
+            var _z2: Int
+            for i in 0 ..< roop1 {
+                switch (position[i][3]) {
+                case "1": //Hydrogen
+                    self.setColor(r: 255, g: 0, b: 0)
+                case "6": //Carbon
+                    self.setColor(r: 0, g: 255, b: 0)
+                case "7": //Nitrogen
+                    self.setColor(r: 0, g: 0, b: 255)
+                case "8": //Oxygen
+                    self.setColor(r: 255, g: 255, b: 0)
+                case "9": //Fluorine
+                    self.setColor(r: 0, g: 255, b: 255)
+                case "14": //Silicon
+                    self.setColor(r: 255, g: 0, b: 255)
+                case "15": //Phosphorus
+                    self.setColor(r: 255, g: 255, b: 255)
+                default:
+                    self.setColor(r: 0, g: 0, b: 0)
+                    break
+                }
+                _x = Int(x + Double(position[i][0])! * magnification)
+                _y = Int(y + Double(position[i][1])! * magnification)
+                _z = Int(z + Double(position[i][2])! * magnification)
+                _r = Int(0.3 * magnification)
+                self.setSphere(x: _x, y: _y, z: _z, r: _r)
+            }
+            self.setColor(r: 0, g: 0, b: 0)
+            for j in 0 ..< roop2 {
+                _x1 = Int(x + Double(position[Int(line[j][0])! - 1][0])! * magnification)
+                _y1 = Int(y + Double(position[Int(line[j][0])! - 1][1])! * magnification)
+                _z1 = Int(z + Double(position[Int(line[j][0])! - 1][2])! * magnification)
+                _x2 = Int(x + Double(position[Int(line[j][1])! - 1][0])! * magnification)
+                _y2 = Int(y + Double(position[Int(line[j][1])! - 1][1])! * magnification)
+                _z2 = Int(z + Double(position[Int(line[j][1])! - 1][2])! * magnification)
+                self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+            }
+        }
+        
+        if mld_file.contains("mld") {
+            // Read ply file from iTunes File Sharing
+            if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+                let path_mld_file = dir.appendingPathComponent( mld_file )
+                do {
+                    let mld = try String( contentsOf: path_mld_file, encoding: String.Encoding.utf8 )
+                    var tempArray = mld.components(separatedBy: "\r\n")
+                    if tempArray.count == 1 {
+                        tempArray = mld.components(separatedBy: "\n")
+                    }
+                    roop1 = Int(tempArray[1])!
+                    for i in 0 ..< roop1 {
+                        position.append(tempArray[2 + i].components(separatedBy: ","))
+                    }
+                    roop2 = Int(tempArray[2 + roop1])!
+                    for i in 0 ..< roop2 {
+                        line.append(tempArray[3 + roop1 + i].components(separatedBy: ","))
+                    }
+                    createStructure()
+                } catch {
+                    //error message
+                    self.roomIDLabel.text = "Not such a file"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        // Put your code which should be executed with a delay here
+                        self.roomIDLabel.text = "Connected !"
+                    }
+                }
+            }
+        } else {
+            let tempArray = mld_file.components(separatedBy: " ")
+            roop1 = Int(tempArray[1])!
+            for i in 0 ..< roop1 {
+                position.append(tempArray[2 + i].components(separatedBy: ","))
+            }
+            roop2 = Int(tempArray[2 + roop1])!
+            for i in 0 ..< roop2 {
+                line.append(tempArray[3 + roop1 + i].components(separatedBy: ","))
+            }
+            createStructure()
+        }
+    }
+    
     func setColor(r: Int, g: Int, b: Int) {
         if (originPosition == nil) {
             return
@@ -1022,6 +1122,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let b2 = Int(units[10])
                     let upward = Int(units[11])
                     self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!, upward: upward!)
+                case "molecular_structure":
+                    let x = Double(units[1])
+                    let y = Double(units[2])
+                    let z = Double(units[3])
+                    let magnification = Double(units[4])
+                    let mld_file = units[5]
+                    self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])
