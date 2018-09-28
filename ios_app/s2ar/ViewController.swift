@@ -549,143 +549,166 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         })
     }
     
-    func map(csv_name: String, width: Int, height: Int, magnification: Double, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int) {
+    func map(map_data: String, width: Int, height: Int, magnification: Double, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int) {
         if (originPosition == nil) {
             return
         }
         //print("mapping...")
         var elevation: Int
+        var _map2 = [[String]]()
         var map2 = [[String]]()
-        var difference_from_next: Int // to fill the gap
+        var maps: [String] = []
+        var _maps: [String] = []
+        var tempArray: [String] = []
+        var gap: Int // to fill the gap
+        var maxY: Int
+        var minY: Int
         
-        func heightSetColor(y: Int) {
-            var _r = Int(r1 + y * (r2 - r1) / 10)
-            var _g = Int(g1 + y * (g2 - g1) / 10)
-            var _b = Int(b1 + y * (b2 - b1) / 10)
-            _r = _r > r2 ? r2 : _r
-            _g = _g > g2 ? g2 : _g
-            _b = _b > b2 ? b2 : _b
+        func heightSetColor(y: Int, minY: Int, maxY: Int) {
+            var _r: Int
+            var _g: Int
+            var _b: Int
+            if minY == maxY {
+                _r = r2
+                _g = g2
+                _b = b2
+            } else {
+                _r = Int(r1 + (y - minY) * (r2 - r1) / (maxY - minY))
+                _g = Int(g1 + (y - minY) * (g2 - g1) / (maxY - minY))
+                _b = Int(b1 + (y - minY) * (b2 - b1) / (maxY - minY))
+                _r = _r > r2 ? r2 : _r
+                _g = _g > g2 ? g2 : _g
+                _b = _b > b2 ? b2 : _b
+            }
             setColor(r: _r, g: _g, b: _b)
         }
         
-        func drawMap(i: Int, j: Int, elevation: Int, difference_from_next: Int) {
-            let _x = Int(width / 2) - i
+        func drawMap(i: Int, j: Int, elevation: Int, gap: Int, minY: Int, maxY: Int) {
+            let _x = Int(height / 2) - i
             let _y = elevation
-            let _z = j - Int(height / 2)
+            let _z = j - Int(width / 2)
             if _y > 0 {
-                heightSetColor(y: _y)
+                heightSetColor(y: _y, minY: minY, maxY: maxY)
                 self.setCube(x: _x, y: _y, z: _z)
-                if difference_from_next > 1 {
-                    for k in 1 ... difference_from_next - 1 {
-                        heightSetColor(y: _y - k)
+                if gap > 1 {
+                    for k in 1 ... gap - 1 {
+                        heightSetColor(y: _y - k, minY: minY, maxY: maxY)
                         self.setCube(x: _x, y: _y - k, z: _z)
                     }
                 }
             }
         }
-        // Read ply file from iTunes File Sharing
-        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
-            let path_file_name = dir.appendingPathComponent( csv_name )
-            do {
-                let map_data = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
-                var maps = map_data.components(separatedBy: "\r\n")
-                if maps.count == 1 {
-                    maps = map_data.components(separatedBy: "\n")
+        
+        if map_data.contains("csv") {
+            // Read ply file from iTunes File Sharing
+            if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+                let path_file_name = dir.appendingPathComponent( map_data )
+                do {
+                    let _map_data = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
+                    maps = _map_data.components(separatedBy: "\r\n")
+                    if maps.count == 1 {
+                        maps = _map_data.components(separatedBy: "\n")
+                    }
+                } catch {
+                    //error message
+                    self.roomIDLabel.text = "Not such a file"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        // Put your code which should be executed with a delay here
+                        self.roomIDLabel.text = "Connected !"
+                    }
                 }
-                if maps.count == 1 {
-                    maps = map_data.components(separatedBy: ",")
-                    for i in 0 ..< height {
-                        for j in 0 ..< width {
-                            if Double(maps[width * i + j])! > 0 {
-                                elevation = Int(Double(maps[width * i + j])! * magnification)
-                                // Calculate gaps
-                                if i == 0 {
-                                    if j == 0 {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i + 1) + j])! * magnification), Int(Double(maps[width * i + j + 1])! * magnification)].min()!
-                                    } else if j == width - 1 {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i + 1) + j])! * magnification), Int(Double(maps[width * i + j - 1])! * magnification)].min()!
-                                    } else {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i + 1) + j])! * magnification), Int(Double(maps[width * i + j - 1])! * magnification), Int(Double(maps[width * i + j + 1])! * magnification)].min()!
-                                    }
-                                } else if i == height - 1 {
-                                    if j == 0 {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i - 1) + j])! * magnification), Int(Double(maps[width * i + j + 1])! * magnification)].min()!
-                                    } else if j == width - 1 {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i - 1) + j])! * magnification), Int(Double(maps[width * i + j - 1])! * magnification)].min()!
-                                    } else {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i - 1) + j])! * magnification), Int(Double(maps[width * i + j - 1])! * magnification), Int(Double(maps[width * i + j + 1])! * magnification)].min()!
-                                    }
-                                } else {
-                                    if j == 0 {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i - 1) + j])! * magnification), Int(Double(maps[width * (i + 1) + j])! * magnification), Int(Double(maps[width * i + j + 1])! * magnification)].min()!
-                                    } else if j == width - 1 {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i - 1) + j])! * magnification), Int(Double(maps[width * (i + 1) + j])! * magnification), Int(Double(maps[width * i + j - 1])! * magnification)].min()!
-                                    } else {
-                                        difference_from_next = elevation - [Int(Double(maps[width * (i - 1) + j])! * magnification), Int(Double(maps[width * (i + 1) + j])! * magnification), Int(Double(maps[width * i + j - 1])! * magnification), Int(Double(maps[width * i + j + 1])! * magnification)].min()!
-                                    }
-                                }
-                                // Lift low ground・
-                                if (abs(Double(maps[width * i + j])!.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
-                                    //小数点なし
-                                } else {
-                                    //小数点あり
-                                    elevation = elevation + 1
-                                }
-                                drawMap(i: i, j: j, elevation: elevation, difference_from_next: difference_from_next)
-                            }
+            }
+        } else {
+            //Read from Scratch
+            maps = map_data.components(separatedBy: " ")
+        }
+        //２次元配列に変換
+        if maps.count == 1{
+            for i in 0 ..< height {
+                _maps = maps[0].components(separatedBy: ",")
+                for j in 0 ..< width {
+                    tempArray.append(_maps[i * width + j])
+                }
+                _map2.append(tempArray)
+                tempArray = []
+            }
+        } else {
+            for i in 0 ..< height {
+                _map2.append(maps[i].components(separatedBy: ","))
+            }
+        }
+        //前後にスペースが入っていたら消す。
+        for i in 0 ..< height {
+            for j in 0 ..< width {
+                tempArray.append(_map2[i][j].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
+            }
+            map2.append(tempArray)
+            tempArray = []
+        }
+        //y の最大値、最小値
+        minY = Int(ceil(Double(map2[0][0])! * magnification))
+        maxY = Int(ceil(Double(map2[0][0])! * magnification))
+        for i in 0 ..< height {
+            for j in 0 ..< width {
+                if minY > Int(ceil(Double(map2[i][j])! * magnification)) {
+                    minY = Int(ceil(Double(map2[i][j])! * magnification))
+                }
+                if maxY < Int(ceil(Double(map2[i][j])! * magnification)) {
+                    maxY = Int(ceil(Double(map2[i][j])! * magnification))
+                }
+            }
+        }
+        
+        for i in 0 ..< height {
+            for j in 0 ..< width {
+                elevation = Int(ceil(Double(map2[i][j])! * magnification))
+                // Calculate gaps
+                if height == 1 {
+                    if j == 0 {
+                        gap = elevation - [Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                    } else if j == width - 1 {
+                        gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                    } else {
+                        gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                    }
+                } else if i == 0 {
+                    if j == 0 {
+                        if width == 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
+                        } else {
+                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
                         }
+                    } else if j == width - 1 {
+                        gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                    } else {
+                        gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                    }
+                } else if i == height - 1 {
+                    if j == 0 {
+                        if width == 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification))].min()!
+                        } else {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                        }
+                    } else if j == width - 1 {
+                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                    } else {
+                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
                     }
                 } else {
-                    for i in 0 ..< height {
-                        map2.append(maps[i].components(separatedBy: ","))
-                    }
-                    for i in 0 ..< height {
-                        for j in 0 ..< width {
-                            elevation = Int(Double(map2[i][j])! * magnification)
-                            // Calculate gaps
-                            if i == 0 {
-                                if j == 0 {
-                                    difference_from_next = elevation - [Int(Double(map2[i + 1][j])! * magnification), Int(Double(map2[i][j + 1])! * magnification)].min()!
-                                } else if j == width - 1 {
-                                    difference_from_next = elevation - [Int(Double(map2[i + 1][j])! * magnification), Int(Double(map2[i][j - 1])! * magnification)].min()!
-                                } else {
-                                    difference_from_next = elevation - [Int(Double(map2[i + 1][j])! * magnification), Int(Double(map2[i][j - 1])! * magnification), Int(Double(map2[i][j + 1])! * magnification)].min()!
-                                }
-                            } else if i == height - 1 {
-                                if j == 0 {
-                                    difference_from_next = elevation - [Int(Double(map2[i - 1][j])! * magnification), Int(Double(map2[i][j + 1])! * magnification)].min()!
-                                } else if j == width - 1 {
-                                    difference_from_next = elevation - [Int(Double(map2[i - 1][j])! * magnification), Int(Double(map2[i][j - 1])! * magnification)].min()!
-                                } else {
-                                    difference_from_next = elevation - [Int(Double(map2[i - 1][j])! * magnification), Int(Double(map2[i][j - 1])! * magnification), Int(Double(map2[i][j + 1])! * magnification)].min()!
-                                }
-                            } else {
-                                if j == 0 {
-                                    difference_from_next = elevation - [Int(Double(map2[i - 1][j])! * magnification), Int(Double(map2[i + 1][j])! * magnification), Int(Double(map2[i][j + 1])! * magnification)].min()!
-                                } else if j == width - 1 {
-                                    difference_from_next = elevation - [Int(Double(map2[i - 1][j])! * magnification), Int(Double(map2[i + 1][j])! * magnification), Int(Double(map2[i][j - 1])! * magnification)].min()!
-                                } else {
-                                    difference_from_next = elevation - [Int(Double(map2[i - 1][j])! * magnification), Int(Double(map2[i + 1][j])! * magnification), Int(Double(map2[i][j - 1])! * magnification), Int(Double(map2[i][j + 1])! * magnification)].min()!
-                                }
-                            }
-                            // Lift low ground
-                            if (abs(Double(map2[i][j])!.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
-                                //小数点なし
-                            } else {
-                                //小数点あり
-                                elevation = elevation + 1
-                            }
-                            drawMap(i: i, j: j, elevation: elevation, difference_from_next: difference_from_next)
+                    if j == 0 {
+                        if width == 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
+                        } else {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
                         }
+                    } else if j == width - 1 {
+                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                    } else {
+                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
                     }
                 }
-            } catch {
-                //error message
-                self.roomIDLabel.text = "Not such a file"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                drawMap(i: i, j: j, elevation: elevation, gap: gap, minY: minY, maxY: maxY)
             }
         }
     }
@@ -711,12 +734,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     
         cubeNode?.removeFromParentNode()
-        print("remove_cube")
+        //print("remove_cube")
     }
     
     func reset() {
         if (originPosition == nil) {
             return
+        }
+        //message
+        self.roomIDLabel.text = "Reset"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            // Put your code which should be executed with a delay here
+            self.roomIDLabel.text = "Connected !"
         }
         
         for (id, cubeNode) in cubeNodes {
@@ -882,7 +911,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let files = units[9]
                     self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: times!, files: files)
                 case "map":
-                    let csv_name = units[1]
+                    let map_data = units[1]
                     let width = Int(units[2])
                     let height = Int(units[3])
                     let magnification = Double(units[4])
@@ -892,7 +921,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let r2 = Int(units[8])
                     let g2 = Int(units[9])
                     let b2 = Int(units[10])
-                    self.map(csv_name: csv_name, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!)
+                    self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])

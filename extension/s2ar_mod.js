@@ -145,7 +145,7 @@
           [' ', locale[lang].set_char, 'set_char', 0, 0, 10, 'A', 'y'],
           [' ', locale[lang].set_line, 'set_line', 0, 0, 0, 10, 10, 10],
           [' ', locale[lang].set_roof, 'set_roof', 0, 3, 0, 14, 10, 7, 'z'],
-          [' ', locale[lang].polygon_file_format, 'polygon_file_format', 0, 0, 0, 'iTunesFileSharing'],
+          [' ', locale[lang].polygon_file_format, 'polygon_file_format', 0, 0, 0, 'model.ply'],
           [' ', locale[lang].animation, 'animation', 0, 0, 0, 1, 0, 0, 2.0, 100, 'model1.ply,model2.ply,model3.ply'],
           [' ', locale[lang].map, 'map', 'map_data.csv', 257, 257, 100, 0, 255, 0, 124, 96, 53],
           [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
