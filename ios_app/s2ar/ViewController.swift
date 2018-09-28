@@ -437,96 +437,121 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func polygonFileFormat(x: Int, y: Int, z: Int, file_name: String) {
+    func polygonFileFormat(x: Int, y: Int, z: Int, ply_file: String) {
         if (originPosition == nil) {
             return
         }
-        // Read ply file from iTunes File Sharing
-        if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
-            let path_file_name = dir.appendingPathComponent( file_name )
-            do {
-                let ply = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
-                var arr = ply.components(separatedBy: "\r\n")
-                if arr.count == 1 {
-                    arr = ply.components(separatedBy: "\n")
-                }
-                let roop = arr[11].components(separatedBy: " ")
-                let _roop = Int(roop[2])!
-                var vertex1: [String]
-                var vertex2: [String]
-                var vertex3: [String]
-                var _x: Int
-                var _y: Int
-                var _z: Int
-                for i in 0..<_roop {
-                    vertex1 = arr[4 * i + 14].components(separatedBy: " ")
-                    vertex2 = arr[4 * i + 15].components(separatedBy: " ")
-                    vertex3 = arr[4 * i + 16].components(separatedBy: " ")
-                    self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
-                    if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
-                        if vertex1[1] == vertex2[1] {
-                            _x = x + Int(Double(vertex1[0])!)
-                            _y = y + Int(Double(vertex1[2])!)
-                            _z = z - Int(Double(vertex1[1])!)
-                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does not contains key
-                                self.setCube(x: _x, y: _y, z: _z)
-                            }
-                        } else {
-                            _x = x + Int(Double(vertex1[0])!) - 1
-                            _y = y + Int(Double(vertex1[2])!)
-                            _z = z - Int(Double(vertex1[1])!)
-                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does notcontains key
-                                self.setCube(x: _x, y: _y, z: _z)
-                            }
+        let roop: Int
+        //let _roop: int
+        var ply2 = [[String]]()
+        
+        func createModel() {
+            var vertex1: [String]
+            var vertex2: [String]
+            var vertex3: [String]
+            var _x: Int
+            var _y: Int
+            var _z: Int
+            for i in 0 ..< roop {
+                vertex1 = ply2[4 * i]
+                vertex2 = ply2[4 * i + 1]
+                vertex3 = ply2[4 * i + 2]
+                self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
+                if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
+                    if vertex1[1] == vertex2[1] {
+                        _x = x + Int(Double(vertex1[0])!)
+                        _y = y + Int(Double(vertex1[2])!)
+                        _z = z - Int(Double(vertex1[1])!)
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                            // does not contains key
+                            self.setCube(x: _x, y: _y, z: _z)
                         }
-                    } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
-                        if vertex1[2] == vertex2[2] {
-                            _x = x + Int(Double(vertex1[0])!)
-                            _y = y + Int(Double(vertex1[2])!)
-                            _z = z - Int(Double(vertex1[1])!)
-                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does notcontains key
-                                self.setCube(x: _x, y: _y, z: _z)
-                            }
-                        } else {
-                            _x = x + Int(Double(vertex1[0])!)
-                            _y = y + Int(Double(vertex1[2])!)
-                            _z = z - Int(Double(vertex1[1])!) + 1
-                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does notcontains key
-                                self.setCube(x: _x, y: _y, z: _z)
-                            }
+                    } else {
+                        _x = x + Int(Double(vertex1[0])!) - 1
+                        _y = y + Int(Double(vertex1[2])!)
+                        _z = z - Int(Double(vertex1[1])!)
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                            // does notcontains key
+                            self.setCube(x: _x, y: _y, z: _z)
                         }
-                    } else {//x-y plane
-                        if vertex1[0] == vertex2[0] {
-                            _x = x + Int(Double(vertex1[0])!)
-                            _y = y + Int(Double(vertex1[2])!)
-                            _z = z - Int(Double(vertex1[1])!)
-                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does notcontains key
-                                self.setCube(x: _x, y: _y, z: _z)
-                            }
-                        } else {
-                            _x = x + Int(Double(vertex1[0])!)
-                            _y = y + Int(Double(vertex1[2])!) - 1
-                            _z = z - Int(Double(vertex1[1])!)
-                            if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                                // does notcontains key
-                                self.setCube(x: _x, y: _y, z: _z)
-                            }
+                    }
+                } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
+                    if vertex1[2] == vertex2[2] {
+                        _x = x + Int(Double(vertex1[0])!)
+                        _y = y + Int(Double(vertex1[2])!)
+                        _z = z - Int(Double(vertex1[1])!)
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                            // does notcontains key
+                            self.setCube(x: _x, y: _y, z: _z)
+                        }
+                    } else {
+                        _x = x + Int(Double(vertex1[0])!)
+                        _y = y + Int(Double(vertex1[2])!)
+                        _z = z - Int(Double(vertex1[1])!) + 1
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                            // does notcontains key
+                            self.setCube(x: _x, y: _y, z: _z)
+                        }
+                    }
+                } else {//x-y plane
+                    if vertex1[0] == vertex2[0] {
+                        _x = x + Int(Double(vertex1[0])!)
+                        _y = y + Int(Double(vertex1[2])!)
+                        _z = z - Int(Double(vertex1[1])!)
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                            // does notcontains key
+                            self.setCube(x: _x, y: _y, z: _z)
+                        }
+                    } else {
+                        _x = x + Int(Double(vertex1[0])!)
+                        _y = y + Int(Double(vertex1[2])!) - 1
+                        _z = z - Int(Double(vertex1[1])!)
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                            // does notcontains key
+                            self.setCube(x: _x, y: _y, z: _z)
                         }
                     }
                 }
-            } catch {
-                //error message
-                self.roomIDLabel.text = "Not such a file"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
+            }
+        }
+        
+        if ply_file.contains("ply") {
+            // Read ply file from iTunes File Sharing
+            if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+                let path_ply_file = dir.appendingPathComponent( ply_file )
+                do {
+                    let ply = try String( contentsOf: path_ply_file, encoding: String.Encoding.utf8 )
+                    var tempArray = ply.components(separatedBy: "\r\n")
+                    if tempArray.count == 1 {
+                        tempArray = ply.components(separatedBy: "\n")
+                    }
+                    //roop = arr[11].components(separatedBy: " ")
+                    roop = Int(tempArray[11].components(separatedBy: " ")[2])!
+                    for i in 0 ..< 4 * roop {
+                        ply2.append(tempArray[14 + i].components(separatedBy: " "))
+                    }
+                    createModel()
+                } catch {
+                    //error message
+                    self.roomIDLabel.text = "Not such a file"
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        // Put your code which should be executed with a delay here
+                        self.roomIDLabel.text = "Connected !"
+                    }
                 }
             }
+        } else {
+            let tempArray = ply_file.components(separatedBy: " ")
+            var tempArray2: [String] = []
+            roop = tempArray.count / 24
+            for i in 0 ..< 4 * roop {
+                for j in 0 ..< 6 {
+                    tempArray2.append(tempArray[6 * i + j])
+                }
+                ply2.append(tempArray2)
+                tempArray2 = []
+            }
+            createModel()
         }
     }
     
@@ -534,22 +559,32 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if (originPosition == nil) {
             return
         }
+
         let plys = files.components(separatedBy: ",")
-        var i = 0
-        timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { (timer) in
-            self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, file_name: plys[i % plys.count])
-            DispatchQueue.main.asyncAfter(deadline: .now() + time * 4 / 5) {
+        if plys[0].contains("ply") {
+            var i = 0
+            timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { (timer) in
+                self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, ply_file: plys[i % plys.count])
+                DispatchQueue.main.asyncAfter(deadline: .now() + time * 4 / 5) {
+                    // Put your code which should be executed with a delay here
+                    self.reset()
+                }
+                i += 1
+                if (i >= times) {
+                    timer.invalidate()
+                }
+            })
+        } else {
+            //error message
+            self.roomIDLabel.text = "Not such a file"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 // Put your code which should be executed with a delay here
-                self.reset()
+                self.roomIDLabel.text = "Connected !"
             }
-            i += 1
-            if (i >= times) {
-                timer.invalidate()
-            }
-        })
+        }
     }
     
-    func map(map_data: String, width: Int, height: Int, magnification: Double, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int) {
+    func map(map_data: String, width: Int, height: Int, magnification: Double, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
         if (originPosition == nil) {
             return
         }
@@ -583,17 +618,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             setColor(r: _r, g: _g, b: _b)
         }
         
-        func drawMap(i: Int, j: Int, elevation: Int, gap: Int, minY: Int, maxY: Int) {
+        func drawMap(i: Int, j: Int, elevation: Int, gap: Int, minY: Int, maxY: Int, upward: Int) {
             let _x = Int(height / 2) - i
             let _y = elevation
             let _z = j - Int(width / 2)
             if _y > 0 {
                 heightSetColor(y: _y, minY: minY, maxY: maxY)
-                self.setCube(x: _x, y: _y, z: _z)
+                self.setCube(x: _x, y: _y + upward, z: _z)
                 if gap > 1 {
                     for k in 1 ... gap - 1 {
                         heightSetColor(y: _y - k, minY: minY, maxY: maxY)
-                        self.setCube(x: _x, y: _y - k, z: _z)
+                        self.setCube(x: _x, y: _y - k + upward, z: _z)
+                    }
+                }
+            } else if _y < 0{
+                heightSetColor(y: _y, minY: minY, maxY: maxY)
+                self.setCube(x: _x, y: _y + 1 + upward, z: _z)
+                if gap > 1 {
+                    for k in 1 ... gap - 1 {
+                        heightSetColor(y: _y - k, minY: minY, maxY: maxY)
+                        self.setCube(x: _x, y: _y + 1 + k + upward, z: _z)
                     }
                 }
             }
@@ -602,9 +646,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if map_data.contains("csv") {
             // Read ply file from iTunes File Sharing
             if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
-                let path_file_name = dir.appendingPathComponent( map_data )
+                let path_csv_file = dir.appendingPathComponent( map_data )
                 do {
-                    let _map_data = try String( contentsOf: path_file_name, encoding: String.Encoding.utf8 )
+                    let _map_data = try String( contentsOf: path_csv_file, encoding: String.Encoding.utf8 )
                     maps = _map_data.components(separatedBy: "\r\n")
                     if maps.count == 1 {
                         maps = _map_data.components(separatedBy: "\n")
@@ -662,53 +706,103 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         for i in 0 ..< height {
             for j in 0 ..< width {
                 elevation = Int(ceil(Double(map2[i][j])! * magnification))
-                // Calculate gaps
-                if height == 1 {
-                    if j == 0 {
-                        gap = elevation - [Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                    } else if j == width - 1 {
-                        gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
-                    } else {
-                        gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                    }
-                } else if i == 0 {
-                    if j == 0 {
-                        if width == 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
+                if elevation > 0 {
+                    // Calculate gaps
+                    if height == 1 {
+                        if j == 0 {
+                            gap = elevation - [Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                        } else if j == width - 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
                         } else {
-                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
                         }
-                    } else if j == width - 1 {
-                        gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
-                    } else {
-                        gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                    }
-                } else if i == height - 1 {
-                    if j == 0 {
-                        if width == 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification))].min()!
+                    } else if i == 0 {
+                        if j == 0 {
+                            if width == 1 {
+                                gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
+                            } else {
+                                gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            }
+                        } else if j == width - 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
                         } else {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
                         }
-                    } else if j == width - 1 {
-                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                    } else if i == height - 1 {
+                        if j == 0 {
+                            if width == 1 {
+                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification))].min()!
+                            } else {
+                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            }
+                        } else if j == width - 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                        } else {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                        }
                     } else {
-                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                        if j == 0 {
+                            if width == 1 {
+                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
+                            } else {
+                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            }
+                        } else if j == width - 1 {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                        } else {
+                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                        }
                     }
                 } else {
-                    if j == 0 {
-                        if width == 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
+                    // Calculate gaps
+                    if height == 1 {
+                        if j == 0 {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                        } else if j == width - 1 {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
                         } else {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
                         }
-                    } else if j == width - 1 {
-                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+                    } else if i == 0 {
+                        if j == 0 {
+                            if width == 1 {
+                                gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification))].max()!
+                            } else {
+                                gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                            }
+                        } else if j == width - 1 {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
+                        } else {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                        }
+                    } else if i == height - 1 {
+                        if j == 0 {
+                            if width == 1 {
+                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification))].max()!
+                            } else {
+                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                            }
+                        } else if j == width - 1 {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
+                        } else {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                        }
                     } else {
-                        gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                        if j == 0 {
+                            if width == 1 {
+                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification))].max()!
+                            } else {
+                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                            }
+                        } else if j == width - 1 {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
+                        } else {
+                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                        }
                     }
+                    
                 }
-                drawMap(i: i, j: j, elevation: elevation, gap: gap, minY: minY, maxY: maxY)
+                drawMap(i: i, j: j, elevation: elevation, gap: gap, minY: minY, maxY: maxY, upward: upward)
             }
         }
     }
@@ -734,7 +828,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     
         cubeNode?.removeFromParentNode()
-        //print("remove_cube")
+        //message
+        self.roomIDLabel.text = "Remove a cube"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Put your code which should be executed with a delay here
+            self.roomIDLabel.text = "Connected !"
+        }
     }
     
     func reset() {
@@ -897,8 +996,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let x = Int(units[1])
                     let y = Int(units[2])
                     let z = Int(units[3])
-                    let file_name = units[4]
-                    self.polygonFileFormat(x: x!, y: y!, z: z!, file_name: file_name)
+                    let ply_file = units[4]
+                    self.polygonFileFormat(x: x!, y: y!, z: z!, ply_file: ply_file)
                 case "animation":
                     let x = Int(units[1])
                     let y = Int(units[2])
@@ -921,7 +1020,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let r2 = Int(units[8])
                     let g2 = Int(units[9])
                     let b2 = Int(units[10])
-                    self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!)
+                    let upward = Int(units[11])
+                    self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!, upward: upward!)
                 case "set_color":
                     let r = Int(units[1])
                     let g = Int(units[2])
