@@ -4,11 +4,16 @@
       var socket;
       var hostname = "s2ar-helper.glitch.me";
       var roomId;
+      var connected = false;
 
       ext._shutdown = function() {};
 
       ext._getStatus = function() {
-        return {status: 2, msg: 'Ready'};
+        if (connected) {
+          return {status: 2, msg: 'Connected to the Server'};
+        } else {
+          return {status: 0, msg: 'Not connected to the Server'};
+        }
       };
 
       ext.set_hostname = function(str) {
@@ -19,6 +24,7 @@
         roomId = str1 + "-" + str2;
         socket = io.connect('http://' + hostname);
         socket.on("connect", function() {
+          connected = true;
           socket.emit("from_client", JSON.stringify({roomId: roomId, command: "connect"}));
         });
       }
