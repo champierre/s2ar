@@ -536,7 +536,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.roomIDLabel.text = "Not such a file"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
+                        self.roomIDLabel.text = "Connected."
                     }
                 }
             }
@@ -579,7 +579,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.roomIDLabel.text = "Not such a file"
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
+                self.roomIDLabel.text = "Connected."
             }
         }
     }
@@ -658,7 +658,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.roomIDLabel.text = "Not such a file"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
+                        self.roomIDLabel.text = "Connected."
                     }
                 }
             }
@@ -889,7 +889,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.roomIDLabel.text = "Not such a file"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
+                        self.roomIDLabel.text = "Connected."
                     }
                 }
             }
@@ -932,7 +932,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.roomIDLabel.text = "Remove a cube"
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
+            self.roomIDLabel.text = "Connected."
         }
     }
     
@@ -944,7 +944,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.roomIDLabel.text = "Reset"
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
+            self.roomIDLabel.text = "Connected."
         }
         
         for (id, cubeNode) in cubeNodes {
@@ -1027,7 +1027,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         socket.on("from_server") { data, ack in
-            self.roomIDLabel.text = "Connected !"
+            self.roomIDLabel.text = "Connected."
             if let msg = data[0] as? String {
                 print(msg)
                 let units = msg.components(separatedBy: ":")
