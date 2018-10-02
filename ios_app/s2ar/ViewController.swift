@@ -441,8 +441,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if (originPosition == nil) {
             return
         }
-        let roop: Int
-        //let _roop: int
+        let loop: Int
+        //let _loop: int
         var ply2 = [[String]]()
         
         func createModel() {
@@ -452,7 +452,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var _x: Int
             var _y: Int
             var _z: Int
-            for i in 0 ..< roop {
+            for i in 0 ..< loop {
                 vertex1 = ply2[4 * i]
                 vertex2 = ply2[4 * i + 1]
                 vertex3 = ply2[4 * i + 2]
@@ -525,9 +525,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if tempArray.count == 1 {
                         tempArray = ply.components(separatedBy: "\n")
                     }
-                    //roop = arr[11].components(separatedBy: " ")
-                    roop = Int(tempArray[11].components(separatedBy: " ")[2])!
-                    for i in 0 ..< 4 * roop {
+                    //loop = arr[11].components(separatedBy: " ")
+                    loop = Int(tempArray[11].components(separatedBy: " ")[2])!
+                    for i in 0 ..< 4 * loop {
                         ply2.append(tempArray[14 + i].components(separatedBy: " "))
                     }
                     createModel()
@@ -543,8 +543,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         } else {
             let tempArray = ply_file.components(separatedBy: " ")
             var tempArray2: [String] = []
-            roop = tempArray.count / 24
-            for i in 0 ..< 4 * roop {
+            loop = tempArray.count / 24
+            for i in 0 ..< 4 * loop {
                 for j in 0 ..< 6 {
                     tempArray2.append(tempArray[6 * i + j])
                 }
@@ -811,8 +811,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if (originPosition == nil) {
             return
         }
-        let roop1: Int
-        let roop2: Int
+        let loop1: Int
+        let loop2: Int
         var position = [[String]]()
         var line = [[String]]()
         
@@ -827,7 +827,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var _x2: Int
             var _y2: Int
             var _z2: Int
-            for i in 0 ..< roop1 {
+            for i in 0 ..< loop1 {
                 switch (position[i][3]) {
                 case "1": //Hydrogen
                     self.setColor(r: 255, g: 0, b: 0)
@@ -854,7 +854,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.setSphere(x: _x, y: _y, z: _z, r: _r)
             }
             self.setColor(r: 0, g: 0, b: 0)
-            for j in 0 ..< roop2 {
+            for j in 0 ..< loop2 {
                 _x1 = Int(x + Double(position[Int(line[j][0])! - 1][0])! * magnification)
                 _y1 = Int(y + Double(position[Int(line[j][0])! - 1][1])! * magnification)
                 _z1 = Int(z + Double(position[Int(line[j][0])! - 1][2])! * magnification)
@@ -875,13 +875,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if tempArray.count == 1 {
                         tempArray = mld.components(separatedBy: "\n")
                     }
-                    roop1 = Int(tempArray[1])!
-                    for i in 0 ..< roop1 {
+                    loop1 = Int(tempArray[1])!
+                    for i in 0 ..< loop1 {
                         position.append(tempArray[2 + i].components(separatedBy: ","))
                     }
-                    roop2 = Int(tempArray[2 + roop1])!
-                    for i in 0 ..< roop2 {
-                        line.append(tempArray[3 + roop1 + i].components(separatedBy: ","))
+                    loop2 = Int(tempArray[2 + loop1])!
+                    for i in 0 ..< loop2 {
+                        line.append(tempArray[3 + loop1 + i].components(separatedBy: ","))
                     }
                     createStructure()
                 } catch {
@@ -895,13 +895,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         } else {
             let tempArray = mld_file.components(separatedBy: " ")
-            roop1 = Int(tempArray[1])!
-            for i in 0 ..< roop1 {
+            loop1 = Int(tempArray[1])!
+            for i in 0 ..< loop1 {
                 position.append(tempArray[2 + i].components(separatedBy: ","))
             }
-            roop2 = Int(tempArray[2 + roop1])!
-            for i in 0 ..< roop2 {
-                line.append(tempArray[3 + roop1 + i].components(separatedBy: ","))
+            loop2 = Int(tempArray[2 + loop1])!
+            for i in 0 ..< loop2 {
+                line.append(tempArray[3 + loop1 + i].components(separatedBy: ","))
             }
             createStructure()
         }
