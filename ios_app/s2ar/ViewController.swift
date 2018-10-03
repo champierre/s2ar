@@ -96,46 +96,103 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             return
         }
         
-        for k in 0...d {
-            for j in 0...h {
-                for i in 0...w {
-                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+        for k in 0..<d {
+            for j in 0..<h {
+                for i in 0..<w {
+                    if k == 0 || k == d - 1 || j == 0 || j == h - 1 || i == 0 || i == w - 1 {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
                 }
             }
         }
     }
     
-    func setCylinder(x: Int, y: Int, z: Int, r: Int, h: Int, a: String) {
+    func setCylinder(x: Int, y: Int, z: Int, _r: Int, h: Int, a: String) {
         if (originPosition == nil) {
             return
+        }
+        var i: Int
+        var j: Int
+        var k: Int
+        var r = _r
+        if r < 2 {
+            r = 2
         }
         
         switch a {
         case "x":
+            i = 0
             for k in -r...r {
                 for j in -r...r {
-                    for i in 0..<h {
-                        if (j * j + k * k < r * r) {
+                    if (j * j + k * k < (r + 1) * (r + 1)) {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
+                }
+            }
+            i = h - 1
+            for k in -r...r {
+                for j in -r...r {
+                    if (j * j + k * k < (r + 1) * (r + 1)) {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
+                }
+            }
+            for i in 1..<h-1 {
+                for k in -r...r {
+                    for j in -r...r {
+                        if (j * j + k * k < (r + 1) * (r + 1)) && (j * j + k * k > (r - 1) * (r - 1)) {
                             self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
                         }
                     }
                 }
             }
         case "y":
+            j = 0
             for k in -r...r {
-                for j in 0..<h {
+                for i in -r...r  {
+                    if (i * i + k * k < (r + 1) * (r + 1)) {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
+                }
+            }
+            j = h - 1
+            for k in -r...r {
+                for i in -r...r  {
+                    if (i * i + k * k < (r + 1) * (r + 1)) {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
+                }
+            }
+            for j in 1..<h-1 {
+                 for k in -r...r{
                     for i in -r...r {
-                        if (i * i + k * k < r * r) {
+                        if (k * k + i * i < (r + 1) * (r + 1)) && (k * k + i * i > (r - 1) * (r - 1)) {
                             self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
                         }
                     }
                 }
             }
         case "z":
-            for k in 0..<h {
+            k = 0
+            for j in -r...r {
+                for i in -r...r {
+                    if (i * i + j * j < (r + 1) * (r + 1)) {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
+                }
+            }
+            k = h - 1
+            for j in -r...r {
+                for i in -r...r {
+                    if (i * i + j * j < (r + 1) * (r + 1)) {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
+                }
+            }
+            for k in 1..<h-1 {
                 for j in -r...r {
                     for i in -r...r {
-                        if (i * i + j * j < r * r) {
+                        if (i * i + j * j < (r + 1) * (r + 1)) && (i * i + j * j > (r - 1) * (r - 1)) {
                             self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
                         }
                     }
@@ -196,16 +253,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setSphere(x: Int, y: Int, z: Int, r: Int) {
+    func setSphere(x: Int, y: Int, z: Int, _r: Int) {
         if (originPosition == nil) {
             return
+        }
+        var r = _r
+        if r < 2 {
+            r = 2
         }
         
         for k in -r...r {
             for j in -r...r {
                 for i in -r...r {
-                    if (i * i + j * j + k * k < r * r) {
-                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    if i * i + j * j + k * k < (r + 1) * (r + 1) {
+                        if i * i + j * j + k * k > (r - 1) * (r - 1) {
+                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                        }
                     }
                 }
             }
@@ -751,10 +814,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             //数字以外の文字が入っていたときの処理
             for i in 0 ..< height {
                 for j in 0 ..< width {
-                    if let num: Float = Float(map3[i][j]) {
-                        tempArray2.append(Int(ceil(num * magnification)))
-                    } else {
+                    if map3[i][j] == "Infinity" {
+                        tempArray2.append(100)
+                    } else if map3[i][j] == "Nan" {
                         tempArray2.append(0)
+                    } else {
+                        if map3[i][j].isOnlyNumeric() {//数字のみ
+                            tempArray2.append(Int(ceil(Float(map3[i][j])! * magnification)))
+                        } else {
+                            let temp = map3[i][j].remove(characterSet: .decimalDigits)//数字を削除
+                            if temp.isOnlyPunctuation(){// "."を含む記号のみ
+                                tempArray2.append(Int(ceil(Float(map3[i][j])! * magnification)))
+                            } else {
+                                tempArray2.append(0)
+                            }
+                        }
                     }
                 }
                 map4.append(tempArray2)
@@ -767,6 +841,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             for i in 0 ..< height {
                 for j in 0 ..< width {
                     elevation = map4[i][j]
+                    if elevation > 100 {
+                        elevation = 100
+                    }
                     if minY > map4[i][j] {
                         minY = map4[i][j]
                     }
@@ -1287,7 +1364,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 if _r < 3 {
                     _r = 3
                 }
-                self.setSphere(x: _x, y: _y, z: _z, r: _r)
+                self.setSphere(x: _x, y: _y, z: _z, _r: _r)
             }
             self.setColor(r: 127, g: 127, b: 127)
             for j in 0 ..< roop2 {
@@ -1502,7 +1579,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let r = Int(units[4])
                     let h = Int(units[5])
                     let a = units[6]
-                    self.setCylinder(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
+                    self.setCylinder(x: x!, y: y!, z: z!, _r: r!, h: h!, a: a)
                 case "set_hexagon":
                     let x = Int(units[1])
                     let y = Int(units[2])
@@ -1516,7 +1593,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let y = Int(units[2])
                     let z = Int(units[3])
                     let r = Int(units[4])
-                    self.setSphere(x: x!, y: y!, z: z!, r: r!)
+                    self.setSphere(x: x!, y: y!, z: z!, _r: r!)
                 case "set_char":
                     let x = Int(units[1])
                     let y = Int(units[2])
@@ -1790,5 +1867,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         planeNode?.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z);
         
         planeNodes[anchor.identifier] = planeNode
+    }
+}
+
+
+extension String {
+    public func isOnly(_ characterSet: CharacterSet) -> Bool {
+        return self.trimmingCharacters(in: characterSet).count <= 0
+    }
+    public func isOnlyNumeric() -> Bool {
+        return isOnly(.decimalDigits)
+    }
+    public func isOnlyPunctuation() -> Bool {
+        return isOnly(.punctuationCharacters)
+    }
+    public func isOnly(_ characterSet: CharacterSet, _ additionalString: String) -> Bool {
+        var replaceCharacterSet = characterSet
+        replaceCharacterSet.insert(charactersIn: additionalString)
+        return isOnly(replaceCharacterSet)
+    }
+    /// StringからCharacterSetを取り除く
+    func remove(characterSet: CharacterSet) -> String {
+        return components(separatedBy: characterSet).joined()
+    }
+    /// StringからCharacterSetを抽出する
+    func extract(characterSet: CharacterSet) -> String {
+        return remove(characterSet: characterSet.inverted)
     }
 }

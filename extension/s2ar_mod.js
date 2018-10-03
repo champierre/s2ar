@@ -113,7 +113,7 @@
         ja: {
           set_hostname: '接続先を %s に設定する',
           connect: 'ID: %s - %s で接続する',
-          change_cube_size: 'ブロック・サイズの変更。拡大倍率を %n',
+          change_cube_size: 'ブロックサイズの変更。拡大倍率を %n',
           set_cube: 'ブロックを置く。x座標を %n 、y座標を %n 、z座標を %n',
           set_box: '直方体を置く。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n',
           set_cylinder: '円柱を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %s 軸',
