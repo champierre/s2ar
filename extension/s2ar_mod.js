@@ -23,6 +23,11 @@
         });
       }
 
+      ext.change_cube_size = function(maginification) {
+        let command = "change_cube_size:" + maginification;
+        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
+      }
+
       ext.set_cube = function(x, y, z) {
         let command = "set_cube:" + x + ":" + y + ":" + z;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
@@ -60,6 +65,11 @@
 
       ext.map = function(csv_name, width, height, magnification, r1, g1, b1, r2, g2, b2, upward) {
         let command = "map:" + csv_name + ":" + width + ":" + height + ":" + magnification + ":" + r1 + ":" + g1 + ":" + b1 + ":" + r2 + ":" + g2 + ":" + b2 + ":" + upward;
+        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
+      }
+
+      ext.pin = function(csv_name, width, height, magnification, up_left_latitude, up_left_longitude, down_right_latitude, down_right_longitude, step) {
+        let command = "pin:" + csv_name + ":" + width + ":" + height + ":" + magnification + ":" + up_left_latitude + ":" + up_left_longitude + ":" + down_right_latitude + ":" + down_right_longitude + ":" + step;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
@@ -103,6 +113,7 @@
         ja: {
           set_hostname: '接続先を %s に設定する',
           connect: 'ID: %s - %s で接続する',
+          change_cube_size: 'ブロック・サイズの変更。拡大倍率を %n',
           set_cube: 'ブロックを置く。x座標を %n 、y座標を %n 、z座標を %n',
           set_box: '直方体を置く。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n',
           set_cylinder: '円柱を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %s 軸',
@@ -114,14 +125,16 @@
           polygon_file_format: '3Dモデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、PLYファイル %s',
           animation: 'アニメーション。x座標を %n 、y座標を %n 、z座標を %n 、差分Xを %n 、 差分Yを %n 、 差分Zを %n 、 時間を %n 、回数を %n 、モデルデータを %s',
           map: '地図を作成。地図データを %s 、横を %n 、縦を %n 、拡大倍率を %n 、（低地の色を r1: %n g1: %n b1: %n ）、（高地の色を r2: %n g2: %n b2: %n ）、上方向へ %n',
-          molecular_structure: '分子構造を作成。x座標を %n 、y座標を %n 、z座標を %n 、拡大倍率を %n 、MLDファイル %s',
-          set_color: 'ブロックの色を r: %n g: %n b: %n に変える',
+          pin: 'ピンを立てる。位置データを %s 、横を %n 、縦を %n 、拡大倍率を %n 、左上緯度を %n 、左上経度を %n 、右下緯度を %n 、右下経度を %n 横に %n',
+          molecular_structure: '分子構造モデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、拡大倍率を %n 、MLDファイル %s',
+          set_color: 'ブロックの色を変える。r: %n g: %n b: %n',
           remove_cube: 'ブロックを消す。x座標を %n 、y座標を %n 、z座標を %n',
           reset: 'リセット'
         },
         en: {
           set_hostname: 'Set hostname to %s',
           connect: 'Connect with ID: %s -  %s',
+          change_cube_size: 'change cube size maginification: %n',
           set_cube: 'set cube at x: %n y: %n z: %n',
           set_box: 'set box at x: %n y: %n z: %n wide: %n depth: %n height: %n',
           set_cylinder: 'set cylinder at x: %n y: %n z: %n radius: %n height: %n axis: %s',
@@ -133,6 +146,7 @@
           polygon_file_format: 'create 3d model at x: %n y: %n z: %n ply file: %s',
           animation: 'animation at x: %n y: %n z: %n diffX: %n diffY: %n diffZ: %n time: %n times: %n models: %s',
           map: 'draw map from csv: %s width: %n height: %n magnification: %n (lowland r1: %n g1: %n b1: %n ) (highland r2: %n g2: %n b2: %n ) upward: %n',
+          pin: 'stand pins at potision: %s width: %n height: %n magnification: %n up-left (latitude: %n longitude: %n ) down-right (latitude: %n longitude: %n ) shift %n',
           molecular_structure: 'molecular structure at x: %n y: %n z: %n magnification: %n mld file: %s',
           set_color: 'set color to r: %n g: %n b: %n',
           remove_cube: 'remove cube at x: %n y: %n z: %n',
@@ -144,6 +158,7 @@
         blocks: [
           [' ', locale[lang].set_hostname, 'set_hostname', hostname],
           [' ', locale[lang].connect, 'connect', '', ''],
+          [' ', locale[lang].change_cube_size, 'change_cube_size', 1],
           [' ', locale[lang].set_cube, 'set_cube', 1, 0, 1],
           [' ', locale[lang].set_box, 'set_box', 2, 0, 2, 2, 2, 2],
           [' ', locale[lang].set_cylinder, 'set_cylinder', 3, 0, 3, 4, 4, 'y'],
@@ -155,6 +170,7 @@
           [' ', locale[lang].polygon_file_format, 'polygon_file_format', 0, 0, 0, 'model.ply'],
           [' ', locale[lang].animation, 'animation', 0, 0, 0, 1, 0, 0, 2.0, 100, 'model1.ply,model2.ply,model3.ply'],
           [' ', locale[lang].map, 'map', 'map_data.csv', 257, 257, 100, 0, 255, 0, 124, 96, 53, 0],
+          [' ', locale[lang].pin, 'pin', 'potision_data.csv', 257, 257, 2, 46.852, 126.738, 29.148, 149.238, 0],
           [' ', locale[lang].molecular_structure, 'molecular_structure', 0, 10, 0, 10, 'methane.mld'],
           [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
           [' ', locale[lang].remove_cube, 'remove_cube', 1, 0, 1],
