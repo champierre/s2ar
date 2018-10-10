@@ -38,6 +38,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     var timer = Timer()
     
+    var connectionState: Bool = false
+    
     @IBOutlet var roomIDLabel: UILabel!
     
     @IBOutlet var togglePlanesButton: UIButton!
@@ -1791,6 +1793,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.roomId = String(format: "%04d", Int(arc4random_uniform(10000))) + "-" + String(format: "%04d", Int(arc4random_uniform(10000)))
             self.roomIDLabel.isHidden = false
             self.roomIDLabel.text = "ID: " + self.roomId
+            self.connectionState = false
             var jsonDic = Dictionary<String, Any>()
             jsonDic["roomId"] = self.roomId
             jsonDic["command"] = "join"
@@ -1804,7 +1807,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         socket.on("from_server") { data, ack in
-            self.showMessage(text1: "Connection Success !", text2: "Start Modeling")
+            if self.connectionState == false {
+                self.showMessage(text1: "Connection Success !", text2: "Start Modeling")
+                self.connectionState = true
+            }
             if let msg = data[0] as? String {
                 print(msg)
                 let units = msg.components(separatedBy: ":")
@@ -1824,157 +1830,157 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.setCube(x: x!, y: y!, z: z!)
                     }
                 case "set_box":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let w = Int(units[4])
-                    let d = Int(units[5])
-                    let h = Int(units[6])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let w = Float(units[4])
+                    let d = Float(units[5])
+                    let h = Float(units[6])
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || h! < 0 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setBox(x: x!, y: y!, z: z!, w: w!, d: d!, h: h!)
+                        self.setBox(x: Int(x!), y: Int(y!), z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!))
                     }
                 case "set_cylinder":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let r = Float(units[4])
                     let _r = round(r! * 2.0) / 2.0
-                    let h = Int(units[5])
+                    let h = Float(units[5])
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setCylinder(x: x!, y: y!, z: z!, r: _r, h: h!, a: a)
+                        self.setCylinder(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
                     }
                 case "set_hexagon":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let r = Float(units[4])
                     let _r = round(r! * 2.0) / 2.0
-                    let h = Int(units[5])
+                    let h = Float(units[5])
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setHexagon(x: x!, y: y!, z: z!, r: _r, h: h!, a: a)
+                        self.setHexagon(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
                     }
                 case "set_sphere":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let r = Float(units[4])
                     let _r = round(r! * 2.0) / 2.0
                     if x == nil || y == nil || z == nil || r == nil {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setSphere(x: x!, y: y!, z: z!, r: _r)
+                        self.setSphere(x: Int(x!), y: Int(y!), z: Int(z!), r: _r)
                     }
                 case "set_char":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let c = units[4]
                     let a = units[5]
                     if x == nil || y == nil || z == nil {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setChar(x: x!, y: y!, z: z!, c: c, a: a)
+                        self.setChar(x: Int(x!), y: Int(y!), z: Int(z!), c: c, a: a)
                     }
                 case "set_line":
-                    let x1 = Int(units[1])
-                    let y1 = Int(units[2])
-                    let z1 = Int(units[3])
-                    let x2 = Int(units[4])
-                    let y2 = Int(units[5])
-                    let z2 = Int(units[6])
+                    let x1 = Float(units[1])
+                    let y1 = Float(units[2])
+                    let z1 = Float(units[3])
+                    let x2 = Float(units[4])
+                    let y2 = Float(units[5])
+                    let z2 = Float(units[6])
                     if x1 == nil || y1 == nil || z1 == nil || x2 == nil || y2 == nil || z2 == nil {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setLine(x1: x1!, y1: y1!, z1: z1!, x2: x2!, y2: y2!, z2: z2!)
+                        self.setLine(x1: Int(x1!), y1: Int(y1!), z1: Int(z1!), x2: Int(x2!), y2: Int(y2!), z2: Int(z2!))
                     }
                 case "set_roof":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let w = Int(units[4])
-                    let d = Int(units[5])
-                    let h = Int(units[6])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let w = Float(units[4])
+                    let d = Float(units[5])
+                    let h = Float(units[6])
                     let a = units[7]
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || abs(h!) < 0 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setRoof(_x: x!, _y: y!, _z: z!, w: w!, d: d!, h: h!, a: a)
+                        self.setRoof(_x: Int(x!), _y: Int(y!), _z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!), a: a)
                     }
                 case "polygon_file_format":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let ply_file = units[4]
                     if x == nil || y == nil || z == nil {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.polygonFileFormat(x: x!, y: y!, z: z!, ply_file: ply_file)
+                        self.polygonFileFormat(x: Int(x!), y: Int(y!), z: Int(z!), ply_file: ply_file)
                     }
                 case "animation":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let differenceX = Int(units[4])
-                    let differenceY = Int(units[5])
-                    let differenceZ = Int(units[6])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let differenceX = Float(units[4])
+                    let differenceY = Float(units[5])
+                    let differenceZ = Float(units[6])
                     let time = Double(units[7])
-                    let times = Int(units[8])
+                    let times = Float(units[8])
                     let files = units[9]
                     if x == nil || y == nil || z == nil || differenceX == nil || differenceY == nil || differenceZ == nil || time == nil || times == nil || time! <= 0 || times! <= 0 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: times!, files: files)
+                        self.animation(x: Int(x!), y: Int(y!), z: Int(z!), differenceX: Int(differenceX!), differenceY: Int(differenceY!), differenceZ: Int(differenceZ!), time: time!, times: Int(times!), files: files)
                     }
                 case "map":
                     let map_data = units[1]
-                    let width = Int(units[2])
-                    let height = Int(units[3])
+                    let width = Float(units[2])
+                    let height = Float(units[3])
                     let magnification = Float(units[4])
-                    let r1 = Int(units[5])
-                    let g1 = Int(units[6])
-                    let b1 = Int(units[7])
-                    let r2 = Int(units[8])
-                    let g2 = Int(units[9])
-                    let b2 = Int(units[10])
-                    let upward = Int(units[11])
+                    let r1 = Float(units[5])
+                    let g1 = Float(units[6])
+                    let b1 = Float(units[7])
+                    let r2 = Float(units[8])
+                    let g2 = Float(units[9])
+                    let b2 = Float(units[10])
+                    let upward = Float(units[11])
                     if width == nil || height == nil || magnification == nil || r1 == nil || g1 == nil || b1 == nil || r2 == nil || g2 == nil || b2 == nil || upward == nil || width! < 1 || height! < 1 || magnification! <= 0.0 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!, upward: upward!)
+                        self.map(map_data: map_data, width: Int(width!), height: Int(height!), magnification: magnification!, r1: Int(r1!), g1: Int(g1!), b1: Int(b1!), r2: Int(r2!), g2: Int(g2!), b2: Int(b2!), upward: Int(upward!))
                     }
                 case "pin":
                     let pin_data = units[1]
-                    let width = Int(units[2])
-                    let height = Int(units[3])
+                    let width = Float(units[2])
+                    let height = Float(units[3])
                     let magnification = Float(units[4])
                     let up_left_latitude = Float(units[5])
                     let up_left_longitude = Float(units[6])
                     let down_right_latitude = Float(units[7])
                     let down_right_longitude = Float(units[8])
-                    let step = Int(units[9])
+                    let step = Float(units[9])
                     if width == nil || height == nil || magnification == nil || up_left_latitude == nil || up_left_longitude == nil || down_right_latitude == nil || down_right_longitude == nil || step == nil || width! < 1 || height! < 1 {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.pin(pin_data: pin_data, width: width!, height: height!, magnification: magnification!, up_left_latitude: up_left_latitude!, up_left_longitude: up_left_longitude!, down_right_latitude: down_right_latitude!, down_right_longitude: down_right_longitude!, step: step!)
+                        self.pin(pin_data: pin_data, width: Int(width!), height: Int(height!), magnification: magnification!, up_left_latitude: up_left_latitude!, up_left_longitude: up_left_longitude!, down_right_latitude: down_right_latitude!, down_right_longitude: down_right_longitude!, step: Int(step!))
                     }
                 case "molecular_structure":
                     let x = Float(units[1])
@@ -1989,14 +1995,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
                     }
                 case "set_color":
-                    let r = Int(units[1])
-                    let g = Int(units[2])
-                    let b = Int(units[3])
+                    let r = Float(units[1])
+                    let g = Float(units[2])
+                    let b = Float(units[3])
                     if r == nil || g == nil || b == nil {
                         //error message
                         self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
-                        self.setColor(r: r!, g: g!, b: b!)
+                        self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
                     }
                 case "remove_cube":
                     let x = Float(units[1])
