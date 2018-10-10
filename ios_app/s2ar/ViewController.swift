@@ -42,22 +42,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @IBOutlet var togglePlanesButton: UIButton!
     
-    func changeCubeSize(magnification: Float) {
-        self.roomIDLabel.text = " Resize x\(magnification)"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+    func showMessage(text1: String, text2: String) {
+        self.roomIDLabel.isHidden = false
+        self.roomIDLabel.text = text1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
+            self.roomIDLabel.text = text2
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                // Put your code which should be executed with a delay here
+                self.roomIDLabel.isHidden = true
+            }
         }
+    }
+    
+    func changeCubeSize(magnification: Float) {
+        self.showMessage(text1: "Resize x\(magnification)", text2: "Connected !")
         CUBE_SIZE = round(0.02 * magnification * 1000.0) / 1000.0
     }
     
     func setCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         // 3Dモデル作成のデータ（.ply）は整数のみではなく 0.5 を含むため、setCube を 0.5 刻みで置けるように改造した。
@@ -83,10 +89,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
             // remove cube if contains
             self.removeCube(x: _x, y: _y, z: _z)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                // set cube
-                setCubeMethod(x: _x, y: _y, z: _z)
-            }
+            setCubeMethod(x: _x, y: _y, z: _z)
         } else {
             // set cube
             setCubeMethod(x: _x, y: _y, z: _z)
@@ -96,11 +99,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setBox(x: Int, y: Int, z: Int, w: Int, d: Int, h: Int) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         
@@ -118,11 +117,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setCylinder(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         var i: Int
@@ -227,11 +222,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.roomIDLabel.text = "x or y or z"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
                 break
             }
         } else {
@@ -335,11 +326,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.roomIDLabel.text = "x or y or z"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
                 break
             }
         }
@@ -348,11 +335,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setHexagon(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         let _r = r < 0 ? -Int(r) : Int(r)
@@ -429,11 +412,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.roomIDLabel.text = "x or y or z"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
             break
         }
     }
@@ -441,11 +420,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setSphere(x: Int, y: Int, z: Int, r: Float) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         let r1: Float = r < 0 ? -r : r
@@ -484,11 +459,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setChar(x: Int, y: Int, z: Int, c: String, a: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         var k = 0
@@ -527,11 +498,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.roomIDLabel.text = "x or y or z"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
             break
         }
     }
@@ -539,11 +506,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setLine(x1: Int, y1: Int, z1: Int, x2: Int, y2: Int, z2: Int) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         if !(x1 == x2 && y1 == y2 && z1 == z2) {
@@ -624,22 +587,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         } else {
             //error message
-            self.roomIDLabel.text = "same points"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "same points", text2: "Connected !")
         }
     }
     
     func setRoof(_x: Int, _y: Int, _z: Int, w: Int, d: Int, h: Int, a: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         var temp: Float
@@ -889,11 +844,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.roomIDLabel.text = "x or y or z"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
             break
         }
     }
@@ -901,11 +852,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func polygonFileFormat(x: Int, y: Int, z: Int, ply_file: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         
@@ -1006,19 +953,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         try createModel()
                     } else {
                         //error message
-                        self.roomIDLabel.text = "Incorrect format"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
                     }
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Not such a file"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Not such a file", text2: "Connected !")
                 }
             }
         } else {
@@ -1037,11 +976,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 try createModel()
             } catch {
                 //error message
-                self.roomIDLabel.text = "Incorrect format"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                self.showMessage(text1: "Incorrect format", text2: "Connected !")
             }
         }
     }
@@ -1049,11 +984,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, time: Double, times: Int, files: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         
@@ -1079,38 +1010,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     })
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Not such a file"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Not such a file", text2: "Connected !")
                 }
             }
         } else {
             //error message
-            self.roomIDLabel.text = "Incorrect files"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Incorrect format", text2: "Connected !")
         }
     }
     
     func map(map_data: String, width: Int, height: Int, magnification: Float, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
-        self.roomIDLabel.text = "Mapping..."
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
-        }
+        self.showMessage(text1: "Mapping...", text2: "Connected !")
         var map2 = [[String]]()
         var map3 = [[String]]()
         var map4 = [[Int]]()
@@ -1383,19 +1298,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         try mapping()
                     } else {
                         //error message
-                        self.roomIDLabel.text = "Incorrect format"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
                     }
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Not such a file"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Not such a file", text2: "Connected !")
                 }
             }
         } else {
@@ -1432,11 +1339,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     try mapping()
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Incorrect format"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Incorrect format", text2: "Connected !")
                 }
             } else if maps.count >= height {
                 for i in 0 ..< height {
@@ -1460,74 +1363,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     try mapping()
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Incorrect format"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Incorrect format", text2: "Connected !")
                 }
             } else {
                 //error message
-                self.roomIDLabel.text = "Incorrect format"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                self.showMessage(text1: "Incorrect format", text2: "Connected !")
             }
-                /*
-            } else {
-                var k = 0 // 空要素が含まれている時の処理
-                if maps.count >= width * height {
-                    for i in 0 ..< height {
-                        for j in 0 ..< width {
-                            if maps[i * width + j + k] == "" {
-                                k += 1
-                                tempArray.append(maps[i * width + j + k])
-                            } else {
-                                tempArray.append(maps[i * width + j + k])
-                            }
-                        }
-                        map2.append(tempArray)
-                        tempArray = []
-                    }
-                    do {
-                        try mapping()
-                    } catch {
-                        //error message
-                        self.roomIDLabel.text = "Incorrect format"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
-                    }
-                } else {
-                    //error message
-                    self.roomIDLabel.text = "Incorrect format"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
-                }
-            }
- */
         }
     }
     
     func pin(pin_data: String, width: Int, height: Int, magnification: Float, up_left_latitude: Float, up_left_longitude: Float, down_right_latitude: Float, down_right_longitude: Float, step: Int) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
-        self.roomIDLabel.text = "Standing pins..."
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
-        }
+        self.showMessage(text1: "Standing pins...", text2: "Connected !")
         
         var pins2: [[String]] = [[String]]()
         var pins3: [[String]] = [[String]]()
@@ -1657,30 +1508,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         }
                     } else {
                         //error message
-                        self.roomIDLabel.text = "Incorrect format"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
                     }
                 }
                 do {
                     try pinning()
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Incorrect format"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Incorrect format", text2: "Connected !")
                 }
             } else {
                 //error message
-                self.roomIDLabel.text = "Incorrect format"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                self.showMessage(text1: "Incorrect format", text2: "Connected !")
             }
         }
     }
@@ -1688,11 +1527,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func molecular_structure(x: Float, y: Float, z: Float, magnification: Float, mld_file: String) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         var position = [[String]]()
@@ -1819,20 +1654,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     do {
                         try createStructure()
                     } catch {
-                        //error message
-                        self.roomIDLabel.text = "Incorrect format"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
                     }
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Not such a file"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
-                    }
+                    self.showMessage(text1: "Not such a file", text2: "Connected !")
                 }
             }
         } else {
@@ -1842,11 +1668,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 try createStructure()
             } catch {
                 //error message
-                self.roomIDLabel.text = "Incorrect format"
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                    // Put your code which should be executed with a delay here
-                    self.roomIDLabel.text = "Connected !"
-                }
+                self.showMessage(text1: "Incorrect format", text2: "Connected !")
             }
         }
     }
@@ -1857,21 +1679,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         blue = b < 0 ? -b%256 : b%256
         
         //message
-        self.roomIDLabel.text = "(\(red):\(green):\(blue))"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
-        }
+        self.showMessage(text1: "RGB: (\(red):\(green):\(blue))", text2: "Connected !")
     }
     
     func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -1882,39 +1696,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let cubeNode = cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)]
         if (cubeNode == nil) {
             //error message
-            self.roomIDLabel.text = "No blocks"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "No blocks", text2: "Connected !")
             return
         }
         
         cubeNode?.removeFromParentNode()
         //message
-        self.roomIDLabel.text = "Remove a cube"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
-        }
+        self.showMessage(text1: "Remove a cube", text2: "Connected !")
     }
     
     func reset() {
         if (originPosition == nil) {
             //error message
-            self.roomIDLabel.text = "Put origin"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected !"
-            }
+            self.showMessage(text1: "Put origin", text2: "Connected !")
             return
         }
         //message
-        self.roomIDLabel.text = "Reset"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected !"
-        }
+        self.showMessage(text1: "Reset...", text2: "Connected !")
         
         for (id, cubeNode) in cubeNodes {
             cubeNode.removeFromParentNode()
@@ -1923,13 +1721,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @IBAction func togglePlanesButtonTapped(_ sender: UIButton) {
+        if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected !")
+            return
+        }
         if (self.settingOrigin) {
             self.settingOrigin = false
             self.xAxisNode?.isHidden = true
             self.yAxisNode?.isHidden = true
             self.zAxisNode?.isHidden = true
             
-            togglePlanesButton.setTitle("Show Planes", for: .normal)
+            togglePlanesButton.setTitle("Show", for: .normal)
             
             for (identifier, planeNode) in planeNodes {
                 planeNode.isHidden = true
@@ -1940,7 +1743,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.yAxisNode.isHidden = false
             self.zAxisNode.isHidden = false
             
-            togglePlanesButton.setTitle("Hide Planes", for: .normal)
+            togglePlanesButton.setTitle("Hide", for: .normal)
             
             for (identifier, planeNode) in planeNodes {
                 planeNode.isHidden = false
@@ -1982,6 +1785,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         socket.on(clientEvent: .connect) {data, ack in
             self.roomId = String(format: "%04d", Int(arc4random_uniform(10000))) + "-" + String(format: "%04d", Int(arc4random_uniform(10000)))
+            self.roomIDLabel.isHidden = false
             self.roomIDLabel.text = "ID: " + self.roomId
             var jsonDic = Dictionary<String, Any>()
             jsonDic["roomId"] = self.roomId
@@ -1996,7 +1800,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         socket.on("from_server") { data, ack in
-            self.roomIDLabel.text = "Connected !"
+            self.showMessage(text1: "Connection Success !", text2: "Start Modeling")
             if let msg = data[0] as? String {
                 print(msg)
                 let units = msg.components(separatedBy: ":")
@@ -2011,11 +1815,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Float(units[3])
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setCube(x: x!, y: y!, z: z!)
                     }
@@ -2028,11 +1828,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let h = Int(units[6])
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || h! < 0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setBox(x: x!, y: y!, z: z!, w: w!, d: d!, h: h!)
                     }
@@ -2046,11 +1842,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setCylinder(x: x!, y: y!, z: z!, r: _r, h: h!, a: a)
                     }
@@ -2064,11 +1856,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setHexagon(x: x!, y: y!, z: z!, r: _r, h: h!, a: a)
                     }
@@ -2080,11 +1868,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let _r = round(r! * 2.0) / 2.0
                     if x == nil || y == nil || z == nil || r == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setSphere(x: x!, y: y!, z: z!, r: _r)
                     }
@@ -2096,11 +1880,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[5]
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setChar(x: x!, y: y!, z: z!, c: c, a: a)
                     }
@@ -2113,11 +1893,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z2 = Int(units[6])
                     if x1 == nil || y1 == nil || z1 == nil || x2 == nil || y2 == nil || z2 == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setLine(x1: x1!, y1: y1!, z1: z1!, x2: x2!, y2: y2!, z2: z2!)
                     }
@@ -2131,11 +1907,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[7]
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || abs(h!) < 0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setRoof(_x: x!, _y: y!, _z: z!, w: w!, d: d!, h: h!, a: a)
                     }
@@ -2146,11 +1918,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let ply_file = units[4]
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.polygonFileFormat(x: x!, y: y!, z: z!, ply_file: ply_file)
                     }
@@ -2166,11 +1934,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let files = units[9]
                     if x == nil || y == nil || z == nil || differenceX == nil || differenceY == nil || differenceZ == nil || time == nil || times == nil || time! <= 0 || times! <= 0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: times!, files: files)
                     }
@@ -2188,11 +1952,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let upward = Int(units[11])
                     if width == nil || height == nil || magnification == nil || r1 == nil || g1 == nil || b1 == nil || r2 == nil || g2 == nil || b2 == nil || upward == nil || width! < 1 || height! < 1 || magnification! <= 0.0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!, upward: upward!)
                     }
@@ -2208,11 +1968,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let step = Int(units[9])
                     if width == nil || height == nil || magnification == nil || up_left_latitude == nil || up_left_longitude == nil || down_right_latitude == nil || down_right_longitude == nil || step == nil || width! < 1 || height! < 1 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.pin(pin_data: pin_data, width: width!, height: height!, magnification: magnification!, up_left_latitude: up_left_latitude!, up_left_longitude: up_left_longitude!, down_right_latitude: down_right_latitude!, down_right_longitude: down_right_longitude!, step: step!)
                     }
@@ -2224,11 +1980,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let mld_file = units[5]
                     if x == nil || y == nil || z == nil || magnification == nil || magnification! <= 0.0 {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
                     }
@@ -2238,11 +1990,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let b = Int(units[3])
                     if r == nil || g == nil || b == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.setColor(r: r!, g: g!, b: b!)
                     }
@@ -2252,11 +2000,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Float(units[3])
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.roomIDLabel.text = "Unacceptable value"
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
-                        }
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
                     } else {
                         self.removeCube(x: x!, y: y!, z: z!)
                     }
