@@ -34,13 +34,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var blue: Int = 255
     
     var roomId: String = "0000 0000"
-    var CUBE_SIZE: Float = 0.02
+    var CUBE_SIZE: Float = 0.01
     
     var timer = Timer()
     
     @IBOutlet var roomIDLabel: UILabel!
     
     @IBOutlet var togglePlanesButton: UIButton!
+    
+    @IBOutlet weak var helpButton: UIButton!
     
     func showMessage(text1: String, text2: String) {
         self.roomIDLabel.isHidden = false
@@ -57,7 +59,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     func changeCubeSize(magnification: Float) {
         self.showMessage(text1: "Resize x\(magnification)", text2: "Connected !")
-        CUBE_SIZE = round(0.02 * magnification * 1000.0) / 1000.0
+        CUBE_SIZE = round(0.01 * magnification * 1000.0) / 1000.0
     }
     
     func setCube(x: Float, y: Float, z: Float) {
@@ -1732,7 +1734,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.yAxisNode?.isHidden = true
             self.zAxisNode?.isHidden = true
             
-            togglePlanesButton.setTitle("Show", for: .normal)
+            togglePlanesButton.setTitle("...", for: .normal)
+            helpButton.setTitle("....", for: .normal)
             
             for (identifier, planeNode) in planeNodes {
                 planeNode.isHidden = true
@@ -1744,6 +1747,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.zAxisNode.isHidden = false
             
             togglePlanesButton.setTitle("Hide", for: .normal)
+            helpButton.setTitle("Help", for: .normal)
             
             for (identifier, planeNode) in planeNodes {
                 planeNode.isHidden = false
