@@ -469,41 +469,45 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var k = 0
         let char:String! = Chars.chars[c]
         
-        switch (a) {
-        case "x":
-            for j in 0..<8 {
-                for i in 0..<8 {
-                    var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
-                    if (flag == "1") {
-                        self.setCube(x: Float(x), y: Float(y - j), z: Float(z + i))
+        if char == nil {
+            showMessage(text1: "Unidentified Character", text2: "Connected")
+        } else {
+            switch (a) {
+            case "x":
+                for j in 0..<8 {
+                    for i in 0..<8 {
+                        var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
+                        if (flag == "1") {
+                            self.setCube(x: Float(x), y: Float(y - j), z: Float(z + i))
+                        }
+                        k += 1
                     }
-                    k += 1
                 }
-            }
-        case "y":
-            for j in 0..<8 {
-                for i in 0..<8 {
-                    var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
-                    if (flag == "1") {
-                        self.setCube(x: Float(x + i), y: Float(y), z: Float(z + j))
+            case "y":
+                for j in 0..<8 {
+                    for i in 0..<8 {
+                        var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
+                        if (flag == "1") {
+                            self.setCube(x: Float(x + i), y: Float(y), z: Float(z + j))
+                        }
+                        k += 1
                     }
-                    k += 1
                 }
-            }
-        case "z":
-            for j in 0..<8 {
-                for i in 0..<8 {
-                    var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
-                    if (flag == "1") {
-                        self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z))
+            case "z":
+                for j in 0..<8 {
+                    for i in 0..<8 {
+                        var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
+                        if (flag == "1") {
+                            self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z))
+                        }
+                        k += 1
                     }
-                    k += 1
                 }
+            default:
+                //error message
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
+                break
             }
-        default:
-            //error message
-            self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
-            break
         }
     }
     
@@ -859,10 +863,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-
+        
         
         let loop: Int
-
+        
         var ply2 = [[String]]()
         
         func createModel() throws {
@@ -872,11 +876,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var vertex1: [String]
             var vertex2: [String]
             var vertex3: [String]
-
+            
             var _x: Float
             var _y: Float
             var _z: Float
-
+            
             for i in 0 ..< loop {
                 vertex1 = ply2[4 * i]
                 vertex2 = ply2[4 * i + 1]
@@ -953,7 +957,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if plys.count == 1 {
                         plys = ply.components(separatedBy: "\r")
                     }
-
+                    
                     if Int(plys[4].components(separatedBy: " ")[2]) != nil {
                         loop = Int(plys[4].components(separatedBy: " ")[2])! / 4
                         for i in 0 ..< 4 * loop {
@@ -1285,7 +1289,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         try mapping()
                     } else if maps.count >= height { // from Web地形自動生成（http://www.bekkoame.ne.jp/ro/kami/LandMaker/LandMaker.html） or self made map
                         if maps[0].contains("map") || maps[0].contains("Map") {
-                           maps.removeFirst()
+                            maps.removeFirst()
                         }
                         for i in 0 ..< height {
                             if maps[i].contains(",") {
@@ -1635,7 +1639,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 _r = _r < 3.0 ? 3.0 : _r
                 self.setSphere(x: _x, y: _y, z: _z, r: _r)
             }
-
+            
             self.setColor(r: 127, g: 127, b: 127)
             for j in 0 ..< loop2 {
                 _x1 = Int(x + Float(position[Int(line[j][0])! - 1][0])! * magnification)
