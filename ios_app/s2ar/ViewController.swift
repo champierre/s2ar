@@ -60,14 +60,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     func changeCubeSize(magnification: Float) {
-        self.showMessage(text1: "Resize x\(magnification)", text2: "Connected !")
+        self.showMessage(text1: "Resize x\(magnification)", text2: "Connected")
         CUBE_SIZE = round(0.01 * magnification * 1000.0) / 1000.0
     }
     
     func setCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         // 3Dモデル作成のデータ（.ply）は整数のみではなく 0.5 を含むため、setCube を 0.5 刻みで置けるように改造した。
@@ -103,7 +103,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setBox(x: Int, y: Int, z: Int, w: Int, d: Int, h: Int) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         
@@ -121,7 +121,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setCylinder(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         var i: Int
@@ -226,7 +226,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
                 break
             }
         } else {
@@ -330,7 +330,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
                 break
             }
         }
@@ -339,7 +339,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setHexagon(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         let _r = r < 0 ? -Int(r) : Int(r)
@@ -416,7 +416,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
             break
         }
     }
@@ -424,7 +424,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setSphere(x: Int, y: Int, z: Int, r: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         let r1: Float = r < 0 ? -r : r
@@ -463,7 +463,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setChar(x: Int, y: Int, z: Int, c: String, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         var k = 0
@@ -502,7 +502,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
             break
         }
     }
@@ -510,7 +510,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setLine(x1: Int, y1: Int, z1: Int, x2: Int, y2: Int, z2: Int) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         if !(x1 == x2 && y1 == y2 && z1 == z2) {
@@ -591,14 +591,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         } else {
             //error message
-            self.showMessage(text1: "same points", text2: "Connected !")
+            self.showMessage(text1: "same points", text2: "Connected")
         }
     }
     
     func setRoof(_x: Int, _y: Int, _z: Int, w: Int, d: Int, h: Int, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         var temp: Float
@@ -848,7 +848,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.showMessage(text1: "Axis: x or y or z", text2: "Connected !")
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
             break
         }
     }
@@ -856,11 +856,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func polygonFileFormat(x: Int, y: Int, z: Int, ply_file: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         
-        let roop: Int
+        let loop: Int
         var ply2 = [[String]]()
         
         func createModel() throws {
@@ -873,7 +873,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var _x: Float
             var _y: Float
             var _z: Float
-            for i in 0 ..< roop {
+            for i in 0 ..< loop {
                 vertex1 = ply2[4 * i]
                 vertex2 = ply2[4 * i + 1]
                 vertex3 = ply2[4 * i + 2]
@@ -950,18 +950,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         plys = ply.components(separatedBy: "\r")
                     }
                     if Int(plys[4].components(separatedBy: " ")[2]) != nil {
-                        roop = Int(plys[4].components(separatedBy: " ")[2])! / 4
-                        for i in 0 ..< 4 * roop {
+                        loop = Int(plys[4].components(separatedBy: " ")[2])! / 4
+                        for i in 0 ..< 4 * loop {
                             ply2.append(plys[14 + i].components(separatedBy: " "))
                         }
                         try createModel()
                     } else {
                         //error message
-                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
                 } catch {
                     //error message
-                    self.showMessage(text1: "Not such a file", text2: "Connected !")
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
         } else {
@@ -969,8 +969,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             do {
                 let plys = ply_file.components(separatedBy: " ")
                 var tempArray: [String] = []
-                roop = plys.count / 24
-                for i in 0 ..< 4 * roop {
+                loop = plys.count / 24
+                for i in 0 ..< 4 * loop {
                     for j in 0 ..< 6 {
                         tempArray.append(plys[6 * i + j])
                     }
@@ -980,7 +980,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 try createModel()
             } catch {
                 //error message
-                self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
         }
     }
@@ -988,7 +988,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, time: Double, times: Int, files: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         
@@ -1014,22 +1014,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     })
                 } catch {
                     //error message
-                    self.showMessage(text1: "Not such a file", text2: "Connected !")
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
         } else {
             //error message
-            self.showMessage(text1: "Incorrect format", text2: "Connected !")
+            self.showMessage(text1: "Incorrect format", text2: "Connected")
         }
     }
     
     func map(map_data: String, width: Int, height: Int, magnification: Float, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-        self.showMessage(text1: "Mapping...", text2: "Connected !")
+        self.showMessage(text1: "Mapping...", text2: "Connected")
         var map2 = [[String]]()
         var map3 = [[String]]()
         var map4 = [[Int]]()
@@ -1302,11 +1302,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         try mapping()
                     } else {
                         //error message
-                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
                 } catch {
                     //error message
-                    self.showMessage(text1: "Not such a file", text2: "Connected !")
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
         } else {
@@ -1343,7 +1343,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     try mapping()
                 } catch {
                     //error message
-                    self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                    self.showMessage(text1: "Incorrect format", text2: "Connected")
                 }
             } else if maps.count >= height {
                 for i in 0 ..< height {
@@ -1367,11 +1367,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     try mapping()
                 } catch {
                     //error message
-                    self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                    self.showMessage(text1: "Incorrect format", text2: "Connected")
                 }
             } else {
                 //error message
-                self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
         }
     }
@@ -1379,10 +1379,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func pin(pin_data: String, width: Int, height: Int, magnification: Float, up_left_latitude: Float, up_left_longitude: Float, down_right_latitude: Float, down_right_longitude: Float, step: Int) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-        self.showMessage(text1: "Standing pins...", text2: "Connected !")
+        self.showMessage(text1: "Standing pins...", text2: "Connected")
         
         var pins2: [[String]] = [[String]]()
         var pins3: [[String]] = [[String]]()
@@ -1468,7 +1468,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             self.roomIDLabel.text = "Incorrect format"
                             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                                 // Put your code which should be executed with a delay here
-                                self.roomIDLabel.text = "Connected !"
+                                self.roomIDLabel.text = "Connected"
                             }
                         }
                     } else {
@@ -1476,7 +1476,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.roomIDLabel.text = "Incorrect format"
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                             // Put your code which should be executed with a delay here
-                            self.roomIDLabel.text = "Connected !"
+                            self.roomIDLabel.text = "Connected"
                         }
                     }
                 } catch {
@@ -1484,7 +1484,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.roomIDLabel.text = "Not such a file"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected !"
+                        self.roomIDLabel.text = "Connected"
                     }
                 }
             }
@@ -1512,18 +1512,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         }
                     } else {
                         //error message
-                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
                 }
                 do {
                     try pinning()
                 } catch {
                     //error message
-                    self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                    self.showMessage(text1: "Incorrect format", text2: "Connected")
                 }
             } else {
                 //error message
-                self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
         }
     }
@@ -1531,7 +1531,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func molecular_structure(x: Float, y: Float, z: Float, magnification: Float, mld_file: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         var position = [[String]]()
@@ -1553,15 +1553,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var _y2: Int
             var _z2: Int
             
-            let roop1: Int = Int(mlds[1])!
-            for i in 0 ..< roop1 {
+            let loop1: Int = Int(mlds[1])!
+            for i in 0 ..< loop1 {
                 position.append(mlds[2 + i].components(separatedBy: ","))
             }
-            let roop2: Int = Int(mlds[2 + roop1])!
-            for i in 0 ..< roop2 {
-                line.append(mlds[3 + roop1 + i].components(separatedBy: ","))
+            let loop2: Int = Int(mlds[2 + loop1])!
+            for i in 0 ..< loop2 {
+                line.append(mlds[3 + loop1 + i].components(separatedBy: ","))
             }
-            for i in 0 ..< roop1 {
+            for i in 0 ..< loop1 {
                 switch (position[i][3]) {
                 case "1": //Hydrogen 水素
                     self.setColor(r: 255, g: 255, b: 255)
@@ -1631,7 +1631,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.setSphere(x: _x, y: _y, z: _z, r: _r)
             }
             self.setColor(r: 127, g: 127, b: 127)
-            for j in 0 ..< roop2 {
+            for j in 0 ..< loop2 {
                 _x1 = Int(x + Float(position[Int(line[j][0])! - 1][0])! * magnification)
                 _y1 = Int(y + Float(position[Int(line[j][0])! - 1][1])! * magnification)
                 _z1 = Int(z + Float(position[Int(line[j][0])! - 1][2])! * magnification)
@@ -1658,11 +1658,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     do {
                         try createStructure()
                     } catch {
-                        self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
                 } catch {
                     //error message
-                    self.showMessage(text1: "Not such a file", text2: "Connected !")
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
         } else {
@@ -1672,7 +1672,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 try createStructure()
             } catch {
                 //error message
-                self.showMessage(text1: "Incorrect format", text2: "Connected !")
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
         }
     }
@@ -1683,13 +1683,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         blue = b < 0 ? -b%256 : b%256
         
         //message
-        self.showMessage(text1: "RGB: (\(red):\(green):\(blue))", text2: "Connected !")
+        self.showMessage(text1: "RGB: (\(red):\(green):\(blue))", text2: "Connected")
     }
     
     func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -1700,23 +1700,23 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let cubeNode = cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)]
         if (cubeNode == nil) {
             //error message
-            self.showMessage(text1: "No blocks", text2: "Connected !")
+            self.showMessage(text1: "No blocks", text2: "Connected")
             return
         }
         
         cubeNode?.removeFromParentNode()
         //message
-        self.showMessage(text1: "Remove a cube", text2: "Connected !")
+        self.showMessage(text1: "Remove a cube", text2: "Connected")
     }
     
     func reset() {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         //message
-        self.showMessage(text1: "Reset...", text2: "Connected !")
+        self.showMessage(text1: "Reset...", text2: "Connected")
         
         for (id, cubeNode) in cubeNodes {
             cubeNode.removeFromParentNode()
@@ -1727,7 +1727,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBAction func togglePlanesButtonTapped(_ sender: UIButton) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text1: "Put origin", text2: "Connected !")
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         if (self.settingOrigin) {
@@ -1825,7 +1825,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Float(units[3])
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setCube(x: x!, y: y!, z: z!)
                     }
@@ -1838,7 +1838,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let h = Float(units[6])
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || h! < 0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setBox(x: Int(x!), y: Int(y!), z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!))
                     }
@@ -1852,7 +1852,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setCylinder(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
                     }
@@ -1866,7 +1866,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setHexagon(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
                     }
@@ -1878,7 +1878,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let _r = round(r! * 2.0) / 2.0
                     if x == nil || y == nil || z == nil || r == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setSphere(x: Int(x!), y: Int(y!), z: Int(z!), r: _r)
                     }
@@ -1890,7 +1890,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[5]
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setChar(x: Int(x!), y: Int(y!), z: Int(z!), c: c, a: a)
                     }
@@ -1903,7 +1903,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z2 = Float(units[6])
                     if x1 == nil || y1 == nil || z1 == nil || x2 == nil || y2 == nil || z2 == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setLine(x1: Int(x1!), y1: Int(y1!), z1: Int(z1!), x2: Int(x2!), y2: Int(y2!), z2: Int(z2!))
                     }
@@ -1917,7 +1917,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[7]
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || abs(h!) < 0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setRoof(_x: Int(x!), _y: Int(y!), _z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!), a: a)
                     }
@@ -1928,7 +1928,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let ply_file = units[4]
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.polygonFileFormat(x: Int(x!), y: Int(y!), z: Int(z!), ply_file: ply_file)
                     }
@@ -1944,7 +1944,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let files = units[9]
                     if x == nil || y == nil || z == nil || differenceX == nil || differenceY == nil || differenceZ == nil || time == nil || times == nil || time! <= 0 || times! <= 0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.animation(x: Int(x!), y: Int(y!), z: Int(z!), differenceX: Int(differenceX!), differenceY: Int(differenceY!), differenceZ: Int(differenceZ!), time: time!, times: Int(times!), files: files)
                     }
@@ -1962,7 +1962,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let upward = Float(units[11])
                     if width == nil || height == nil || magnification == nil || r1 == nil || g1 == nil || b1 == nil || r2 == nil || g2 == nil || b2 == nil || upward == nil || width! < 1 || height! < 1 || magnification! <= 0.0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.map(map_data: map_data, width: Int(width!), height: Int(height!), magnification: magnification!, r1: Int(r1!), g1: Int(g1!), b1: Int(b1!), r2: Int(r2!), g2: Int(g2!), b2: Int(b2!), upward: Int(upward!))
                     }
@@ -1978,7 +1978,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let step = Float(units[9])
                     if width == nil || height == nil || magnification == nil || up_left_latitude == nil || up_left_longitude == nil || down_right_latitude == nil || down_right_longitude == nil || step == nil || width! < 1 || height! < 1 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.pin(pin_data: pin_data, width: Int(width!), height: Int(height!), magnification: magnification!, up_left_latitude: up_left_latitude!, up_left_longitude: up_left_longitude!, down_right_latitude: down_right_latitude!, down_right_longitude: down_right_longitude!, step: Int(step!))
                     }
@@ -1990,7 +1990,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let mld_file = units[5]
                     if x == nil || y == nil || z == nil || magnification == nil || magnification! <= 0.0 {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
                     }
@@ -2000,7 +2000,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let b = Float(units[3])
                     if r == nil || g == nil || b == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
                     }
@@ -2010,7 +2010,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Float(units[3])
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text1: "Unacceptable value", text2: "Connected !")
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
                     } else {
                         self.removeCube(x: x!, y: y!, z: z!)
                     }
