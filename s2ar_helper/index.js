@@ -3,7 +3,7 @@ var server = require('http').createServer(function(req, res) {
     res.end();
 });
 var io = require('socket.io')(server);
-var port = process.env.PORT;
+var port = process.env.PORT || 3000;
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);

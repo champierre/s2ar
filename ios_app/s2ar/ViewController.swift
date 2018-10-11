@@ -859,8 +859,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
+
         
         let loop: Int
+
         var ply2 = [[String]]()
         
         func createModel() throws {
@@ -870,9 +872,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var vertex1: [String]
             var vertex2: [String]
             var vertex3: [String]
+
             var _x: Float
             var _y: Float
             var _z: Float
+
             for i in 0 ..< loop {
                 vertex1 = ply2[4 * i]
                 vertex2 = ply2[4 * i + 1]
@@ -949,6 +953,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if plys.count == 1 {
                         plys = ply.components(separatedBy: "\r")
                     }
+
                     if Int(plys[4].components(separatedBy: " ")[2]) != nil {
                         loop = Int(plys[4].components(separatedBy: " ")[2])! / 4
                         for i in 0 ..< 4 * loop {
@@ -960,7 +965,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
                 } catch {
-                    //error message
+                    //error messager
                     self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
@@ -1630,6 +1635,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 _r = _r < 3.0 ? 3.0 : _r
                 self.setSphere(x: _x, y: _y, z: _z, r: _r)
             }
+
             self.setColor(r: 127, g: 127, b: 127)
             for j in 0 ..< loop2 {
                 _x1 = Int(x + Float(position[Int(line[j][0])! - 1][0])! * magnification)
