@@ -14,7 +14,7 @@ import SocketIO
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let manager = SocketManager(socketURL: URL(string: "http://s2ar-helper.glitch.me")!, config: [.log(true), .compress])
     var settingOrigin: Bool = true
-
+    
     var xAxisNode: SCNNode!
     var yAxisNode: SCNNode!
     var zAxisNode: SCNNode!
@@ -22,7 +22,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     var cubeNode: SCNNode!
     var cubeNodes: [String:SCNNode] = [:]
-
+    
     var lightNode: SCNNode!
     var backLightNode: SCNNode!
     
@@ -34,304 +34,658 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var blue: Int = 255
     
     var roomId: String = "0000 0000"
-    let CUBE_SIZE: Float = 0.02
+    var CUBE_SIZE: Float = 0.01
     
     var timer = Timer()
+    
+    var connectionState: Bool = false
     
     @IBOutlet var roomIDLabel: UILabel!
     
     @IBOutlet var togglePlanesButton: UIButton!
-
-    func setCube(x: Int, y: Int, z: Int) {
+    
+    @IBOutlet weak var helpButton: UIButton!
+    
+    func showMessage(text1: String, text2: String) {
+        self.roomIDLabel.isHidden = false
+        self.roomIDLabel.text = text1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            // Put your code which should be executed with a delay here
+            self.roomIDLabel.text = text2
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                // Put your code which should be executed with a delay here
+                self.roomIDLabel.isHidden = true
+            }
+        }
+    }
+    
+    func changeCubeSize(magnification: Float) {
+        self.showMessage(text1: "Resize x\(magnification)", text2: "Connected")
+        CUBE_SIZE = round(0.01 * magnification * 1000.0) / 1000.0
+    }
+    
+    func setCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-        func setCubeMethod(x: Int, y: Int, z: Int) {
+        // 3Dモデル作成のデータ（.ply）は整数のみではなく 0.5 を含むため、setCube を 0.5 刻みで置けるように改造した。
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        
+        func setCubeMethod(x: Float, y: Float, z: Float) {
             let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
             cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1)
             cubeNode = SCNNode(geometry: cube)
             cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
             let position = SCNVector3Make(
-                originPosition.x + Float(x) * CUBE_SIZE,
-                originPosition.y + Float(y) * CUBE_SIZE,
-                originPosition.z + Float(z) * CUBE_SIZE
+                originPosition.x + _x * CUBE_SIZE,
+                originPosition.y + _y * CUBE_SIZE,
+                originPosition.z + _z * CUBE_SIZE
             )
             cubeNode.position = position
             sceneView.scene.rootNode.addChildNode(cubeNode)
-            cubeNodes[String(x) + "_" + String(y) + "_" + String(z)] = cubeNode
+            cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
         }
-        if cubeNodes.keys.contains(String(x) + "_" + String(y) + "_" + String(z)) {
+        if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
             // remove cube if contains
-            self.removeCube(x: x, y: y, z: z)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                // set cube
-                setCubeMethod(x: x, y: y, z: z)
-            }
-                /*
-            Thread.sleep(forTimeInterval: 0.01)
-            // set cube
-            setCubeMethod(x: x, y: y, z: z)
-            */
+            self.removeCube(x: _x, y: _y, z: _z)
+            setCubeMethod(x: _x, y: _y, z: _z)
         } else {
             // set cube
-            setCubeMethod(x: x, y: y, z: z)
+            setCubeMethod(x: _x, y: _y, z: _z)
         }
     }
     
     func setBox(x: Int, y: Int, z: Int, w: Int, d: Int, h: Int) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         
-        for k in 0...d {
-            for j in 0...h {
-                for i in 0...w {
-                    self.setCube(x: x + i, y: y + j, z: z + k)
+        for k in 0..<d {
+            for j in 0..<h {
+                for i in 0..<w {
+                    if k == 0 || k == d - 1 || j == 0 || j == h - 1 || i == 0 || i == w - 1 {
+                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                    }
                 }
             }
         }
     }
     
-    func setCylinder(x: Int, y: Int, z: Int, r: Int, h: Int, a: String) {
+    func setCylinder(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
+        var i: Int
+        var j: Int
+        var k: Int
+        let r1: Float = r < 0 ? -r : r
+        let _r = Int(r1)
+        
+        if (abs(r1.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            //小数点なし
+            switch a {
+            case "x":
+                i = 0
+                for k in -_r..._r {
+                    for j in -_r..._r {
+                        if j * j + k * k < _r * _r {
+                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                        }
+                    }
+                }
+                if h > 1 {
+                    i = h - 1
+                    for k in -_r..._r {
+                        for j in -_r..._r {
+                            if j * j + k * k < _r * _r {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            }
+                        }
+                    }
+                }
+                if h > 2 {
+                    for i in 1..<h-1 {
+                        for k in -_r..._r {
+                            for j in -_r..._r {
+                                if (j * j + k * k < _r * _r) && (j * j + k * k >= (_r - 1) * (_r - 1)) {
+                                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            case "y":
+                j = 0
+                for k in -_r..._r {
+                    for i in -_r..._r  {
+                        if i * i + k * k < _r * _r {
+                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                        }
+                    }
+                }
+                if h > 1 {
+                    j = h - 1
+                    for k in -_r..._r {
+                        for i in -_r..._r  {
+                            if i * i + k * k < _r * _r {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            }
+                        }
+                    }
+                }
+                if h > 2 {
+                    for j in 1..<h-1 {
+                        for k in -_r..._r{
+                            for i in -_r..._r {
+                                if (k * k + i * i < _r * _r) && (k * k + i * i >= (_r - 1) * (_r - 1)) {
+                                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                }
+                            }
+                        }
+                    }
+                }
+            case "z":
+                k = 0
+                for j in -_r..._r {
+                    for i in -_r..._r {
+                        if i * i + j * j < _r * _r {
+                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                        }
+                    }
+                }
+                if h > 1 {
+                    k = h - 1
+                    for j in -_r..._r {
+                        for i in -_r..._r {
+                            if i * i + j * j < _r * _r {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            }
+                        }
+                    }
+                }
+                if h > 2 {
+                    for k in 1..<h-1 {
+                        for j in -_r..._r {
+                            for i in -_r..._r {
+                                if (i * i + j * j < _r * _r) && (i * i + j * j >= (_r - 1) * (_r - 1)) {
+                                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                }
+                            }
+                        }
+                    }
+                }
+            default:
+                //error message
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
+                break
+            }
+        } else {
+            //小数点あり
+            switch a {
+            case "x":
+                i = 0
+                for k in -_r..._r+1 {
+                    for j in -_r..._r+1 {
+                        if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                            self.setCube(x: Float(x + i), y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                        }
+                    }
+                }
+                if h > 1 {
+                    i = h - 1
+                    for k in -_r..._r+1 {
+                        for j in -_r..._r+1 {
+                            if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                                self.setCube(x: Float(x + i), y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                            }
+                        }
+                    }
+                }
+                if h > 2 {
+                    for i in 1..<h-1 {
+                        for k in -_r..._r+1 {
+                            for j in -_r..._r+1 {
+                                if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                                    if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) >= (r1 - 1) * (r1 - 1) {
+                                        self.setCube(x: Float(x + i), y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            case "y":
+                j = 0
+                for k in -_r..._r+1 {
+                    for i in -_r..._r+1  {
+                        if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                            self.setCube(x: Float(x + i) - 0.5, y: Float(y + j), z: Float(z + k) - 0.5)
+                        }
+                    }
+                }
+                if h > 1 {
+                    j = h - 1
+                    for k in -_r..._r+1 {
+                        for i in -_r..._r+1  {
+                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                                self.setCube(x: Float(x + i) - 0.5, y: Float(y + j), z: Float(z + k) - 0.5)
+                            }
+                        }
+                    }
+                }
+                if h > 2 {
+                    for j in 1..<h-1 {
+                        for k in -_r..._r+1 {
+                            for i in -_r..._r+1 {
+                                if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                                    if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) >= (r1 - 1) * (r1 - 1) {
+                                        self.setCube(x: Float(x + i) - 0.5, y: Float(y + j), z: Float(z + k) - 0.5)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            case "z":
+                k = 0
+                for j in -_r..._r+1 {
+                    for i in -_r..._r+1 {
+                        if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
+                            self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k))
+                        }
+                    }
+                }
+                if h > 1 {
+                    k = h - 1
+                    for j in -_r..._r+1 {
+                        for i in -_r..._r+1 {
+                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
+                                self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k))
+                            }
+                        }
+                    }
+                }
+                if h > 2 {
+                    for k in 1..<h-1 {
+                        for j in -_r..._r+1 {
+                            for i in -_r..._r+1 {
+                                if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
+                                    if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) >= (r1 - 1) * (r1 - 1) {
+                                        self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            default:
+                //error message
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
+                break
+            }
+        }
+    }
+    
+    func setHexagon(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
+        if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
+            return
+        }
+        let _r = r < 0 ? -Int(r) : Int(r)
         
         switch a {
         case "x":
-            for k in -r...r {
-                for j in -r...r {
+            for k in 0..._r {
+                for j in 0..._r {
                     for i in 0..<h {
-                        if (j * j + k * k < r * r) {
-                            self.setCube(x: x + i, y: y + j, z: z + k)
+                        if ((Float(j) <= cos(Float.pi / 6) * Float(_r)) && (Float(j) <= -tan(Float.pi / 3) * Float(k) + tan(Float.pi / 3) * Float(_r))) {
+                            if j == 0 && k == 0 {
+                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z))
+                            }  else if j == 0 {
+                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z + k))
+                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z - k))
+                            } else if k == 0 {
+                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z))
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z))
+                            } else {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z + k))
+                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z - k))
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z - k))
+                            }
                         }
                     }
                 }
             }
         case "y":
-            for k in -r...r {
+            for k in 0..._r {
                 for j in 0..<h {
-                    for i in -r...r {
-                        if (i * i + k * k < r * r) {
-                            self.setCube(x: x + i, y: y + j, z: z + k)
+                    for i in 0..._r {
+                        if ((Float(k) <= cos(Float.pi / 6) * Float(_r)) && (Float(k) <= -tan(Float.pi / 3) * Float(i) + tan(Float.pi / 3) * Float(_r))) {
+                            if k == 0 && i == 0 {
+                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z))
+                            } else if k == 0 {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z))
+                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z))
+                            } else if i == 0 {
+                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z - k))
+                            }else {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z - k))
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z - k))
+                            }
                         }
                     }
                 }
             }
         case "z":
             for k in 0..<h {
-                for j in -r...r {
-                    for i in -r...r {
-                        if (i * i + j * j < r * r) {
-                            self.setCube(x: x + i, y: y + j, z: z + k)
+                for j in 0..._r {
+                    for i in 0..._r {
+                        if ((Float(j) <= cos(Float.pi / 6) * Float(_r)) && (Float(j) <= -tan(Float.pi / 3) * Float(i) + tan(Float.pi / 3) * Float(_r))) {
+                            if i == 0 && j == 0 {
+                                self.setCube(x: Float(x), y: Float(y), z: Float(z + k))
+                            } else if i == 0 {
+                                self.setCube(x: Float(x), y: Float(y - j), z: Float(z + k))
+                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z + k))
+                            } else if j == 0 {
+                                self.setCube(x: Float(x - i), y: Float(y), z: Float(z + k))
+                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z + k))
+                            } else {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: Float(x - i), y: Float(y - j), z: Float(z + k))
+                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z + k))
+                            }
                         }
                     }
                 }
             }
         default:
+            //error message
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
             break
         }
     }
     
-    func setHexagon(x: Int, y: Int, z: Int, r: Int, h: Int, a: String) {
+    func setSphere(x: Int, y: Int, z: Int, r: Float) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
+        let r1: Float = r < 0 ? -r : r
+        let _r = Int(r1)
         
-        switch a {
-        case "x":
-            for k in 0...r {
-                for j in 0...r {
-                    for i in 0..<h {
-                        if ((Double(j) <= cos(Double.pi / 6) * Double(r)) && (Double(j) <= -tan(Double.pi / 3) * Double(k) + tan(Double.pi / 3) * Double(r))) {
-                            self.setCube(x: x + i, y: y + j, z: z + k)
-                            self.setCube(x: x + i, y: y - j, z: z + k)
-                            self.setCube(x: x + i, y: y - j, z: z - k)
-                            self.setCube(x: x + i, y: y + j, z: z - k)
+        if (abs(r1.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            //小数点なし
+            for k in -_r..._r {
+                for j in -_r..._r {
+                    for i in -_r..._r {
+                        if i * i + j * j + k * k < _r * _r {
+                            if i * i + j * j + k * k >= (_r - 1) * (_r - 1) {
+                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            }
                         }
                     }
                 }
             }
-        case "y":
-            for k in 0...r {
-                for j in 0..<h {
-                    for i in 0...r {
-                        if ((Double(k) <= cos(Double.pi / 6) * Double(r)) && (Double(k) <= -tan(Double.pi / 3) * Double(i) + tan(Double.pi / 3) * Double(r))) {
-                            self.setCube(x: x + i, y: y + j, z: z + k)
-                            self.setCube(x: x - i, y: y + j, z: z + k)
-                            self.setCube(x: x - i, y: y + j, z: z - k)
-                            self.setCube(x: x + i, y: y + j, z: z - k)
+        } else {
+            //小数点あり
+            for k in -_r..._r+1 {
+                for j in -_r..._r+1 {
+                    for i in -_r..._r+1 {
+                        if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) > (r1 - 1) * (r1 - 1) {
+                                self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                            }
                         }
                     }
                 }
             }
-        case "z":
-            for k in 0..<h {
-                for j in 0...r {
-                    for i in 0...r {
-                        if ((Double(j) <= cos(Double.pi / 6) * Double(r)) && (Double(j) <= -tan(Double.pi / 3) * Double(i) + tan(Double.pi / 3) * Double(r))) {
-                            self.setCube(x: x + i, y: y + j, z: z + k)
-                            self.setCube(x: x - i, y: y + j, z: z + k)
-                            self.setCube(x: x - i, y: y - j, z: z + k)
-                            self.setCube(x: x + i, y: y - j, z: z + k)
-                        }
-                    }
-                }
-            }
-        default:
-            break
-        }
-    }
-    
-    func setSphere(x: Int, y: Int, z: Int, r: Int) {
-        if (originPosition == nil) {
-            return
-        }
-        
-        for k in -r...r {
-            for j in -r...r {
-                for i in -r...r {
-                    if (i * i + j * j + k * k < r * r) {
-                        self.setCube(x: x + i, y: y + j, z: z + k)
-                    }
-                }
-            }
+            
         }
     }
     
     func setChar(x: Int, y: Int, z: Int, c: String, a: String) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         var k = 0
         let char:String! = Chars.chars[c]
-
-        switch (a) {
-        case "x":
-            for j in 0..<8 {
-                for i in 0..<8 {
-                    var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
-                    if (flag == "1") {
-                        self.setCube(x: x, y: y - j, z: z + i)
+        
+        if char == nil {
+            showMessage(text1: "Unidentified Character", text2: "Connected")
+        } else {
+            switch (a) {
+            case "x":
+                for j in 0..<8 {
+                    for i in 0..<8 {
+                        var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
+                        if (flag == "1") {
+                            self.setCube(x: Float(x), y: Float(y - j), z: Float(z + i))
+                        }
+                        k += 1
                     }
-                    k += 1
                 }
-            }
-        case "y":
-            for j in 0..<8 {
-                for i in 0..<8 {
-                    var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
-                    if (flag == "1") {
-                        self.setCube(x: x + i, y: y, z: z - j)
+            case "y":
+                for j in 0..<8 {
+                    for i in 0..<8 {
+                        var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
+                        if (flag == "1") {
+                            self.setCube(x: Float(x + i), y: Float(y), z: Float(z + j))
+                        }
+                        k += 1
                     }
-                    k += 1
                 }
-            }
-        case "z":
-            for j in 0..<8 {
-                for i in 0..<8 {
-                    var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
-                    if (flag == "1") {
-                        self.setCube(x: x + i, y: y - j, z: z)
+            case "z":
+                for j in 0..<8 {
+                    for i in 0..<8 {
+                        var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
+                        if (flag == "1") {
+                            self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z))
+                        }
+                        k += 1
                     }
-                    k += 1
                 }
+            default:
+                //error message
+                self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
+                break
             }
-        default:
-            break
         }
     }
     
     func setLine(x1: Int, y1: Int, z1: Int, x2: Int, y2: Int, z2: Int) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-
-        var vector = [x2 - x1, y2 - y1, z2 - z1]
-        var vector2 = [abs(x2 - x1), abs(y2 - y1), abs(z2 - z1)]
-        
-        let index:Int? = vector2.index(of: vector2.max()!)
-        
-        switch (index) {
-        case 0:
-            for i in 0...vector2[0] {
-                if (x2 > x1) {
-                    self.setCube(x: x1 + i, y: y1 + vector[1] * i / vector[0], z: z1 + vector[2] * i / vector[0])
-                } else {
-                    self.setCube(x: x2 + i, y: y2 + vector[1] * i / vector[0], z: z2 + vector[2] * i / vector[0])
+        if !(x1 == x2 && y1 == y2 && z1 == z2) {
+            var vector = [x2 - x1, y2 - y1, z2 - z1]
+            var vector2 = [abs(x2 - x1), abs(y2 - y1), abs(z2 - z1)]
+            var _x: Float
+            var _y: Float
+            var _z: Float
+            
+            let index:Int? = vector2.index(of: vector2.max()!)
+            
+            switch (index) {
+            case 0:
+                for i in 0...vector2[0] {
+                    if (x2 > x1) {
+                        //self.setCube(x: x1 + i, y: y1 + vector[1] * i / vector[0], z: z1 + vector[2] * i / vector[0])
+                        _x = Float(x1) + Float(i)
+                        _y = Float(y1) + Float(vector[1]) * Float(i) / Float(vector[0])
+                        _z = Float(z1) + Float(vector[2]) * Float(i) / Float(vector[0])
+                    } else {
+                        //self.setCube(x: x2 + i, y: y2 + vector[1] * i / vector[0], z: z2 + vector[2] * i / vector[0])
+                        _x = Float(x2) + Float(i)
+                        _y = Float(y2) + Float(vector[1]) * Float(i) / Float(vector[0])
+                        _z = Float(z2) + Float(vector[2]) * Float(i) / Float(vector[0])
+                    }
+                    _x = round(_x * 2.0) / 2.0
+                    _y = round(_y * 2.0) / 2.0
+                    _z = round(_z * 2.0) / 2.0
+                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        // does not contains key
+                        self.setCube(x: _x, y: _y, z: _z)
+                    }
                 }
-            }
-        case 1:
-            for i in 0...vector2[1] {
-                if (y2 > y1) {
-                    self.setCube(x: x1 + vector[0] * i / vector[1], y: y1 + i, z: z1 + vector[2] * i / vector[1])
-                } else {
-                    self.setCube(x: x2 + vector[0] * i / vector[1], y: y2 + i, z: z2 + vector[2] * i / vector[1])
+            case 1:
+                for i in 0...vector2[1] {
+                    if (y2 > y1) {
+                        //self.setCube(x: x1 + vector[0] * i / vector[1], y: y1 + i, z: z1 + vector[2] * i / vector[1])
+                        _x = Float(x1) + Float(vector[0]) * Float(i) / Float(vector[1])
+                        _y = Float(y1) + Float(i)
+                        _z = Float(z1) + Float(vector[2]) * Float(i) / Float(vector[1])
+                    } else {
+                        //self.setCube(x: x2 + vector[0] * i / vector[1], y: y2 + i, z: z2 + vector[2] * i / vector[1])
+                        _x = Float(x2) + Float(vector[0]) * Float(i) / Float(vector[1])
+                        _y = Float(y2) + Float(i)
+                        _z = Float(z2) + Float(vector[2]) * Float(i) / Float(vector[1])
+                    }
+                    _x = round(_x * 2.0) / 2.0
+                    _y = round(_y * 2.0) / 2.0
+                    _z = round(_z * 2.0) / 2.0
+                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        // does not contains key
+                        self.setCube(x: _x, y: _y, z: _z)
+                    }
                 }
-            }
-        case 2:
-            for i in 0...vector2[2] {
-                if (z2 > z1) {
-                    self.setCube(x: x1 + vector[0] * i / vector[2], y: y1 + vector[1] * i / vector[2], z: z1 + i)
-                } else {
-                    self.setCube(x: x2 + vector[0] * i / vector[2], y: y2 + vector[1] * i / vector[2], z: z2 + i)
+            case 2:
+                for i in 0...vector2[2] {
+                    if (z2 > z1) {
+                        //self.setCube(x: x1 + vector[0] * i / vector[2], y: y1 + vector[1] * i / vector[2], z: z1 + i)
+                        _x = Float(x1) + Float(vector[0]) * Float(i) / Float(vector[2])
+                        _y = Float(y1) + Float(vector[1]) * Float(i) / Float(vector[2])
+                        _z = Float(z1) + Float(i)
+                    } else {
+                        //self.setCube(x: x2 + vector[0] * i / vector[2], y: y2 + vector[1] * i / vector[2], z: z2 + i)
+                        _x = Float(x2) + Float(vector[0]) * Float(i) / Float(vector[2])
+                        _y = Float(y2) + Float(vector[1]) * Float(i) / Float(vector[2])
+                        _z = Float(z2) + Float(i)
+                    }
+                    _x = round(_x * 2.0) / 2.0
+                    _y = round(_y * 2.0) / 2.0
+                    _z = round(_z * 2.0) / 2.0
+                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        // does not contains key
+                        self.setCube(x: _x, y: _y, z: _z)
+                    }
                 }
+            default:
+                break
             }
-        default:
-            break
+        } else {
+            //error message
+            self.showMessage(text1: "same points", text2: "Connected")
         }
     }
-
+    
     func setRoof(_x: Int, _y: Int, _z: Int, w: Int, d: Int, h: Int, a: String) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
+        var temp: Float
+        var temp1: Float
+        var temp2: Float
         
         switch (a) {
         case "x":
             if (w % 2 == 0) {
                 if (abs(h) <= w / 2) {
                     for j in 0..<w {
-                        let y:Int
-                        if (j < w / 2) {
-                            y = _y + 2 * (h - 1) * j / (w - 2)
+                        if h > 0 {
+                            temp1 = 2.0 * (Float(h) - 1.0) * Float(j) / (Float(w) - 2.0)
+                            temp2 = 2.0 * (Float(h) - 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         } else {
-                            y = _y - 2 * (h - 1) * (j - w + 1) / (w - 2)
+                            temp1 = 2.0 * (Float(h) + 1.0) * Float(j) / (Float(w) - 2.0)
+                            temp2 = 2.0 * (Float(h) + 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         }
                         for i in _x..<(_x + d) {
-                            self.setCube(x: i, y: y, z: _z + j)
+                            if (j < w / 2) {
+                                self.setCube(x: Float(i), y: Float(_y) + temp1, z: Float(_z + j))
+                            } else {
+                                self.setCube(x: Float(i), y: Float(_y) - temp2, z: Float(_z + j))
+                            }
                         }
                     }
                 } else {
-                    for j in 0..<h {
-                        for i in _z..<(_z + d) {
-                            self.setCube(x: i, y: _y + j, z: (_z + (w - 2) * j / (2 * (h - 1))))
+                    if h > 0 {
+                        for j in 0..<h {
+                            temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) - 1.0))
+                            for i in _x..<(_x + d) {
+                                self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + temp)
+                                self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + Float(w) - temp - 1.0)
+                            }
                         }
-                        for i in _x..<(_x + d) {
-                            self.setCube(x: i, y: _y + j, z: (_z - (w - 2) * j / (2 * (h - 1)) + w - 1))
+                    } else {
+                        for j in 0..<(-h) {
+                            temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) + 1.0))
+                            for i in _x..<(_x + d) {
+                                self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) - temp)
+                                self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) + Float(w) + temp - 1.0)
+                            }
                         }
                     }
                 }
             } else {
                 if (abs(h) <= (w + 1) / 2) {
                     for j in 0..<w {
-                        let y:Int
-                        if (j < w / 2) {
-                            y = _y + 2 * (h - 1) * j / (w - 1)
+                        if h > 0 {
+                            temp1 = 2.0 * (Float(h) - 1) * Float(j) / (Float(w) - 1.0)
+                            temp2 = 2.0 * (Float(h) - 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         } else {
-                            y = _y - 2 * (h - 1) * (j - w + 1) / (w - 1)
+                            temp1 = 2.0 * (Float(h) + 1) * Float(j) / (Float(w) - 1.0)
+                            temp2 = 2.0 * (Float(h) + 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         }
                         for i in _x..<(_x + d) {
-                            self.setCube(x: i, y: y, z: _z + j)
+                            if (j < w / 2) {
+                                self.setCube(x: Float(i), y: Float(_y) + temp1, z: Float(_z + j))
+                            } else {
+                                self.setCube(x: Float(i), y: Float(_y) - temp2, z: Float(_z + j))
+                            }
                         }
                     }
                 } else {
-                    for j in 0..<h {
-                        for i in _x..<(_x + d) {
-                            self.setCube(x: i, y: _y + j, z: (_z + (w - 1) * j / (2 * (h - 1))))
+                    if h > 0 {
+                        for j in 0..<h {
+                            for i in _x..<(_x + d) {
+                                temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) - 1.0))
+                                self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + temp)
+                                if j != h - 1 {
+                                    self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + Float(w) - temp - 1.0)
+                                }
+                            }
                         }
-                        for i in _x..<(_x + d) {
-                            self.setCube(x: i, y: _y + j, z: (_z - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1))))
+                    } else {
+                        for j in 0..<(-h) {
+                            for i in _x..<(_x + d) {
+                                temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) + 1.0))
+                                self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) - temp)
+                                if j != h - 1 {
+                                    self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) + Float(w) + temp - 1.0)
+                                }
+                            }
                         }
                     }
                 }
@@ -340,46 +694,78 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             if (w % 2 == 0) {
                 if (abs(h) <= w / 2) {
                     for j in 0..<w {
-                        let z:Int
-                        if (j < w / 2) {
-                            z = _z + 2 * (h - 1) * j / (w - 2)
+                        if h > 0 {
+                            temp1 = 2.0 * (Float(h) - 1.0) * Float(j) / (Float(w) - 2.0)
+                            temp2 = 2.0 * (Float(h) - 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         } else {
-                            z = _z - 2 * (h - 1) * (j - w + 1) / (w - 2)
+                            temp1 = 2.0 * (Float(h) + 1.0) * Float(j) / (Float(w) - 2.0)
+                            temp2 = 2.0 * (Float(h) + 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         }
                         for i in _y..<(_y + d) {
-                            self.setCube(x: _x + j, y: i, z: z)
+                            if (j < w / 2) {
+                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) + temp1)
+                            } else {
+                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) - temp2)
+                            }
                         }
                     }
                 } else {
-                    for j in 0..<h {
-                        for i in _y..<(_y + d) {
-                            self.setCube(x: (_x + (w - 2) * j / (2 * (h - 1))), y: i, z: _z + j)
+                    if h > 0 {
+                        for j in 0..<h {
+                            temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) - 1.0))
+                            for i in _y..<(_y + d) {
+                                self.setCube(x: Float(_x) + temp, y: Float(i), z: Float(_z + j))
+                                self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(i), z: Float(_z + j))
+                            }
                         }
-                        for i in _y..<(_y + d) {
-                            self.setCube(x: (_x - (w - 2) * j / (2 * (h - 1)) + w - 1), y: i, z: _z + j)
+                    } else {
+                        for j in 0..<(-h) {
+                            temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) + 1.0))
+                            for i in _y..<(_y + d) {
+                                self.setCube(x: Float(_x) - temp, y: Float(i), z: Float(_z - j))
+                                self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(i), z: Float(_z - j))
+                            }
                         }
                     }
                 }
             } else {
                 if (abs(h) <= (w + 1) / 2) {
                     for j in 0..<w {
-                        let z:Int
-                        if (j < w / 2) {
-                            z = _z + 2 * (h - 1) * j / (w - 1)
+                        if h > 0 {
+                            temp1 = 2.0 * (Float(h) - 1) * Float(j) / (Float(w) - 1.0)
+                            temp2 = 2.0 * (Float(h) - 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         } else {
-                            z = _z - 2 * (h - 1) * (j - w + 1) / (w - 1)
+                            temp1 = 2.0 * (Float(h) + 1) * Float(j) / (Float(w) - 1.0)
+                            temp2 = 2.0 * (Float(h) + 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         }
                         for i in _y..<(_y + d) {
-                            self.setCube(x: _x + j, y: i, z: z)
+                            if (j < w / 2) {
+                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) + temp1)
+                            } else {
+                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) - temp2)
+                            }
                         }
                     }
                 } else {
-                    for j in 0..<h {
-                        for i in _y..<(_y + d) {
-                            self.setCube(x: (_x + (w - 1) * j / (2 * (h - 1))), y: i, z: _z + j)
+                    if h > 0 {
+                        for j in 0..<h {
+                            for i in _y..<(_y + d) {
+                                let temp: Float = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) - 1.0))
+                                self.setCube(x: Float(_x) + temp, y: Float(i), z: Float(_z + j))
+                                if j != h - 1 {
+                                    self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(i), z: Float(_z + j))
+                                }
+                            }
                         }
-                        for i in _y..<(_y + d) {
-                            self.setCube(x: (_x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1))), y: i, z: _z + j)
+                    } else {
+                        for j in 0..<(-h) {
+                            for i in _y..<(_y + d) {
+                                let temp: Float = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) + 1.0))
+                                self.setCube(x: Float(_x) - temp, y: Float(i), z: Float(_z - j))
+                                if j != h - 1 {
+                                    self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(i), z: Float(_z - j))
+                                }
+                            }
                         }
                     }
                 }
@@ -388,70 +774,113 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             if (w % 2 == 0) {
                 if (abs(h) <= w / 2) {
                     for j in 0..<w {
-                        let y:Int
-                        if (j < w / 2) {
-                            y = _y + 2 * (h - 1) * j / (w - 2)
+                        if h > 0 {
+                            temp1 = 2.0 * (Float(h) - 1.0) * Float(j) / (Float(w) - 2.0)
+                            temp2 = 2.0 * (Float(h) - 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         } else {
-                            y = _y - 2 * (h - 1) * (j - w + 1) / (w - 2)
+                            temp1 = 2.0 * (Float(h) + 1.0) * Float(j) / (Float(w) - 2.0)
+                            temp2 = 2.0 * (Float(h) + 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         }
                         for i in _z..<(_z + d) {
-                            self.setCube(x: _x + j, y: y, z: i)
+                            if (j < w / 2) {
+                                self.setCube(x: Float(_x + j), y: Float(_y) + temp1, z: Float(i))
+                            } else {
+                                self.setCube(x: Float(_x + j), y: Float(_y) - temp2, z: Float(i))
+                            }
                         }
                     }
                 } else {
-                    for j in 0..<h {
-                        for i in _z..<(_z + d) {
-                            self.setCube(x: (_x + (w - 2) * j / (2 * (h - 1))), y: _y + j, z: i)
+                    if h > 0 {
+                        for j in 0..<h {
+                            temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) - 1.0))
+                            for i in _z..<(_z + d) {
+                                self.setCube(x: Float(_x) + temp, y: Float(_y + j), z: Float(i))
+                                self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(_y + j), z: Float(i))
+                            }
                         }
-                        for i in _z..<(_z + d) {
-                            self.setCube(x: (_x - (w - 2) * j / (2 * (h - 1)) + w - 1), y: _y + j, z: i)
+                    } else {
+                        for j in 0..<(-h) {
+                            temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) + 1.0))
+                            for i in _z..<(_z + d) {
+                                self.setCube(x: Float(_x) - temp, y: Float(_y - j), z: Float(i))
+                                self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(_y - j), z: Float(i))
+                            }
                         }
                     }
                 }
             } else {
                 if (abs(h) <= (w + 1) / 2) {
                     for j in 0..<w {
-                        let y:Int
-                        if (j < w / 2) {
-                            y = _y + 2 * (h - 1) * j / (w - 1)
+                        if h > 0 {
+                            temp1 = 2.0 * (Float(h) - 1) * Float(j) / (Float(w) - 1.0)
+                            temp2 = 2.0 * (Float(h) - 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         } else {
-                            y = _y - 2 * (h - 1) * (j - w + 1) / (w - 1)
+                            temp1 = 2.0 * (Float(h) + 1) * Float(j) / (Float(w) - 1.0)
+                            temp2 = 2.0 * (Float(h) + 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         }
                         for i in _z..<(_z + d) {
-                            self.setCube(x: _x + j, y: y, z: i)
+                            if (j < w / 2) {
+                                self.setCube(x: Float(_x + j), y: Float(_y) + temp1, z: Float(i))
+                            } else {
+                                self.setCube(x: Float(_x + j), y: Float(_y) - temp2, z: Float(i))
+                            }
                         }
                     }
                 } else {
-                    for j in 0..<h {
-                        for i in _x..<(_x + d) {
-                            self.setCube(x: (_x + (w - 1) * j / (2 * (h - 1))), y: _y + j, z: i)
+                    if h > 0 {
+                        for j in 0..<h {
+                            for i in _z..<(_z + d) {
+                                temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) - 1.0))
+                                self.setCube(x: Float(_x) + temp, y: Float(_y + j), z: Float(i))
+                                if j != h - 1 {
+                                    self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(_y + j), z: Float(i))
+                                }
+                            }
                         }
-                        for i in _x..<(_x + d) {
-                            self.setCube(x: (_x - (w - 1) * (j - 2 * h + 2) / (2 * (h - 1))), y: _y + j, z: i)
+                    } else {
+                        for j in 0..<(-h) {
+                            for i in _z..<(_z + d) {
+                                temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) + 1.0))
+                                self.setCube(x: Float(_x) - temp, y: Float(_y - j), z: Float(i))
+                                if j != h - 1 {
+                                    self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(_y - j), z: Float(i))
+                                }
+                            }
                         }
                     }
                 }
             }
         default:
+            //error message
+            self.showMessage(text1: "Axis: x or y or z", text2: "Connected")
             break
         }
     }
     
     func polygonFileFormat(x: Int, y: Int, z: Int, ply_file: String) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
+        
+        
         let loop: Int
-        //let _loop: int
+        
         var ply2 = [[String]]()
         
-        func createModel() {
+        func createModel() throws {
+            if ply2.count == 0 {
+                throw NSError(domain: "error message", code: -1, userInfo: nil)
+            }
             var vertex1: [String]
             var vertex2: [String]
             var vertex3: [String]
-            var _x: Int
-            var _y: Int
-            var _z: Int
+            
+            var _x: Float
+            var _y: Float
+            var _z: Float
+            
             for i in 0 ..< loop {
                 vertex1 = ply2[4 * i]
                 vertex2 = ply2[4 * i + 1]
@@ -459,55 +888,55 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
                 if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
                     if vertex1[1] == vertex2[1] {
-                        _x = x + Int(Double(vertex1[0])!)
-                        _y = y + Int(Double(vertex1[2])!)
-                        _z = z - Int(Double(vertex1[1])!)
+                        _x = Float(x) + Float(vertex1[0])!
+                        _y = Float(y) + Float(vertex1[2])!
+                        _z = Float(z) - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
                     } else {
-                        _x = x + Int(Double(vertex1[0])!) - 1
-                        _y = y + Int(Double(vertex1[2])!)
-                        _z = z - Int(Double(vertex1[1])!)
+                        _x = Float(x) + Float(vertex1[0])! - 1.0
+                        _y = Float(y) + Float(vertex1[2])!
+                        _z = Float(z) - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does notcontains key
+                            // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
                     }
                 } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
                     if vertex1[2] == vertex2[2] {
-                        _x = x + Int(Double(vertex1[0])!)
-                        _y = y + Int(Double(vertex1[2])!)
-                        _z = z - Int(Double(vertex1[1])!)
+                        _x = Float(x) + Float(vertex1[0])!
+                        _y = Float(y) + Float(vertex1[2])!
+                        _z = Float(z) - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does notcontains key
+                            // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
                     } else {
-                        _x = x + Int(Double(vertex1[0])!)
-                        _y = y + Int(Double(vertex1[2])!)
-                        _z = z - Int(Double(vertex1[1])!) + 1
+                        _x = Float(x) + Float(vertex1[0])!
+                        _y = Float(y) + Float(vertex1[2])!
+                        _z = Float(z) - Float(vertex1[1])! + 1.0
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does notcontains key
+                            // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
                     }
                 } else {//x-y plane
                     if vertex1[0] == vertex2[0] {
-                        _x = x + Int(Double(vertex1[0])!)
-                        _y = y + Int(Double(vertex1[2])!)
-                        _z = z - Int(Double(vertex1[1])!)
+                        _x = Float(x) + Float(vertex1[0])!
+                        _y = Float(y) + Float(vertex1[2])!
+                        _z = Float(z) - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does notcontains key
+                            // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
                     } else {
-                        _x = x + Int(Double(vertex1[0])!)
-                        _y = y + Int(Double(vertex1[2])!) - 1
-                        _z = z - Int(Double(vertex1[1])!)
+                        _x = Float(x) + Float(vertex1[0])!
+                        _y = Float(y) + Float(vertex1[2])! - 1.0
+                        _z = Float(z) - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does notcontains key
+                            // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
                     }
@@ -521,83 +950,103 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 let path_ply_file = dir.appendingPathComponent( ply_file )
                 do {
                     let ply = try String( contentsOf: path_ply_file, encoding: String.Encoding.utf8 )
-                    var tempArray = ply.components(separatedBy: "\r\n")
-                    if tempArray.count == 1 {
-                        tempArray = ply.components(separatedBy: "\n")
+                    var plys = ply.components(separatedBy: "\r\n")
+                    if plys.count == 1 {
+                        plys = ply.components(separatedBy: "\n")
                     }
-                    //loop = arr[11].components(separatedBy: " ")
-                    loop = Int(tempArray[11].components(separatedBy: " ")[2])!
-                    for i in 0 ..< 4 * loop {
-                        ply2.append(tempArray[14 + i].components(separatedBy: " "))
+                    if plys.count == 1 {
+                        plys = ply.components(separatedBy: "\r")
                     }
-                    createModel()
+                    
+                    if Int(plys[4].components(separatedBy: " ")[2]) != nil {
+                        loop = Int(plys[4].components(separatedBy: " ")[2])! / 4
+                        for i in 0 ..< 4 * loop {
+                            ply2.append(plys[14 + i].components(separatedBy: " "))
+                        }
+                        try createModel()
+                    } else {
+                        //error message
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
+                    }
                 } catch {
-                    //error message
-                    self.roomIDLabel.text = "Not such a file"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected."
-                    }
+                    //error messager
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
         } else {
-            let tempArray = ply_file.components(separatedBy: " ")
-            var tempArray2: [String] = []
-            loop = tempArray.count / 24
-            for i in 0 ..< 4 * loop {
-                for j in 0 ..< 6 {
-                    tempArray2.append(tempArray[6 * i + j])
+            //read from scratch
+            do {
+                let plys = ply_file.components(separatedBy: " ")
+                var tempArray: [String] = []
+                loop = plys.count / 24
+                for i in 0 ..< 4 * loop {
+                    for j in 0 ..< 6 {
+                        tempArray.append(plys[6 * i + j])
+                    }
+                    ply2.append(tempArray)
+                    tempArray = []
                 }
-                ply2.append(tempArray2)
-                tempArray2 = []
+                try createModel()
+            } catch {
+                //error message
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
-            createModel()
         }
     }
     
     func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, time: Double, times: Int, files: String) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-
+        
         let plys = files.components(separatedBy: ",")
-        if plys[0].contains("ply") {
-            var i = 0
-            timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { (timer) in
-                self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, ply_file: plys[i % plys.count])
-                DispatchQueue.main.asyncAfter(deadline: .now() + time * 4 / 5) {
-                    // Put your code which should be executed with a delay here
-                    self.reset()
+        if plys[0].contains(".ply") || plys.count > 3 {
+            if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+                do {
+                    for i in 0 ..< plys.count {
+                        let path_ply_file = dir.appendingPathComponent( plys[i] )
+                        _ = try String( contentsOf: path_ply_file, encoding: String.Encoding.utf8 )
+                    }
+                    var i = 0
+                    timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { (timer) in
+                        self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, ply_file: plys[i % plys.count])
+                        DispatchQueue.main.asyncAfter(deadline: .now() + time * 0.8) {
+                            // Put your code which should be executed with a delay here
+                            self.reset()
+                        }
+                        i += 1
+                        if (i >= times) {
+                            timer.invalidate()
+                        }
+                    })
+                } catch {
+                    //error message
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
-                i += 1
-                if (i >= times) {
-                    timer.invalidate()
-                }
-            })
+            }
         } else {
             //error message
-            self.roomIDLabel.text = "Not such a file"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                // Put your code which should be executed with a delay here
-                self.roomIDLabel.text = "Connected."
-            }
+            self.showMessage(text1: "Incorrect format", text2: "Connected")
         }
     }
     
-    func map(map_data: String, width: Int, height: Int, magnification: Double, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
+    func map(map_data: String, width: Int, height: Int, magnification: Float, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-        //print("mapping...")
-        var elevation: Int
-        var _map2 = [[String]]()
+        self.showMessage(text1: "Mapping...", text2: "Connected")
         var map2 = [[String]]()
+        var map3 = [[String]]()
+        var map4 = [[Int]]()
+        //map4.append([Int]())
         var maps: [String] = []
         var _maps: [String] = []
         var tempArray: [String] = []
-        var gap: Int // to fill the gap
-        var maxY: Int
-        var minY: Int
+        var tempArray2: [Int] = []
         
         func heightSetColor(y: Int, minY: Int, maxY: Int) {
             var _r: Int
@@ -622,330 +1071,662 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let _x = Int(height / 2) - i
             let _y = elevation
             let _z = j - Int(width / 2)
+            print("i: \(i), j: \(j), elevation: \(elevation), gap: \(gap), minY: \(minY), maxY: \(maxY), upward: \(upward)")
             if _y > 0 {
                 heightSetColor(y: _y, minY: minY, maxY: maxY)
-                self.setCube(x: _x, y: _y + upward, z: _z)
-                if gap > 1 {
-                    for k in 1 ... gap - 1 {
-                        heightSetColor(y: _y - k, minY: minY, maxY: maxY)
-                        self.setCube(x: _x, y: _y - k + upward, z: _z)
+                self.setCube(x: Float(_x), y: Float(_y + upward), z: Float(_z))
+                if gap < 1000 { // Not infinity
+                    if gap > 1 {
+                        for k in 1 ... gap - 1 {
+                            heightSetColor(y: _y - k, minY: minY, maxY: maxY)
+                            self.setCube(x: Float(_x), y: Float(_y - k + upward), z: Float(_z))
+                        }
                     }
                 }
             } else if _y < 0{
-                heightSetColor(y: _y, minY: minY, maxY: maxY)
-                self.setCube(x: _x, y: _y + 1 + upward, z: _z)
-                if gap > 1 {
-                    for k in 1 ... gap - 1 {
-                        heightSetColor(y: _y - k, minY: minY, maxY: maxY)
-                        self.setCube(x: _x, y: _y + 1 + k + upward, z: _z)
+                heightSetColor(y: -_y, minY: -maxY, maxY: -minY)
+                self.setCube(x: Float(_x), y: Float(_y + 1 + upward), z: Float(_z))
+                if gap < 1000 { // Not infinity
+                    if gap > 1 {
+                        for k in 1 ... gap - 1 {
+                            heightSetColor(y: -_y - k, minY: -maxY, maxY: -minY)
+                            self.setCube(x: Float(_x), y: Float(_y + 1 + k + upward), z: Float(_z))
+                        }
                     }
                 }
             }
         }
         
-        if map_data.contains("csv") {
+        func mapping() throws {
+            if map2.count != height || map2[0].count != width {
+                throw NSError(domain: "error message", code: -1, userInfo: nil)
+            }
+            var elevation: Int
+            var gap: Int // to fill the gap
+            var maxY: Int
+            var minY: Int
+            //前後にスペースが入っていたら消す。
+            for i in 0 ..< height {
+                for j in 0 ..< width {
+                    tempArray.append(map2[i][j].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
+                }
+                map3.append(tempArray)
+                tempArray = []
+            }
+            //数字以外の文字が入っていたときの処理
+            for i in 0 ..< height {
+                for j in 0 ..< width {
+                    if map3[i][j] == "Infinity" {
+                        tempArray2.append(10000)
+                    } else if map3[i][j] == "Nan" {
+                        tempArray2.append(0)
+                    }else if map3[i][j] == "" {
+                        tempArray2.append(0)
+                    } else {
+                        if map3[i][j].isOnlyNumeric() {//数字のみ
+                            tempArray2.append(Int(ceil(Float(map3[i][j])! * magnification)))
+                        } else {
+                            let temp = map3[i][j].remove(characterSet: .decimalDigits)//数字を削除
+                            if temp == "."{// 小数点を含む数字のみ
+                                tempArray2.append(Int(ceil(Float(map3[i][j])! * magnification)))
+                            } else if temp == "-."{// 小数点を含む数字のみ（マイナス）
+                                tempArray2.append(Int(ceil(Float(map3[i][j])! * magnification)))
+                            } else if temp == "-"{// 整数（マイナス）
+                                tempArray2.append(Int(ceil(Float(map3[i][j])! * magnification)))
+                            } else {
+                                tempArray2.append(0)
+                            }
+                        }
+                    }
+                }
+                map4.append(tempArray2)
+                tempArray2 = []
+            }
+            //y の最大値、最小値
+            minY = map4[0][0]
+            maxY = map4[0][0]
+            
+            for i in 0 ..< height {
+                for j in 0 ..< width {
+                    if map4[i][j] == 10000 { // infinity
+                        elevation = 0
+                    } else if map4[i][j] > 100 {
+                        elevation = 100
+                    } else if map4[i][j] < -100 {
+                        elevation = -100
+                    } else {
+                        elevation = map4[i][j]
+                    }
+                    if minY > map4[i][j] {
+                        minY = map4[i][j]
+                    }
+                    if maxY < map4[i][j] {
+                        maxY = map4[i][j]
+                    }
+                    if elevation > 0 {
+                        // Calculate gaps
+                        if height == 1 {
+                            if j == 0 {
+                                gap = map4[i][j] - [map4[i][j + 1]].min()!
+                            } else if j == width - 1 {
+                                gap = map4[i][j] - [map4[i][j - 1]].min()!
+                            } else {
+                                gap = map4[i][j] - [map4[i][j - 1], map4[i][j + 1]].min()!
+                            }
+                        } else if i == 0 {
+                            if j == 0 {
+                                if width == 1 {
+                                    gap = map4[i][j] - [map4[i + 1][j]].min()!
+                                } else {
+                                    gap = map4[i][j] - [map4[i + 1][j], map4[i][j + 1]].min()!
+                                }
+                            } else if j == width - 1 {
+                                gap = map4[i][j] - [map4[i + 1][j], map4[i][j - 1]].min()!
+                            } else {
+                                gap = map4[i][j] - [map4[i + 1][j], map4[i][j - 1], map4[i][j + 1]].min()!
+                            }
+                        } else if i == height - 1 {
+                            if j == 0 {
+                                if width == 1 {
+                                    gap = map4[i][j] - [map4[i - 1][j]].min()!
+                                } else {
+                                    gap = map4[i][j] - [map4[i - 1][j], map4[i][j + 1]].min()!
+                                }
+                            } else if j == width - 1 {
+                                gap = map4[i][j] - [map4[i - 1][j], map4[i][j - 1]].min()!
+                            } else {
+                                gap = map4[i][j] - [map4[i - 1][j], map4[i][j - 1], map4[i][j + 1]].min()!
+                            }
+                        } else {
+                            if j == 0 {
+                                if width == 1 {
+                                    gap = map4[i][j] - [map4[i - 1][j], map4[i + 1][j]].min()!
+                                } else {
+                                    gap = map4[i][j] - [map4[i - 1][j], map4[i + 1][j], map4[i][j + 1]].min()!
+                                }
+                            } else if j == width - 1 {
+                                gap = map4[i][j] - [map4[i - 1][j], map4[i + 1][j], map4[i][j - 1]].min()!
+                            } else {
+                                gap = map4[i][j] - [map4[i - 1][j], map4[i + 1][j], map4[i][j - 1], map4[i][j + 1]].min()!
+                            }
+                        }
+                    } else {
+                        // Calculate gaps
+                        if height == 1 {
+                            if j == 0 {
+                                gap = -map4[i][j] + [map4[i][j + 1]].max()!
+                            } else if j == width - 1 {
+                                gap = -map4[i][j] + [map4[i][j - 1]].max()!
+                            } else {
+                                gap = -map4[i][j] + [map4[i][j - 1], map4[i][j + 1]].max()!
+                            }
+                        } else if i == 0 {
+                            if j == 0 {
+                                if width == 1 {
+                                    gap = -map4[i][j] + [map4[i + 1][j]].max()!
+                                } else {
+                                    gap = -map4[i][j] + [map4[i + 1][j], map4[i][j + 1]].max()!
+                                }
+                            } else if j == width - 1 {
+                                gap = -map4[i][j] + [map4[i + 1][j], map4[i][j - 1]].max()!
+                            } else {
+                                gap = -map4[i][j] + [map4[i + 1][j], map4[i][j - 1], map4[i][j + 1]].max()!
+                            }
+                        } else if i == height - 1 {
+                            if j == 0 {
+                                if width == 1 {
+                                    gap = -map4[i][j] + [map4[i - 1][j]].max()!
+                                } else {
+                                    gap = -map4[i][j] + [map4[i - 1][j], map4[i][j + 1]].max()!
+                                }
+                            } else if j == width - 1 {
+                                gap = -map4[i][j] + [map4[i - 1][j], map4[i][j - 1]].max()!
+                            } else {
+                                gap = -map4[i][j] + [map4[i - 1][j], map4[i][j - 1], map4[i][j + 1]].max()!
+                            }
+                        } else {
+                            if j == 0 {
+                                if width == 1 {
+                                    gap = -map4[i][j] + [map4[i - 1][j], map4[i + 1][j]].max()!
+                                } else {
+                                    gap = -map4[i][j] + [map4[i - 1][j], map4[i + 1][j], map4[i][j + 1]].max()!
+                                }
+                            } else if j == width - 1 {
+                                gap = -map4[i][j] + [map4[i - 1][j], map4[i + 1][j], map4[i][j - 1]].max()!
+                            } else {
+                                gap = -map4[i][j] + [map4[i - 1][j], map4[i + 1][j], map4[i][j - 1], map4[i][j + 1]].max()!
+                            }
+                        }
+                        
+                    }
+                    drawMap(i: i, j: j, elevation: elevation, gap: gap, minY: minY, maxY: maxY, upward: upward)
+                }
+            }
+        }
+        
+        if map_data.contains("csv") || map_data.contains("txt") {
             // Read ply file from iTunes File Sharing
             if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
                 let path_csv_file = dir.appendingPathComponent( map_data )
                 do {
-                    let _map_data = try String( contentsOf: path_csv_file, encoding: String.Encoding.utf8 )
-                    maps = _map_data.components(separatedBy: "\r\n")
+                    let csv = try String( contentsOf: path_csv_file, encoding: String.Encoding.utf8 )
+                    maps = csv.components(separatedBy: "\r\n")
                     if maps.count == 1 {
-                        maps = _map_data.components(separatedBy: "\n")
+                        maps = csv.components(separatedBy: "\n")
+                    }
+                    if maps.count == 1 {
+                        maps = csv.components(separatedBy: "\r")
+                    }
+                    if maps.count == 1 { // from Web地理院地図（http://maps.gsi.go.jp）
+                        _maps = maps[0].components(separatedBy: ",")
+                        for i in 0 ..< height {
+                            for j in 0 ..< width {
+                                tempArray.append(_maps[i * width + j])
+                            }
+                            map2.append(tempArray)
+                            tempArray = []
+                        }
+                        try mapping()
+                    } else if maps.count >= height { // from Web地形自動生成（http://www.bekkoame.ne.jp/ro/kami/LandMaker/LandMaker.html） or self made map
+                        if maps[0].contains("map") || maps[0].contains("Map") {
+                            maps.removeFirst()
+                        }
+                        for i in 0 ..< height {
+                            if maps[i].contains(",") {
+                                map2.append(maps[i].components(separatedBy: ","))
+                            } else if maps[i].contains("\t") {
+                                map2.append(maps[i].components(separatedBy: "\t"))
+                            } else {
+                                // replace all
+                                while true {
+                                    if let range = maps[i].range(of: "  ") {
+                                        maps[i].replaceSubrange(range, with: " ")
+                                    } else {
+                                        break
+                                    }
+                                }
+                                map2.append(maps[i].components(separatedBy: " "))
+                            }
+                        }
+                        try mapping()
+                    } else {
+                        //error message
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
+                    }
+                } catch {
+                    //error message
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
+                }
+            }
+        } else {
+            //Read from Scratch
+            var _map_data = map_data
+            // replace all for Web地形自動生成
+            while true {
+                if let range = _map_data.range(of: "  ") {
+                    _map_data.replaceSubrange(range, with: " ")
+                } else {
+                    break
+                }
+            }
+            while true {
+                if let range = _map_data.range(of: "\t ") {
+                    _map_data.replaceSubrange(range, with: "\t")
+                } else {
+                    break
+                }
+            }
+            maps = _map_data.components(separatedBy: " ")
+            if maps[0].contains("map") || maps[0].contains("Map") {
+                maps.removeFirst()
+            }
+            if maps.count >= width * height {
+                for i in 0 ..< height {
+                    for j in 0 ..< width {
+                        tempArray.append(maps[i * width + j])
+                    }
+                    map2.append(tempArray)
+                    tempArray = []
+                }
+                do {
+                    try mapping()
+                } catch {
+                    //error message
+                    self.showMessage(text1: "Incorrect format", text2: "Connected")
+                }
+            } else if maps.count >= height {
+                for i in 0 ..< height {
+                    if maps[i].contains(",") {
+                        map2.append(maps[i].components(separatedBy: ","))
+                    } else if maps[i].contains("\t") {
+                        map2.append(maps[i].components(separatedBy: "\t"))
+                    } else {
+                        // replace all
+                        while true {
+                            if let range = maps[i].range(of: "  ") {
+                                maps[i].replaceSubrange(range, with: " ")
+                            } else {
+                                break
+                            }
+                        }
+                        map2.append(maps[i].components(separatedBy: " "))
+                    }
+                }
+                do {
+                    try mapping()
+                } catch {
+                    //error message
+                    self.showMessage(text1: "Incorrect format", text2: "Connected")
+                }
+            } else {
+                //error message
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
+            }
+        }
+    }
+    
+    func pin(pin_data: String, width: Int, height: Int, magnification: Float, up_left_latitude: Float, up_left_longitude: Float, down_right_latitude: Float, down_right_longitude: Float, step: Int) {
+        if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
+            return
+        }
+        self.showMessage(text1: "Standing pins...", text2: "Connected")
+        
+        var pins2: [[String]] = [[String]]()
+        var pins3: [[String]] = [[String]]()
+        var pins4: [[Float]] = [[Float]]()
+        var pins: [String] = []
+        var tempArray: [String] = []
+        var tempArray2: [Float] = []
+        
+        func standPins(i: Int, j: Int, elevation: Int, magnification: Float, step: Int) {
+            let _x1 = Int(height / 2) - j
+            let _y1 = 0
+            let _z1 = i - Int(width / 2) + step
+            let _x2 = Int(height / 2) - j
+            let _y2 = Int(Float(elevation) * magnification)
+            let _z2 = i - Int(width / 2) + step
+            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+            //self.setSphere(x: _x2, y: _y2, z: _z2, r: 2)
+        }
+        
+        func pinning() throws {
+            if pins2.count < 2 || pins2[0].count < 3 || Int(pins2[0][0]) == nil  {
+                throw NSError(domain: "error message", code: -1, userInfo: nil)
+            }
+            //前後にスペースが入っていたら消す。
+            for i in 0 ..< pins2.count {
+                if pins2[i][0] != ""{
+                    for j in 0 ..< 3 {
+                        tempArray.append(pins2[i][j].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
+                    }
+                    pins3.append(tempArray)
+                    tempArray = []            }
+            }
+            //数字以外の文字が入っていたときの処理
+            for i in 0 ..< pins3.count {
+                for j in 0 ..< 3 {
+                    if let num: Float = Float(pins3[i][j]) {
+                        tempArray2.append(num)
+                    } else {
+                        tempArray2.append(0.0)
+                    }
+                }
+                pins4.append(tempArray2)
+                tempArray2 = []
+            }
+            
+            self.setColor(r: Int(pins4[0][0]), g: Int(pins4[0][1]), b: Int(pins4[0][2]))
+            for k in 1 ..< pins4.count {
+                let i = Int(Float(width) * (pins4[k][1] - up_left_longitude) / (down_right_longitude - up_left_longitude))
+                let j = height - Int(Float(height) * (pins4[k][0] - down_right_latitude) / (up_left_latitude - down_right_latitude))
+                let elevation = Int(pins4[k][2])
+                standPins(i: i, j: j, elevation: elevation, magnification: magnification, step: step)
+            }
+        }
+        
+        if pin_data.contains("csv") || pin_data.contains("txt") {
+            // Read ply file from iTunes File Sharing
+            if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
+                let path_csv_file = dir.appendingPathComponent( pin_data )
+                do {
+                    let csv = try String( contentsOf: path_csv_file, encoding: String.Encoding.utf8 )
+                    pins = csv.components(separatedBy: "\r\n")
+                    if pins.count == 1 {
+                        pins = csv.components(separatedBy: "\n")
+                    }
+                    if pins.count == 1 {
+                        pins = csv.components(separatedBy: "\r")
+                    }
+                    if pins.count >= 3 && (pins[0].contains("pin") || pins[0].contains("Pin")) {
+                        pins.removeFirst()
+                        for i in 0 ..< pins.count {
+                            if pins[i].contains(",") {
+                                pins2.append(pins[i].components(separatedBy: ","))
+                            } else if pins[i].contains("\t") {
+                                pins2.append(pins[i].components(separatedBy: "\t"))
+                            } else {
+                                pins2.append(pins[i].components(separatedBy: " "))
+                            }
+                        }
+                        do {
+                            try pinning()
+                        } catch {
+                            //error message
+                            self.roomIDLabel.text = "Incorrect format"
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                // Put your code which should be executed with a delay here
+                                self.roomIDLabel.text = "Connected"
+                            }
+                        }
+                    } else {
+                        //error message
+                        self.roomIDLabel.text = "Incorrect format"
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                            // Put your code which should be executed with a delay here
+                            self.roomIDLabel.text = "Connected"
+                        }
                     }
                 } catch {
                     //error message
                     self.roomIDLabel.text = "Not such a file"
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected."
+                        self.roomIDLabel.text = "Connected"
                     }
                 }
             }
         } else {
             //Read from Scratch
-            maps = map_data.components(separatedBy: " ")
-        }
-        //２次元配列に変換
-        if maps.count == 1{
-            for i in 0 ..< height {
-                _maps = maps[0].components(separatedBy: ",")
-                for j in 0 ..< width {
-                    tempArray.append(_maps[i * width + j])
-                }
-                _map2.append(tempArray)
-                tempArray = []
-            }
-        } else {
-            for i in 0 ..< height {
-                _map2.append(maps[i].components(separatedBy: ","))
-            }
-        }
-        //前後にスペースが入っていたら消す。
-        for i in 0 ..< height {
-            for j in 0 ..< width {
-                tempArray.append(_map2[i][j].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines))
-            }
-            map2.append(tempArray)
-            tempArray = []
-        }
-        //y の最大値、最小値
-        minY = Int(ceil(Double(map2[0][0])! * magnification))
-        maxY = Int(ceil(Double(map2[0][0])! * magnification))
-        for i in 0 ..< height {
-            for j in 0 ..< width {
-                if minY > Int(ceil(Double(map2[i][j])! * magnification)) {
-                    minY = Int(ceil(Double(map2[i][j])! * magnification))
-                }
-                if maxY < Int(ceil(Double(map2[i][j])! * magnification)) {
-                    maxY = Int(ceil(Double(map2[i][j])! * magnification))
-                }
-            }
-        }
-        
-        for i in 0 ..< height {
-            for j in 0 ..< width {
-                elevation = Int(ceil(Double(map2[i][j])! * magnification))
-                if elevation > 0 {
-                    // Calculate gaps
-                    if height == 1 {
-                        if j == 0 {
-                            gap = elevation - [Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                        } else if j == width - 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
+            pins = pin_data.components(separatedBy: " ")
+            if pins.count >= 3 && (pins[0].contains("pin") || pins[0].contains("Pin")) {
+                pins.removeFirst()
+                if pins[0].contains(",") || pins[0].contains("\t") {
+                    for i in 0 ..< pins.count {
+                        if pins[i].contains(",") {
+                            pins2.append(pins[i].components(separatedBy: ","))
                         } else {
-                            gap = elevation - [Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                        }
-                    } else if i == 0 {
-                        if j == 0 {
-                            if width == 1 {
-                                gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
-                            } else {
-                                gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                            }
-                        } else if j == width - 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
-                        } else {
-                            gap = elevation - [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                        }
-                    } else if i == height - 1 {
-                        if j == 0 {
-                            if width == 1 {
-                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification))].min()!
-                            } else {
-                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                            }
-                        } else if j == width - 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
-                        } else {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                        }
-                    } else {
-                        if j == 0 {
-                            if width == 1 {
-                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification))].min()!
-                            } else {
-                                gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
-                            }
-                        } else if j == width - 1 {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].min()!
-                        } else {
-                            gap = elevation - [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].min()!
+                            pins2.append(pins[i].components(separatedBy: "\t"))
                         }
                     }
                 } else {
-                    // Calculate gaps
-                    if height == 1 {
-                        if j == 0 {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
-                        } else if j == width - 1 {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
-                        } else {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
-                        }
-                    } else if i == 0 {
-                        if j == 0 {
-                            if width == 1 {
-                                gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification))].max()!
-                            } else {
-                                gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                    if pins.count % 3 == 0 {
+                        for i in 0 ..< pins.count / 3 {
+                            for j in 0 ..< 3 {
+                                tempArray.append(pins[3 * i + j])
                             }
-                        } else if j == width - 1 {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
-                        } else {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
-                        }
-                    } else if i == height - 1 {
-                        if j == 0 {
-                            if width == 1 {
-                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification))].max()!
-                            } else {
-                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
-                            }
-                        } else if j == width - 1 {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
-                        } else {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
+                            pins2.append(tempArray)
+                            tempArray = []
                         }
                     } else {
-                        if j == 0 {
-                            if width == 1 {
-                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification))].max()!
-                            } else {
-                                gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
-                            }
-                        } else if j == width - 1 {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification))].max()!
-                        } else {
-                            gap = 0 - elevation + [Int(ceil(Double(map2[i - 1][j])! * magnification)), Int(ceil(Double(map2[i + 1][j])! * magnification)), Int(ceil(Double(map2[i][j - 1])! * magnification)), Int(ceil(Double(map2[i][j + 1])! * magnification))].max()!
-                        }
+                        //error message
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
-                    
                 }
-                drawMap(i: i, j: j, elevation: elevation, gap: gap, minY: minY, maxY: maxY, upward: upward)
+                do {
+                    try pinning()
+                } catch {
+                    //error message
+                    self.showMessage(text1: "Incorrect format", text2: "Connected")
+                }
+            } else {
+                //error message
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
         }
     }
     
-    func molecular_structure(x: Double, y: Double, z: Double, magnification: Double, mld_file: String) {
+    func molecular_structure(x: Float, y: Float, z: Float, magnification: Float, mld_file: String) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
-        let loop1: Int
-        let loop2: Int
         var position = [[String]]()
         var line = [[String]]()
+        var mlds: [String] = []
         
-        func createStructure() {
+        func createStructure() throws {
+            if mlds.count < 5 || Int(mlds[1]) == nil {
+                throw NSError(domain: "error message", code: -1, userInfo: nil)
+            }
             var _x: Int
             var _y: Int
             var _z: Int
-            var _r: Int
+            var _r: Float
             var _x1: Int
             var _y1: Int
             var _z1: Int
             var _x2: Int
             var _y2: Int
             var _z2: Int
+            
+            let loop1: Int = Int(mlds[1])!
+            for i in 0 ..< loop1 {
+                position.append(mlds[2 + i].components(separatedBy: ","))
+            }
+            let loop2: Int = Int(mlds[2 + loop1])!
+            for i in 0 ..< loop2 {
+                line.append(mlds[3 + loop1 + i].components(separatedBy: ","))
+            }
             for i in 0 ..< loop1 {
                 switch (position[i][3]) {
-                case "1": //Hydrogen
-                    self.setColor(r: 255, g: 0, b: 0)
-                case "6": //Carbon
-                    self.setColor(r: 0, g: 255, b: 0)
-                case "7": //Nitrogen
-                    self.setColor(r: 0, g: 0, b: 255)
-                case "8": //Oxygen
-                    self.setColor(r: 255, g: 255, b: 0)
-                case "9": //Fluorine
-                    self.setColor(r: 0, g: 255, b: 255)
-                case "14": //Silicon
-                    self.setColor(r: 255, g: 0, b: 255)
-                case "15": //Phosphorus
+                case "1": //Hydrogen 水素
                     self.setColor(r: 255, g: 255, b: 255)
-                default:
+                case "5": //Boron ホウ素
+                    self.setColor(r: 245, g: 245, b: 220)
+                case "6": //Carbon 炭素
                     self.setColor(r: 0, g: 0, b: 0)
+                case "7": //Nitrogen 窒素
+                    self.setColor(r: 0, g: 0, b: 255)
+                case "8": //Oxygen 酸素
+                    self.setColor(r: 255, g: 0, b: 0)
+                case "15": //Phosphorus リン
+                    self.setColor(r: 255, g: 0, b: 255)
+                case "16": //Sulfur 硫黄
+                    self.setColor(r: 255, g: 255, b: 0)
+                case "9": //Fluorine フッ素 ハロゲン
+                    self.setColor(r: 0, g: 255, b: 255)
+                case "17": //Chlorine 塩素 ハロゲン
+                    self.setColor(r: 0, g: 255, b: 255)
+                case "35": //Bromine 臭素 ハロゲン
+                    self.setColor(r: 0, g: 255, b: 255)
+                case "53": //Iodine ヨウ素 ハロゲン
+                    self.setColor(r: 0, g: 255, b: 255)
+                case "85": //Astatine アスタチン ハロゲン
+                    self.setColor(r: 0, g: 255, b: 255)
+                case "11": //Sodium ナトリウム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "12": //Magnesium マグネシウム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "13": //Alminium アルミニウム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "14": //Silicon ケイ素
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "19": //Potassium カリウム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "20": //Calcium カルシウム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "24": //Chromium クロム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "25": //Manganese マンガン
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "26": //Iron 鉄
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "27": //Cobalt コバルト
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "28": //Nickel ニッケル
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "29": //Copper 銅
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "30": //Zinc 亜鉛
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "47": //Silver 銀
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "48": //Cadmium カドミウム
+                    self.setColor(r: 192, g: 192, b: 192)
+                case "79": //Gold 金
+                    self.setColor(r: 192, g: 192, b: 192)
+                default:
+                    self.setColor(r: 192, g: 192, b: 192)
                     break
                 }
-                _x = Int(x + Double(position[i][0])! * magnification)
-                _y = Int(y + Double(position[i][1])! * magnification)
-                _z = Int(z + Double(position[i][2])! * magnification)
-                _r = Int(0.3 * magnification)
+                _x = Int(x + Float(position[i][0])! * magnification)
+                _y = Int(y + Float(position[i][1])! * magnification)
+                _z = Int(z + Float(position[i][2])! * magnification)
+                _r = round(magnification) / 2.0
+                _r = _r < 3.0 ? 3.0 : _r
                 self.setSphere(x: _x, y: _y, z: _z, r: _r)
             }
-            self.setColor(r: 0, g: 0, b: 0)
+            
+            self.setColor(r: 127, g: 127, b: 127)
             for j in 0 ..< loop2 {
-                _x1 = Int(x + Double(position[Int(line[j][0])! - 1][0])! * magnification)
-                _y1 = Int(y + Double(position[Int(line[j][0])! - 1][1])! * magnification)
-                _z1 = Int(z + Double(position[Int(line[j][0])! - 1][2])! * magnification)
-                _x2 = Int(x + Double(position[Int(line[j][1])! - 1][0])! * magnification)
-                _y2 = Int(y + Double(position[Int(line[j][1])! - 1][1])! * magnification)
-                _z2 = Int(z + Double(position[Int(line[j][1])! - 1][2])! * magnification)
+                _x1 = Int(x + Float(position[Int(line[j][0])! - 1][0])! * magnification)
+                _y1 = Int(y + Float(position[Int(line[j][0])! - 1][1])! * magnification)
+                _z1 = Int(z + Float(position[Int(line[j][0])! - 1][2])! * magnification)
+                _x2 = Int(x + Float(position[Int(line[j][1])! - 1][0])! * magnification)
+                _y2 = Int(y + Float(position[Int(line[j][1])! - 1][1])! * magnification)
+                _z2 = Int(z + Float(position[Int(line[j][1])! - 1][2])! * magnification)
                 self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
             }
         }
         
-        if mld_file.contains("mld") {
+        if mld_file.contains("mld") || mld_file.contains("csv") || mld_file.contains("txt") {
             // Read ply file from iTunes File Sharing
             if let dir = FileManager.default.urls( for: .documentDirectory, in: .userDomainMask ).first {
                 let path_mld_file = dir.appendingPathComponent( mld_file )
                 do {
                     let mld = try String( contentsOf: path_mld_file, encoding: String.Encoding.utf8 )
-                    var tempArray = mld.components(separatedBy: "\r\n")
-                    if tempArray.count == 1 {
-                        tempArray = mld.components(separatedBy: "\n")
+                    mlds = mld.components(separatedBy: "\r\n")
+                    if mlds.count == 1 {
+                        mlds = mld.components(separatedBy: "\n")
                     }
-                    loop1 = Int(tempArray[1])!
-                    for i in 0 ..< loop1 {
-                        position.append(tempArray[2 + i].components(separatedBy: ","))
+                    if mlds.count == 1 {
+                        mlds = mld.components(separatedBy: "\r")
                     }
-                    loop2 = Int(tempArray[2 + loop1])!
-                    for i in 0 ..< loop2 {
-                        line.append(tempArray[3 + loop1 + i].components(separatedBy: ","))
+                    do {
+                        try createStructure()
+                    } catch {
+                        self.showMessage(text1: "Incorrect format", text2: "Connected")
                     }
-                    createStructure()
                 } catch {
                     //error message
-                    self.roomIDLabel.text = "Not such a file"
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        // Put your code which should be executed with a delay here
-                        self.roomIDLabel.text = "Connected."
-                    }
+                    self.showMessage(text1: "Not such a file", text2: "Connected")
                 }
             }
         } else {
-            let tempArray = mld_file.components(separatedBy: " ")
-            loop1 = Int(tempArray[1])!
-            for i in 0 ..< loop1 {
-                position.append(tempArray[2 + i].components(separatedBy: ","))
+            //Read from Scratch
+            mlds = mld_file.components(separatedBy: " ")
+            do {
+                try createStructure()
+            } catch {
+                //error message
+                self.showMessage(text1: "Incorrect format", text2: "Connected")
             }
-            loop2 = Int(tempArray[2 + loop1])!
-            for i in 0 ..< loop2 {
-                line.append(tempArray[3 + loop1 + i].components(separatedBy: ","))
-            }
-            createStructure()
         }
     }
     
     func setColor(r: Int, g: Int, b: Int) {
-        if (originPosition == nil) {
-            return
-        }
+        red = r < 0 ? -r%256 : r%256
+        green = g < 0 ? -g%256 : g%256
+        blue = b < 0 ? -b%256 : b%256
         
-        red = r
-        green = g
-        blue = b
+        //message
+        self.showMessage(text1: "RGB: (\(red):\(green):\(blue))", text2: "Connected")
     }
     
-    func removeCube(x: Int, y: Int, z: Int) {
+    func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
+            return
+        }
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        
+        let cubeNode = cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)]
+        if (cubeNode == nil) {
+            //error message
+            self.showMessage(text1: "No blocks", text2: "Connected")
             return
         }
         
-        let cubeNode = cubeNodes[String(x) + "_" + String(y) + "_" + String(z)]
-        if (cubeNode == nil) {
-            return
-        }
-    
         cubeNode?.removeFromParentNode()
         //message
-        self.roomIDLabel.text = "Remove a cube"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected."
-        }
+        self.showMessage(text1: "Remove a cube", text2: "Connected")
     }
     
     func reset() {
         if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
             return
         }
         //message
-        self.roomIDLabel.text = "Reset"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "Connected."
-        }
+        self.showMessage(text1: "Reset...", text2: "Connected")
         
         for (id, cubeNode) in cubeNodes {
             cubeNode.removeFromParentNode()
@@ -954,13 +1735,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @IBAction func togglePlanesButtonTapped(_ sender: UIButton) {
+        if (originPosition == nil) {
+            //error message
+            self.showMessage(text1: "Put origin", text2: "Connected")
+            return
+        }
         if (self.settingOrigin) {
             self.settingOrigin = false
             self.xAxisNode?.isHidden = true
             self.yAxisNode?.isHidden = true
             self.zAxisNode?.isHidden = true
             
-            togglePlanesButton.setTitle("Show Planes", for: .normal)
+            togglePlanesButton.setTitle("...", for: .normal)
+            helpButton.setTitle("....", for: .normal)
             
             for (identifier, planeNode) in planeNodes {
                 planeNode.isHidden = true
@@ -970,8 +1757,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.xAxisNode.isHidden = false
             self.yAxisNode.isHidden = false
             self.zAxisNode.isHidden = false
-
-            togglePlanesButton.setTitle("Hide Planes", for: .normal)
+            
+            togglePlanesButton.setTitle("Hide", for: .normal)
+            helpButton.setTitle("Help", for: .normal)
             
             for (identifier, planeNode) in planeNodes {
                 planeNode.isHidden = false
@@ -987,11 +1775,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Set the view's delegate
         sceneView.delegate = self
         sceneView.session.delegate = self
-                
+        
         // Set the scene to the view
         sceneView.scene = SCNScene(named: "art.scnassets/main.scn")!
         
@@ -1013,7 +1801,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         socket.on(clientEvent: .connect) {data, ack in
             self.roomId = String(format: "%04d", Int(arc4random_uniform(10000))) + "-" + String(format: "%04d", Int(arc4random_uniform(10000)))
+            self.roomIDLabel.isHidden = false
             self.roomIDLabel.text = "ID: " + self.roomId
+            self.connectionState = false
             var jsonDic = Dictionary<String, Any>()
             jsonDic["roomId"] = self.roomId
             jsonDic["command"] = "join"
@@ -1027,118 +1817,213 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         socket.on("from_server") { data, ack in
-            self.roomIDLabel.text = "Connected."
+            if self.connectionState == false {
+                self.showMessage(text1: "Connection Success !", text2: "Start Modeling")
+                self.connectionState = true
+            }
             if let msg = data[0] as? String {
                 print(msg)
                 let units = msg.components(separatedBy: ":")
                 let action = units[0]
                 switch action {
+                case "change_cube_size":
+                    let magnification = Float(units[1])
+                    self.changeCubeSize(magnification: magnification!)
                 case "set_cube":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    self.setCube(x: x!, y: y!, z: z!)
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    if x == nil || y == nil || z == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setCube(x: x!, y: y!, z: z!)
+                    }
                 case "set_box":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let w = Int(units[4])
-                    let d = Int(units[5])
-                    let h = Int(units[6])
-                    self.setBox(x: x!, y: y!, z: z!, w: w!, d: d!, h: h!)
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let w = Float(units[4])
+                    let d = Float(units[5])
+                    let h = Float(units[6])
+                    if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || h! < 0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setBox(x: Int(x!), y: Int(y!), z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!))
+                    }
                 case "set_cylinder":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let r = Int(units[4])
-                    let h = Int(units[5])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let r = Float(units[4])
+                    let _r = round(r! * 2.0) / 2.0
+                    let h = Float(units[5])
                     let a = units[6]
-                    self.setCylinder(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
+                    if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setCylinder(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
+                    }
                 case "set_hexagon":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let r = Int(units[4])
-                    let h = Int(units[5])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let r = Float(units[4])
+                    let _r = round(r! * 2.0) / 2.0
+                    let h = Float(units[5])
                     let a = units[6]
-                    self.setHexagon(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
+                    if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setHexagon(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
+                    }
                 case "set_sphere":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let r = Int(units[4])
-                    self.setSphere(x: x!, y: y!, z: z!, r: r!)
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let r = Float(units[4])
+                    let _r = round(r! * 2.0) / 2.0
+                    if x == nil || y == nil || z == nil || r == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setSphere(x: Int(x!), y: Int(y!), z: Int(z!), r: _r)
+                    }
                 case "set_char":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let c = units[4]
                     let a = units[5]
-                    self.setChar(x: x!, y: y!, z: z!, c: c, a: a)
+                    if x == nil || y == nil || z == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setChar(x: Int(x!), y: Int(y!), z: Int(z!), c: c, a: a)
+                    }
                 case "set_line":
-                    let x1 = Int(units[1])
-                    let y1 = Int(units[2])
-                    let z1 = Int(units[3])
-                    let x2 = Int(units[4])
-                    let y2 = Int(units[5])
-                    let z2 = Int(units[6])
-                    self.setLine(x1: x1!, y1: y1!, z1: z1!, x2: x2!, y2: y2!, z2: z2!)
+                    let x1 = Float(units[1])
+                    let y1 = Float(units[2])
+                    let z1 = Float(units[3])
+                    let x2 = Float(units[4])
+                    let y2 = Float(units[5])
+                    let z2 = Float(units[6])
+                    if x1 == nil || y1 == nil || z1 == nil || x2 == nil || y2 == nil || z2 == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setLine(x1: Int(x1!), y1: Int(y1!), z1: Int(z1!), x2: Int(x2!), y2: Int(y2!), z2: Int(z2!))
+                    }
                 case "set_roof":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let w = Int(units[4])
-                    let d = Int(units[5])
-                    let h = Int(units[6])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let w = Float(units[4])
+                    let d = Float(units[5])
+                    let h = Float(units[6])
                     let a = units[7]
-                    self.setRoof(_x: x!, _y: y!, _z: z!, w: w!, d: d!, h: h!, a: a)
+                    if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || abs(h!) < 0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setRoof(_x: Int(x!), _y: Int(y!), _z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!), a: a)
+                    }
                 case "polygon_file_format":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
                     let ply_file = units[4]
-                    self.polygonFileFormat(x: x!, y: y!, z: z!, ply_file: ply_file)
+                    if x == nil || y == nil || z == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.polygonFileFormat(x: Int(x!), y: Int(y!), z: Int(z!), ply_file: ply_file)
+                    }
                 case "animation":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    let differenceX = Int(units[4])
-                    let differenceY = Int(units[5])
-                    let differenceZ = Int(units[6])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let differenceX = Float(units[4])
+                    let differenceY = Float(units[5])
+                    let differenceZ = Float(units[6])
                     let time = Double(units[7])
-                    let times = Int(units[8])
+                    let times = Float(units[8])
                     let files = units[9]
-                    self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: times!, files: files)
+                    if x == nil || y == nil || z == nil || differenceX == nil || differenceY == nil || differenceZ == nil || time == nil || times == nil || time! <= 0 || times! <= 0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.animation(x: Int(x!), y: Int(y!), z: Int(z!), differenceX: Int(differenceX!), differenceY: Int(differenceY!), differenceZ: Int(differenceZ!), time: time!, times: Int(times!), files: files)
+                    }
                 case "map":
                     let map_data = units[1]
-                    let width = Int(units[2])
-                    let height = Int(units[3])
-                    let magnification = Double(units[4])
-                    let r1 = Int(units[5])
-                    let g1 = Int(units[6])
-                    let b1 = Int(units[7])
-                    let r2 = Int(units[8])
-                    let g2 = Int(units[9])
-                    let b2 = Int(units[10])
-                    let upward = Int(units[11])
-                    self.map(map_data: map_data, width: width!, height: height!, magnification: magnification!, r1: r1!, g1: g1!, b1: b1!, r2: r2!, g2: g2!, b2: b2!, upward: upward!)
+                    let width = Float(units[2])
+                    let height = Float(units[3])
+                    let magnification = Float(units[4])
+                    let r1 = Float(units[5])
+                    let g1 = Float(units[6])
+                    let b1 = Float(units[7])
+                    let r2 = Float(units[8])
+                    let g2 = Float(units[9])
+                    let b2 = Float(units[10])
+                    let upward = Float(units[11])
+                    if width == nil || height == nil || magnification == nil || r1 == nil || g1 == nil || b1 == nil || r2 == nil || g2 == nil || b2 == nil || upward == nil || width! < 1 || height! < 1 || magnification! <= 0.0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.map(map_data: map_data, width: Int(width!), height: Int(height!), magnification: magnification!, r1: Int(r1!), g1: Int(g1!), b1: Int(b1!), r2: Int(r2!), g2: Int(g2!), b2: Int(b2!), upward: Int(upward!))
+                    }
+                case "pin":
+                    let pin_data = units[1]
+                    let width = Float(units[2])
+                    let height = Float(units[3])
+                    let magnification = Float(units[4])
+                    let up_left_latitude = Float(units[5])
+                    let up_left_longitude = Float(units[6])
+                    let down_right_latitude = Float(units[7])
+                    let down_right_longitude = Float(units[8])
+                    let step = Float(units[9])
+                    if width == nil || height == nil || magnification == nil || up_left_latitude == nil || up_left_longitude == nil || down_right_latitude == nil || down_right_longitude == nil || step == nil || width! < 1 || height! < 1 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.pin(pin_data: pin_data, width: Int(width!), height: Int(height!), magnification: magnification!, up_left_latitude: up_left_latitude!, up_left_longitude: up_left_longitude!, down_right_latitude: down_right_latitude!, down_right_longitude: down_right_longitude!, step: Int(step!))
+                    }
                 case "molecular_structure":
-                    let x = Double(units[1])
-                    let y = Double(units[2])
-                    let z = Double(units[3])
-                    let magnification = Double(units[4])
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    let magnification = Float(units[4])
                     let mld_file = units[5]
-                    self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
+                    if x == nil || y == nil || z == nil || magnification == nil || magnification! <= 0.0 {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
+                    }
                 case "set_color":
-                    let r = Int(units[1])
-                    let g = Int(units[2])
-                    let b = Int(units[3])
-                    self.setColor(r: r!, g: g!, b: b!)
+                    let r = Float(units[1])
+                    let g = Float(units[2])
+                    let b = Float(units[3])
+                    if r == nil || g == nil || b == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
+                    }
                 case "remove_cube":
-                    let x = Int(units[1])
-                    let y = Int(units[2])
-                    let z = Int(units[3])
-                    self.removeCube(x: x!, y: y!, z: z!)
+                    let x = Float(units[1])
+                    let y = Float(units[2])
+                    let z = Float(units[3])
+                    if x == nil || y == nil || z == nil {
+                        //error message
+                        self.showMessage(text1: "Unacceptable value", text2: "Connected")
+                    } else {
+                        self.removeCube(x: x!, y: y!, z: z!)
+                    }
                 case "reset":
                     self.reset()
                 default:
@@ -1165,17 +2050,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         super.didReceiveMemoryWarning()
         // Release any cached data, images, etc that aren't in use.
     }
-
+    
     // MARK: - ARSCNViewDelegate
     
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
+    /*
+     // Override to create and configure nodes for anchors added to the view's session.
+     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+     let node = SCNNode()
      
-        return node
-    }
-*/
+     return node
+     }
+     */
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
@@ -1207,28 +2092,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             originPosition = SCNVector3Make(hitResult.worldTransform.columns.3.x,
                                             hitResult.worldTransform.columns.3.y,
                                             hitResult.worldTransform.columns.3.z)
-            xAxisNode.position = SCNVector3Make(originPosition.x + CUBE_SIZE * 10, originPosition.y, originPosition.z)
-            yAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y + CUBE_SIZE * 10, originPosition.z)
-            zAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y, originPosition.z + CUBE_SIZE * 10)
-
+            xAxisNode.position = SCNVector3Make(originPosition.x + 0.2, originPosition.y, originPosition.z)
+            yAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y + 0.2, originPosition.z)
+            zAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y, originPosition.z + 0.2)
+            
             lightNode.position = SCNVector3Make(originPosition.x + CUBE_SIZE * 100,
                                                 originPosition.y + CUBE_SIZE * 100,
                                                 originPosition.z + CUBE_SIZE * 100)
             
             backLightNode.position = SCNVector3Make(originPosition.x - CUBE_SIZE * 100,
-                                                originPosition.y + CUBE_SIZE * 100,
-                                                originPosition.z - CUBE_SIZE * 100)
+                                                    originPosition.y + CUBE_SIZE * 100,
+                                                    originPosition.z - CUBE_SIZE * 100)
         } else {
-            let xAxisGeometry = SCNCylinder(radius: CGFloat(CUBE_SIZE / 10.0), height: CGFloat(CUBE_SIZE * 20.0))
+            let xAxisGeometry = SCNCylinder(radius: CGFloat(0.002), height: CGFloat(0.4))//CUBE SIZE を変更できるように定数に変更した
             xAxisGeometry.firstMaterial?.diffuse.contents = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
             xAxisNode = SCNNode(geometry: xAxisGeometry)
             xAxisNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 0, 0, 1)
-
-            let yAxisGeometry = SCNCylinder(radius: CGFloat(CUBE_SIZE / 10.0), height: CGFloat(CUBE_SIZE * 20.0))
+            
+            let yAxisGeometry = SCNCylinder(radius: CGFloat(0.002), height: CGFloat(0.4))
             yAxisGeometry.firstMaterial?.diffuse.contents = UIColor(red: 0, green: 1, blue: 0, alpha: 1)
             yAxisNode = SCNNode(geometry: yAxisGeometry)
-
-            let zAxisGeometry = SCNCylinder(radius: CGFloat(CUBE_SIZE / 10.0), height: CGFloat(CUBE_SIZE * 20.0))
+            
+            let zAxisGeometry = SCNCylinder(radius: CGFloat(0.002), height: CGFloat(0.4))
             zAxisGeometry.firstMaterial?.diffuse.contents = UIColor(red: 0, green: 0, blue: 1, alpha: 1)
             zAxisNode = SCNNode(geometry: zAxisGeometry)
             zAxisNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
@@ -1236,14 +2121,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             xAxisNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
             yAxisNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
             zAxisNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-
+            
             originPosition = SCNVector3Make(hitResult.worldTransform.columns.3.x,
                                             hitResult.worldTransform.columns.3.y,
                                             hitResult.worldTransform.columns.3.z)
             
-            xAxisNode.position = SCNVector3Make(originPosition.x + CUBE_SIZE * 10, originPosition.y, originPosition.z)
-            yAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y + CUBE_SIZE * 10, originPosition.z)
-            zAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y, originPosition.z + CUBE_SIZE * 10)
+            xAxisNode.position = SCNVector3Make(originPosition.x + 0.2, originPosition.y, originPosition.z)
+            yAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y + 0.2, originPosition.z)
+            zAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y, originPosition.z + 0.2)
             
             sceneView.scene.rootNode.addChildNode(xAxisNode)
             sceneView.scene.rootNode.addChildNode(yAxisNode)
@@ -1257,25 +2142,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             lightNode = SCNNode()
             lightNode.light = light
             lightNode.position = SCNVector3Make(originPosition.x + CUBE_SIZE * 100,
-                                               originPosition.y + CUBE_SIZE * 100,
-                                               originPosition.z + CUBE_SIZE * 100)
-        
+                                                originPosition.y + CUBE_SIZE * 100,
+                                                originPosition.z + CUBE_SIZE * 100)
+            
             let constraint = SCNLookAtConstraint(target: xAxisNode)
             constraint.isGimbalLockEnabled = true
             
             lightNode.constraints = [constraint]
             sceneView.scene.rootNode.addChildNode(lightNode)
-
+            
             let backLight = SCNLight()
             backLight.type = .directional
             backLight.intensity = 100
             light.castsShadow = true
-
+            
             backLightNode = SCNNode()
             backLightNode.light = backLight
             backLightNode.position = SCNVector3Make(originPosition.x - CUBE_SIZE * 100,
-                                                originPosition.y + CUBE_SIZE * 100,
-                                                originPosition.z - CUBE_SIZE * 100)
+                                                    originPosition.y + CUBE_SIZE * 100,
+                                                    originPosition.z - CUBE_SIZE * 100)
             
             backLightNode.constraints = [constraint]
             sceneView.scene.rootNode.addChildNode(backLightNode)
@@ -1286,7 +2171,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
         
         let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
-                               height: CGFloat(planeAnchor.extent.z))
+                                height: CGFloat(planeAnchor.extent.z))
         
         geometry.materials.first?.diffuse.contents = UIImage(named: "grid.png")
         let material = geometry.materials.first
@@ -1301,34 +2186,60 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         planeNodes[anchor.identifier] = planeNode
         
         DispatchQueue.main.async(execute: {
-          node.addChildNode(planeNode)
+            node.addChildNode(planeNode)
         })
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-
+        
         let planeNode = planeNodes[anchor.identifier]
         if planeNode == nil {
             return
         }
-
+        
         let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
                                 height: CGFloat(planeAnchor.extent.z))
-
+        
         geometry.materials.first?.diffuse.contents = UIImage(named: "grid.png")
         
         let material = geometry.materials.first
         material?.diffuse.contentsTransform = SCNMatrix4MakeScale(planeAnchor.extent.x, planeAnchor.extent.z, 1)
         material?.diffuse.wrapS = SCNWrapMode.repeat
         material?.diffuse.wrapT = SCNWrapMode.repeat
-
+        
         planeNode?.geometry = geometry
         planeNode?.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
         planeNode?.isHidden = !settingOrigin
-
+        
         planeNode?.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z);
         
         planeNodes[anchor.identifier] = planeNode
+    }
+}
+
+
+extension String {
+    public func isOnly(_ characterSet: CharacterSet) -> Bool {
+        return self.trimmingCharacters(in: characterSet).count <= 0
+    }
+    public func isOnlyNumeric() -> Bool {
+        return isOnly(.decimalDigits)
+    }
+    public func isOnlyPunctuation() -> Bool {
+        return isOnly(.punctuationCharacters)
+    }
+    public func isOnly(_ characterSet: CharacterSet, _ additionalString: String) -> Bool {
+        var replaceCharacterSet = characterSet
+        replaceCharacterSet.insert(charactersIn: additionalString)
+        return isOnly(replaceCharacterSet)
+    }
+    /// StringからCharacterSetを取り除く
+    func remove(characterSet: CharacterSet) -> String {
+        return components(separatedBy: characterSet).joined()
+    }
+    /// StringからCharacterSetを抽出する
+    func extract(characterSet: CharacterSet) -> String {
+        return remove(characterSet: characterSet.inverted)
     }
 }
