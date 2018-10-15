@@ -10,6 +10,10 @@ S2AR is available at [App Store](https://itunes.apple.com/jp/app/s2ar/id13168479
 
 [![](images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8)
 
+Links
+
+- [S2AR とは – AIに負けない！キッズ・プログラミング教室](http://creativival.com/s2ar-%E3%81%A8%E3%81%AF/)
+
 Demo Movies
 
 - https://www.youtube.com/watch?v=lYuR27QzpL0
