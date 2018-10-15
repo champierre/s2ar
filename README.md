@@ -16,8 +16,6 @@ Demo Movies
 - https://www.youtube.com/watch?v=rBz-OfMnzKU
 - https://www.youtube.com/watch?v=P9t2iPcgGGw
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/lYuR27QzpL0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
 ## How to use
 
 1. On iOS device, start S2AR and you will find ID(connection ID) appeared in the bottom bar.
