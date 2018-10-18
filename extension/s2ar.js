@@ -12,7 +12,7 @@
         if (connected) {
           return {status: 2, msg: 'Connected to the Server'};
         } else {
-          return {status: 0, msg: 'Not connected to the Server'};
+          return {status: 1, msg: 'Not connected to the Server'};
         }
       };
 
