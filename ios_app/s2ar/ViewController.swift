@@ -32,6 +32,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var red: Int = 255
     var green: Int = 255
     var blue: Int = 255
+    var alpha: Float = 1.0
     
     var roomId: String = "0000 0000"
     var CUBE_SIZE: Float = 0.01
@@ -74,7 +75,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         func setCubeMethod(x: Float, y: Float, z: Float) {
             let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
-            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1)
+            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: CGFloat(alpha))
             cubeNode = SCNNode(geometry: cube)
             cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
             let position = SCNVector3Make(
@@ -1680,6 +1681,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.showMessage(text: "RGB: (\(red):\(green):\(blue))")
     }
     
+    func setAlpha(a: Float) {
+        var _a: Float = a < 0 ? -a : a
+        while(_a > 1) {
+            _a /= 10.0
+        }
+        alpha = _a
+        
+        //message
+        self.showMessage(text: "alpha: (\(_a))")
+    }
+    
     func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
@@ -1993,6 +2005,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.showMessage(text: "Invalid value")
                     } else {
                         self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
+                    }
+                case "set_alpha":
+                    let a = Float(units[1])
+                    if a == nil {
+                        //error message
+                        self.showMessage(text: "Invalid value")
+                    } else {
+                        self.setAlpha(a: Float(a!))
                     }
                 case "remove_cube":
                     let x = Float(units[1])

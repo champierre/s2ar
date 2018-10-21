@@ -104,6 +104,11 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
+      ext.set_alpha = function(a) {
+        let command = "set_alpha:" + a;
+        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
+      }
+
       ext.remove_cube = function(x, y, z) {
         let command = "remove_cube:" + x + ":" + y + ":" + z;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
@@ -134,6 +139,7 @@
           pin: 'ピンを立てる。位置データを %s 、幅を %n 、高さを %n 、拡大倍率を %n 、左上緯度を %n 、左上経度を %n 、右下緯度を %n 、右下経度を %n 横に %n ずらす',
           molecular_structure: '分子構造モデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、拡大倍率を %n 、MLDファイル %s',
           set_color: 'ブロックの色を変える。r: %n g: %n b: %n',
+          set_alpha: 'ブロックの透明度を変える。alpha: %n',
           remove_cube: 'ブロックを消す。x座標を %n 、y座標を %n 、z座標を %n',
           reset: 'リセット'
         },
@@ -155,6 +161,7 @@
           pin: 'stand pins at position: %s width: %n height: %n magnification: %n up-left (latitude: %n longitude: %n ) down-right (latitude: %n longitude: %n ) shift %n',
           molecular_structure: 'molecular structure at x: %n y: %n z: %n magnification: %n mld file: %s',
           set_color: 'set color to r: %n g: %n b: %n',
+          set_alpha: 'set transparency to alpha: %n',
           remove_cube: 'remove cube at x: %n y: %n z: %n',
           reset: 'reset'
         },
@@ -179,6 +186,7 @@
           [' ', locale[lang].pin, 'pin', 'potision_data.csv', 257, 257, 2, 46.852, 126.738, 29.148, 149.238, 0],
           [' ', locale[lang].molecular_structure, 'molecular_structure', 0, 10, 0, 10, 'methane.mld'],
           [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
+          [' ', locale[lang].set_alpha, 'set_alpha', 1.0],
           [' ', locale[lang].remove_cube, 'remove_cube', 1, 0, 1],
           [' ', locale[lang].reset, 'reset']
         ],
