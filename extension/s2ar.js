@@ -109,6 +109,11 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
+      ext.change_layer = function(l) {
+        let command = "change_layer:" + l;
+        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
+      }
+
       ext.remove_cube = function(x, y, z) {
         let command = "remove_cube:" + x + ":" + y + ":" + z;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
@@ -140,6 +145,7 @@
           molecular_structure: '分子構造モデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、拡大倍率を %n 、MLDファイル %s',
           set_color: 'ブロックの色を変える。r: %n g: %n b: %n',
           set_alpha: 'ブロックの透明度を変える。alpha: %n',
+          change_layer: 'ＡＲのレイヤを変える。レイヤ: %m.layer',
           remove_cube: 'ブロックを消す。x座標を %n 、y座標を %n 、z座標を %n',
           reset: 'リセット'
         },
@@ -162,6 +168,7 @@
           molecular_structure: 'molecular structure at x: %n y: %n z: %n magnification: %n mld file: %s',
           set_color: 'set color to r: %n g: %n b: %n',
           set_alpha: 'set transparency to alpha: %n',
+          change_layer: 'change AR layer: %m.layer',
           remove_cube: 'remove cube at x: %n y: %n z: %n',
           reset: 'reset'
         },
@@ -187,11 +194,13 @@
           [' ', locale[lang].molecular_structure, 'molecular_structure', 0, 10, 0, 10, 'methane.mld'],
           [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
           [' ', locale[lang].set_alpha, 'set_alpha', 1.0],
+          [' ', locale[lang].change_layer, 'change_layer', '1'],
           [' ', locale[lang].remove_cube, 'remove_cube', 1, 0, 1],
           [' ', locale[lang].reset, 'reset']
         ],
         menus: {
-          axes: ['x', 'y', 'z']
+          axes: ['x', 'y', 'z'],
+          layer: ['1', '2', '3']
         }
       };
 

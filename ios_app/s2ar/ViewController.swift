@@ -22,6 +22,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     var cubeNode: SCNNode!
     var cubeNodes: [String:SCNNode] = [:]
+    var cubeNodes2: [String:SCNNode] = [:]
+    var cubeNodes3: [String:SCNNode] = [:]
     
     var lightNode: SCNNode!
     var backLightNode: SCNNode!
@@ -40,6 +42,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var timer = Timer()
     
     var connectionState: Bool = false
+    
+    var layer: String = "1"
     
     @IBOutlet var roomIDLabel: UILabel!
     
@@ -85,9 +89,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             )
             cubeNode.position = position
             sceneView.scene.rootNode.addChildNode(cubeNode)
-            cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            switch layer {
+            case "2":
+                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            case "3":
+                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            default:
+                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            }
         }
-        if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
+        if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
             // remove cube if contains
             self.removeCube(x: _x, y: _y, z: _z)
             setCubeMethod(x: _x, y: _y, z: _z)
@@ -540,7 +551,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     _x = round(_x * 2.0) / 2.0
                     _y = round(_y * 2.0) / 2.0
                     _z = round(_z * 2.0) / 2.0
-                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                         // does not contains key
                         self.setCube(x: _x, y: _y, z: _z)
                     }
@@ -561,7 +572,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     _x = round(_x * 2.0) / 2.0
                     _y = round(_y * 2.0) / 2.0
                     _z = round(_z * 2.0) / 2.0
-                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                         // does not contains key
                         self.setCube(x: _x, y: _y, z: _z)
                     }
@@ -582,7 +593,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     _x = round(_x * 2.0) / 2.0
                     _y = round(_y * 2.0) / 2.0
                     _z = round(_z * 2.0) / 2.0
-                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                    if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                         // does not contains key
                         self.setCube(x: _x, y: _y, z: _z)
                     }
@@ -888,7 +899,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         _x = Float(x) + Float(vertex1[0])!
                         _y = Float(y) + Float(vertex1[2])!
                         _z = Float(z) - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
@@ -896,7 +907,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         _x = Float(x) + Float(vertex1[0])! - 1.0
                         _y = Float(y) + Float(vertex1[2])!
                         _z = Float(z) - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
@@ -906,7 +917,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         _x = Float(x) + Float(vertex1[0])!
                         _y = Float(y) + Float(vertex1[2])!
                         _z = Float(z) - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
@@ -914,7 +925,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         _x = Float(x) + Float(vertex1[0])!
                         _y = Float(y) + Float(vertex1[2])!
                         _z = Float(z) - Float(vertex1[1])! + 1.0
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
@@ -924,7 +935,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         _x = Float(x) + Float(vertex1[0])!
                         _y = Float(y) + Float(vertex1[2])!
                         _z = Float(z) - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
@@ -932,7 +943,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         _x = Float(x) + Float(vertex1[0])!
                         _y = Float(y) + Float(vertex1[2])! - 1.0
                         _z = Float(z) - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
                             self.setCube(x: _x, y: _y, z: _z)
                         }
@@ -1692,6 +1703,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.showMessage(text: "alpha: (\(_a))")
     }
     
+    func changeLayer(l: String) {
+        layer = l
+        
+        //message
+        self.showMessage(text: "Change layer: \(l)")
+    }
+    
     func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
@@ -1704,13 +1722,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let _z: Float = round(2.0 * z) / 2.0
         
         let cubeNode = cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)]
-        if (cubeNode == nil) {
+        let cubeNode2 = cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)]
+        let cubeNode3 = cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)]
+        if (cubeNode == nil && cubeNode2 == nil && cubeNode3 == nil) {
             //error message
             self.showMessage(text: "No block")
             return
         }
-        
-        cubeNode?.removeFromParentNode()
+        if (cubeNode != nil) {
+            cubeNode?.removeFromParentNode()
+        }
+        if (cubeNode2 != nil) {
+            cubeNode2?.removeFromParentNode()
+        }
+        if (cubeNode3 != nil) {
+            cubeNode3?.removeFromParentNode()
+        }
     }
     
     func reset() {
@@ -1719,13 +1746,30 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
-        //message
-        self.showMessage(text: "Reset")
         
-        for (id, cubeNode) in cubeNodes {
-            cubeNode.removeFromParentNode()
+        switch layer{
+        case "1":
+            self.showMessage(text: "Reset layer1")
+            for (id, cubeNode) in cubeNodes {
+                cubeNode.removeFromParentNode()
+            }
+            cubeNodes = [:]
+        case "2":
+            self.showMessage(text: "Reset layer2")
+            for (id, cubeNode) in cubeNodes2 {
+                cubeNode.removeFromParentNode()
+            }
+            cubeNodes2 = [:]
+        case "3":
+            self.showMessage(text: "Reset layer3")
+            for (id, cubeNode) in cubeNodes3 {
+                cubeNode.removeFromParentNode()
+            }
+            cubeNodes3 = [:]
+        default:
+            self.showMessage(text: "No layer")
+            break
         }
-        cubeNodes = [:]
     }
     
     @IBAction func togglePlanesButtonTapped(_ sender: UIButton) {
@@ -2013,6 +2057,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.showMessage(text: "Invalid value")
                     } else {
                         self.setAlpha(a: Float(a!))
+                    }
+                case "change_layer":
+                    let layer: String? = units[1]// 1 or 2 or 3
+                    if layer == nil {
+                        //error message
+                        self.showMessage(text: "Invalid value")
+                    } else {
+                        self.changeLayer(l: layer!)
                     }
                 case "remove_cube":
                     let x = Float(units[1])
