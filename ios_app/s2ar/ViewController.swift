@@ -108,64 +108,358 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setBox(x: Int, y: Int, z: Int, w: Int, d: Int, h: Int) {
+    func setBox(x: Float, y: Float, z: Float, w: Float, d: Float, h: Float) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        var _w: Float = round(2.0 * w) / 2.0
+        var _d: Float = round(2.0 * d) / 2.0
+        var _h: Float = round(2.0 * h) / 2.0
+        var w_half: Bool = false// With 0.5
+        var d_half: Bool = false// With 0.5
+        var h_half: Bool = false// With 0.5
+        var w_plus: Bool = true// plus or minus
+        var d_plus: Bool = true// plus or minus
+        var h_plus: Bool = true// plus or minus
         
-        for k in 0..<d {
-            for j in 0..<h {
-                for i in 0..<w {
-                    if k == 0 || k == d - 1 || j == 0 || j == h - 1 || i == 0 || i == w - 1 {
-                        self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+        if _w < 0 {
+            w_plus = false
+            _w = -_w
+        }
+        if _d < 0 {
+            d_plus = false
+            _d = -_d
+        }
+        if _h < 0 {
+            h_plus = false
+            _h = -_h
+        }
+        
+        if !(abs(_w.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            // With decimal point
+            w_half = true
+        }
+        if !(abs(_d.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            // With decimal point
+            d_half = true
+        }
+        if !(abs(_h.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            // With decimal point
+            h_half = true
+        }
+        
+        
+        for k in 0..<Int(_d) {
+            for j in 0..<Int(_h) {
+                for i in 0..<Int(_w) {
+                    if k == 0 || k == Int(_d) - 1 || j == 0 || j == Int(_h) - 1 || i == 0 || i == Int(_w) - 1 {
+                        if w_plus && h_plus && d_plus {//ok
+                            self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                        }
+                        if !w_plus && h_plus && d_plus {//ok
+                            self.setCube(x: _x - Float(i), y: _y + Float(j), z: _z + Float(k))
+                        }
+                        if w_plus && !h_plus && d_plus {
+                            self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z + Float(k))
+                        }
+                        if w_plus && h_plus && !d_plus {
+                            self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - Float(k))
+                        }
+                        if !w_plus && !h_plus && d_plus {
+                            self.setCube(x: _x - Float(i), y: _y - Float(j), z: _z + Float(k))
+                        }
+                        if w_plus && !h_plus && !d_plus {
+                            self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z - Float(k))
+                        }
+                        if !w_plus && h_plus && !d_plus {
+                            self.setCube(x: _x - Float(i), y: _y + Float(j), z: _z - Float(k))
+                        }
+                        if !w_plus && !h_plus && !d_plus {
+                            self.setCube(x: _x - Float(i), y: _y - Float(j), z: _z - Float(k))
+                        }
+                        if i == Int(_w) - 1 {
+                            if w_half {//ok
+                                if w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 -  Float(i), y: _y + Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 -  Float(i), y: _y - Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 -  Float(i), y: _y + Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 -  Float(i), y: _y - Float(j), z: _z - Float(k))
+                                }
+                            }
+                        }
+                        if j == Int(_h) - 1 {
+                            if h_half {//ok
+                                if w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + 0.5 + Float(j), z: _z + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y + 0.5 + Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y - 0.5 - Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + 0.5 + Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y - 0.5 - Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y - 0.5 - Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y + 0.5 + Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y - 0.5 - Float(j), z: _z - Float(k))
+                                }
+                            }
+                        }
+                        if k == Int(_d) - 1 {
+                            if d_half {//ok
+                                if w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                            }
+                        }
+                        if i == Int(_w) - 1 && j == Int(_h) - 1 {
+                            if w_half && h_half {//ok
+                                if w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + 0.5 + Float(j), z: _z + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y + 0.5 + Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - 0.5 - Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + 0.5 + Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y - 0.5 - Float(j), z: _z + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - 0.5 - Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y + 0.5 + Float(j), z: _z - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y - 0.5 - Float(j), z: _z - Float(k))
+                                }
+                            }
+                        }
+                        if j == Int(_h) - 1 && k == Int(_d) - 1 {
+                            if h_half && d_half {//ok
+                                if w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + 0.5 + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y + 0.5 + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y - 0.5 - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + 0.5 + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y - 0.5 - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + Float(i), y: _y - 0.5 - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y + 0.5 + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - Float(i), y: _y - 0.5 - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                            }
+                        }
+                        if k == Int(_d) - 1 && i == Int(_w) - 1 {
+                            if d_half && w_half {//ok
+                                if w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                            }
+                        }
+                        if i == Int(_w) - 1 && j == Int(_h) - 1 && k == Int(_d) - 1 {
+                            if w_half && h_half && d_half {
+                                if w_plus && h_plus && d_plus {//ok
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + 0.5 + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if !w_plus && h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y + 0.5 + Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - 0.5 - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y + 0.5 + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y - 0.5 - Float(j), z: _z + 0.5 + Float(k))
+                                }
+                                if w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x + 0.5 + Float(i), y: _y - 0.5 - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y + 0.5 + Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                if !w_plus && !h_plus && !d_plus {
+                                    self.setCube(x: _x - 0.5 - Float(i), y: _y - 0.5 - Float(j), z: _z - 0.5 - Float(k))
+                                }
+                                showMessage(text: "End to set a box")
+                            }
+                        }
                     }
                 }
             }
         }
     }
     
-    func setCylinder(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
+    func setCylinder(x: Float, y: Float, z: Float, r: Float, h: Float, a: String) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
-        var i: Int
-        var j: Int
-        var k: Int
-        let r1: Float = r < 0 ? -r : r
-        let _r = Int(r1)
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        var _h: Float = round(2.0 * h) / 2.0
+        var r1: Float = round(2.0 * r) / 2.0
+        var h_half: Bool = false// With 0.5
+        var h_plus: Bool = true// plus or minus
+        r1 = r1 < 0 ? -r1 : r1
+        let _r: Int = Int(r1)
+        
+        if _h < 0 {
+            h_plus = false
+            _h = -_h
+        }
+        
+        if !(abs(_h.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            // With decimal point
+            h_half = true
+        }
         
         if (abs(r1.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
             //小数点なし
             switch a {
             case "x":
-                i = 0
                 for k in -_r..._r {
                     for j in -_r..._r {
                         if j * j + k * k < _r * _r {
-                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
-                        }
-                    }
-                }
-                if h > 1 {
-                    i = h - 1
-                    for k in -_r..._r {
-                        for j in -_r..._r {
-                            if j * j + k * k < _r * _r {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            self.setCube(x: _x, y: _y + Float(j), z: _z + Float(k))
+                            if _h == 1.5 {
+                                if h_plus {
+                                    self.setCube(x: _x + 0.5, y: _y + Float(j), z: _z + Float(k))
+                                } else {
+                                    self.setCube(x: _x - 0.5, y: _y + Float(j), z: _z + Float(k))
+                                }
                             }
                         }
                     }
                 }
-                if h > 2 {
-                    for i in 1..<h-1 {
+                if Int(_h) > 1 {
+                    for k in -_r..._r {
+                        for j in -_r..._r {
+                            if j * j + k * k < _r * _r {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(Int(_h) - 1), y: _y + Float(j), z: _z + Float(k))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(Int(_h) - 1) + 0.5, y: _y + Float(j), z: _z + Float(k))
+                                    }
+                                } else {
+                                    self.setCube(x: _x - Float(Int(_h) - 1), y: _y + Float(j), z: _z + Float(k))
+                                    if h_half {
+                                        self.setCube(x: _x - Float(Int(_h) - 1) - 0.5, y: _y + Float(j), z: _z + Float(k))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if Int(_h) > 2 {
+                    for i in 1..<Int(_h)-1 {
                         for k in -_r..._r {
                             for j in -_r..._r {
                                 if (j * j + k * k < _r * _r) && (j * j + k * k >= (_r - 1) * (_r - 1)) {
-                                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                    if h_plus {
+                                        self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                    } else {
+                                        self.setCube(x: _x - Float(i), y: _y + Float(j), z: _z + Float(k))
+                                    }
                                 }
                             }
                         }
@@ -173,60 +467,98 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     
                 }
             case "y":
-                j = 0
                 for k in -_r..._r {
                     for i in -_r..._r  {
                         if i * i + k * k < _r * _r {
-                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
-                        }
-                    }
-                }
-                if h > 1 {
-                    j = h - 1
-                    for k in -_r..._r {
-                        for i in -_r..._r  {
-                            if i * i + k * k < _r * _r {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            self.setCube(x: _x + Float(i), y: _y, z: _z + Float(k))
+                            if _h == 1.5 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + 0.5, z: _z + Float(k))
+                                } else {
+                                    self.setCube(x: _x + Float(i), y: _y - 0.5, z: _z + Float(k))
+                                }
                             }
                         }
                     }
                 }
-                if h > 2 {
-                    for j in 1..<h-1 {
+                if Int(_h) > 1 {
+                    for k in -_r..._r {
+                        for i in -_r..._r  {
+                            if i * i + k * k < _r * _r {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(Int(_h) - 1), z: _z + Float(k))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i), y: _y + Float(Int(_h) - 1) + 0.5, z: _z + Float(k))
+                                    }
+                                } else {
+                                    self.setCube(x: _x + Float(i), y: _y - Float(Int(_h) - 1), z: _z + Float(k))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i), y: _y - Float(Int(_h) - 1) - 0.5, z: _z + Float(k))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if Int(_h) > 2 {
+                    for j in 1..<Int(_h)-1 {
                         for k in -_r..._r{
                             for i in -_r..._r {
                                 if (k * k + i * i < _r * _r) && (k * k + i * i >= (_r - 1) * (_r - 1)) {
-                                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                    if h_plus {
+                                        self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                    } else {
+                                        self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z + Float(k))
+                                    }
                                 }
                             }
                         }
                     }
                 }
             case "z":
-                k = 0
                 for j in -_r..._r {
                     for i in -_r..._r {
                         if i * i + j * j < _r * _r {
-                            self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
-                        }
-                    }
-                }
-                if h > 1 {
-                    k = h - 1
-                    for j in -_r..._r {
-                        for i in -_r..._r {
-                            if i * i + j * j < _r * _r {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                            self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z)
+                            if _h == 1.5 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + 0.5)
+                                } else {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - 0.5)
+                                }
                             }
                         }
                     }
                 }
-                if h > 2 {
-                    for k in 1..<h-1 {
+                if Int(_h) > 1 {
+                    for j in -_r..._r {
+                        for i in -_r..._r {
+                            if i * i + j * j < _r * _r {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(Int(_h) - 1))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(Int(_h) - 1) + 0.5)
+                                    }
+                                } else {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - Float(Int(_h) - 1))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - Float(Int(_h) - 1) - 0.5)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if Int(_h) > 2 {
+                    for k in 1..<Int(_h)-1 {
                         for j in -_r..._r {
                             for i in -_r..._r {
                                 if (i * i + j * j < _r * _r) && (i * i + j * j >= (_r - 1) * (_r - 1)) {
-                                    self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                    if h_plus {
+                                        self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                    } else {
+                                        self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z - Float(k))
+                                    }
                                 }
                             }
                         }
@@ -241,31 +573,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             //小数点あり
             switch a {
             case "x":
-                i = 0
                 for k in -_r..._r+1 {
                     for j in -_r..._r+1 {
                         if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
-                            self.setCube(x: Float(x + i), y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
-                        }
-                    }
-                }
-                if h > 1 {
-                    i = h - 1
-                    for k in -_r..._r+1 {
-                        for j in -_r..._r+1 {
-                            if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
-                                self.setCube(x: Float(x + i), y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                            self.setCube(x: _x, y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                            if _h == 1.5 {
+                                if h_plus {
+                                    self.setCube(x: _x + 0.5, y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                } else {
+                                    self.setCube(x: _x - 0.5, y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                }
                             }
                         }
                     }
                 }
-                if h > 2 {
-                    for i in 1..<h-1 {
+                if Int(_h) > 1 {
+                    for k in -_r..._r+1 {
+                        for j in -_r..._r+1 {
+                            if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(Int(_h) - 1), y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                    if h_half {
+                                        self.setCube(x: _x + Float(Int(_h) - 1) + 0.5, y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                    }
+                                } else {
+                                    self.setCube(x: _x - Float(Int(_h) - 1), y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                    if h_half {
+                                        self.setCube(x: _x - Float(Int(_h) - 1) - 0.5, y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if Int(_h) > 2 {
+                    for i in 1..<Int(_h)-1 {
                         for k in -_r..._r+1 {
                             for j in -_r..._r+1 {
                                 if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
                                     if (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) >= (r1 - 1) * (r1 - 1) {
-                                        self.setCube(x: Float(x + i), y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                                        if h_plus {
+                                            self.setCube(x: _x + Float(i), y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                        } else {
+                                            self.setCube(x: _x - Float(i), y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
+                                        }
                                     }
                                 }
                             }
@@ -273,31 +624,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     }
                 }
             case "y":
-                j = 0
                 for k in -_r..._r+1 {
                     for i in -_r..._r+1  {
                         if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
-                            self.setCube(x: Float(x + i) - 0.5, y: Float(y + j), z: Float(z + k) - 0.5)
-                        }
-                    }
-                }
-                if h > 1 {
-                    j = h - 1
-                    for k in -_r..._r+1 {
-                        for i in -_r..._r+1  {
-                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
-                                self.setCube(x: Float(x + i) - 0.5, y: Float(y + j), z: Float(z + k) - 0.5)
+                            self.setCube(x: _x + Float(i) - 0.5, y: _y, z: _z + Float(k) - 0.5)
+                            if _h == 1.5 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y + 0.5, z: _z + Float(k) - 0.5)
+                                } else {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y - 0.5, z: _z + Float(k) - 0.5)
+                                }
                             }
                         }
                     }
                 }
-                if h > 2 {
-                    for j in 1..<h-1 {
+                if Int(_h) > 1 {
+                    for k in -_r..._r+1 {
+                        for i in -_r..._r+1  {
+                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(Int(_h) - 1), z: _z + Float(k) - 0.5)
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(Int(_h) - 1) + 0.5, z: _z + Float(k) - 0.5)
+                                    }
+                                } else {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y - Float(Int(_h) - 1), z: _z + Float(k) - 0.5)
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i) - 0.5, y: _y - Float(Int(_h) - 1) - 0.5, z: _z + Float(k) - 0.5)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if Int(_h) > 2 {
+                    for j in 1..<Int(_h)-1 {
                         for k in -_r..._r+1 {
                             for i in -_r..._r+1 {
                                 if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
                                     if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) >= (r1 - 1) * (r1 - 1) {
-                                        self.setCube(x: Float(x + i) - 0.5, y: Float(y + j), z: Float(z + k) - 0.5)
+                                        if h_plus {
+                                            self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j), z: _z + Float(k) - 0.5)
+                                        } else {
+                                            self.setCube(x: _x + Float(i) - 0.5, y: _y - Float(j), z: _z + Float(k) - 0.5)
+                                        }
                                     }
                                 }
                             }
@@ -305,31 +675,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     }
                 }
             case "z":
-                k = 0
                 for j in -_r..._r+1 {
                     for i in -_r..._r+1 {
                         if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
-                            self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k))
-                        }
-                    }
-                }
-                if h > 1 {
-                    k = h - 1
-                    for j in -_r..._r+1 {
-                        for i in -_r..._r+1 {
-                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
-                                self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k))
+                            self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z)
+                            if _h == 1.5 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z + 0.5)
+                                } else {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z - 0.5)
+                                }
                             }
                         }
                     }
                 }
-                if h > 2 {
-                    for k in 1..<h-1 {
+                if Int(_h) > 1 {
+                    for j in -_r..._r+1 {
+                        for i in -_r..._r+1 {
+                            if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
+                                if h_plus {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z + Float(Int(_h) - 1))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z + Float(Int(_h) - 1) + 0.5)
+                                    }
+                                } else {
+                                    self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z - Float(Int(_h) - 1))
+                                    if h_half {
+                                        self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z - Float(Int(_h) - 1) - 0.5)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if Int(_h) > 2 {
+                    for k in 1..<Int(_h)-1 {
                         for j in -_r..._r+1 {
                             for i in -_r..._r+1 {
                                 if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) < r1 * r1 {
                                     if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) >= (r1 - 1) * (r1 - 1) {
-                                        self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k))
+                                        if h_plus {
+                                            self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z + Float(k))
+                                        } else {
+                                            self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z - Float(k))
+                                        }
                                     }
                                 }
                             }
@@ -344,79 +733,102 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setHexagon(x: Int, y: Int, z: Int, r: Float, h: Int, a: String) {
+    func setHexagon(x: Float, y: Float, z: Float, r: Float, h: Float, a: String) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        var _h: Float = round(2.0 * h) / 2.0
+        var h_half: Bool = false// With 0.5
+        var h_plus: Bool = true// plus or minus
         let _r = r < 0 ? -Int(r) : Int(r)
+        
+        if _h < 0 {
+            h_plus = false
+            _h = -_h
+        }
+        
+        if !(abs(_h.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            // With decimal point
+            h_half = true
+        }
         
         switch a {
         case "x":
-            for k in 0..._r {
-                for j in 0..._r {
-                    for i in 0..<h {
-                        if ((Float(j) <= cos(Float.pi / 6) * Float(_r)) && (Float(j) <= -tan(Float.pi / 3) * Float(k) + tan(Float.pi / 3) * Float(_r))) {
-                            if j == 0 && k == 0 {
-                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z))
-                            }  else if j == 0 {
-                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z + k))
-                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z - k))
-                            } else if k == 0 {
-                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z))
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z))
+            for k in -_r..._r {
+                for j in -_r..._r {
+                    for i in 0..<Int(_h) {
+                        if ((Float(j) <= cos(Float.pi / 6) * Float(_r))
+                            && (Float(j) >= -cos(Float.pi / 6) * Float(_r))
+                            && (Float(j) <= -tan(Float.pi / 3) * Float(k) + tan(Float.pi / 3) * Float(_r))
+                            && (Float(j) <= +tan(Float.pi / 3) * Float(k) + tan(Float.pi / 3) * Float(_r))
+                            && (Float(j) >= -tan(Float.pi / 3) * Float(k) - tan(Float.pi / 3) * Float(_r))
+                            && (Float(j) >= +tan(Float.pi / 3) * Float(k) - tan(Float.pi / 3) * Float(_r))) {
+                            if h_plus {
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                if h_half {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y + Float(j), z: _z + Float(k))
+                                }
                             } else {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
-                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z + k))
-                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z - k))
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z - k))
+                                self.setCube(x: _x - Float(i), y: _y + Float(j), z: _z + Float(k))
+                                if h_half {
+                                    self.setCube(x: _x - Float(i) - 0.5, y: _y + Float(j), z: _z + Float(k))
+                                }
                             }
                         }
                     }
                 }
             }
         case "y":
-            for k in 0..._r {
-                for j in 0..<h {
-                    for i in 0..._r {
-                        if ((Float(k) <= cos(Float.pi / 6) * Float(_r)) && (Float(k) <= -tan(Float.pi / 3) * Float(i) + tan(Float.pi / 3) * Float(_r))) {
-                            if k == 0 && i == 0 {
-                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z))
-                            } else if k == 0 {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z))
-                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z))
-                            } else if i == 0 {
-                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z + k))
-                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z - k))
-                            }else {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
-                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z + k))
-                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z - k))
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z - k))
+            for k in -_r..._r {
+                for j in 0..<Int(_h) {
+                    for i in -_r..._r {
+                        if ((Float(k) <= cos(Float.pi / 6) * Float(_r))
+                            && (Float(k) >= -cos(Float.pi / 6) * Float(_r))
+                            && (Float(k) <= -tan(Float.pi / 3) * Float(i) + tan(Float.pi / 3) * Float(_r))
+                            && (Float(k) <= +tan(Float.pi / 3) * Float(i) + tan(Float.pi / 3) * Float(_r))
+                            && (Float(k) >= -tan(Float.pi / 3) * Float(i) - tan(Float.pi / 3) * Float(_r))
+                            && (Float(k) >= +tan(Float.pi / 3) * Float(i) - tan(Float.pi / 3) * Float(_r))) {
+                            if h_plus {
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                if h_half {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j) + 0.5, z: _z + Float(k))
+                                }
+                            } else {
+                                self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z + Float(k))
+                                if h_half {
+                                    self.setCube(x: _x + Float(i), y: _y - Float(j) - 0.5, z: _z + Float(k))
+                                }
                             }
                         }
                     }
                 }
             }
         case "z":
-            for k in 0..<h {
-                for j in 0..._r {
-                    for i in 0..._r {
-                        if ((Float(j) <= cos(Float.pi / 6) * Float(_r)) && (Float(j) <= -tan(Float.pi / 3) * Float(i) + tan(Float.pi / 3) * Float(_r))) {
-                            if i == 0 && j == 0 {
-                                self.setCube(x: Float(x), y: Float(y), z: Float(z + k))
-                            } else if i == 0 {
-                                self.setCube(x: Float(x), y: Float(y - j), z: Float(z + k))
-                                self.setCube(x: Float(x), y: Float(y + j), z: Float(z + k))
-                            } else if j == 0 {
-                                self.setCube(x: Float(x - i), y: Float(y), z: Float(z + k))
-                                self.setCube(x: Float(x + i), y: Float(y), z: Float(z + k))
+            for k in 0..<Int(_h) {
+                for j in -_r..._r {
+                    for i in -_r..._r {
+                        if ((Float(i) <= cos(Float.pi / 6) * Float(_r))
+                            && (Float(i) >= -cos(Float.pi / 6) * Float(_r))
+                            && (Float(i) <= -tan(Float.pi / 3) * Float(j) + tan(Float.pi / 3) * Float(_r))
+                            && (Float(i) <= +tan(Float.pi / 3) * Float(j) + tan(Float.pi / 3) * Float(_r))
+                            && (Float(i) >= -tan(Float.pi / 3) * Float(j) - tan(Float.pi / 3) * Float(_r))
+                            && (Float(i) >= +tan(Float.pi / 3) * Float(j) - tan(Float.pi / 3) * Float(_r))) {
+                            if h_plus {
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
+                                if h_half {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k) + 0.5)
+                                }
                             } else {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
-                                self.setCube(x: Float(x - i), y: Float(y + j), z: Float(z + k))
-                                self.setCube(x: Float(x - i), y: Float(y - j), z: Float(z + k))
-                                self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z + k))
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - Float(k))
+                                if h_half {
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z - Float(k) - 0.5)
+                                }
                             }
                         }
                     }
@@ -429,14 +841,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setSphere(x: Int, y: Int, z: Int, r: Float) {
+    func setSphere(x: Float, y: Float, z: Float, r: Float) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
-        let r1: Float = r < 0 ? -r : r
-        let _r = Int(r1)
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        let r1: Float = round(2.0 * r) / 2.0
+        let _r = r1 < 0 ? -Int(r1) : Int(r1)
         
         if (abs(r1.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
             //小数点なし
@@ -445,7 +861,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     for i in -_r..._r {
                         if i * i + j * j + k * k < _r * _r {
                             if i * i + j * j + k * k >= (_r - 1) * (_r - 1) {
-                                self.setCube(x: Float(x + i), y: Float(y + j), z: Float(z + k))
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(k))
                             }
                         }
                     }
@@ -458,7 +874,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     for i in -_r..._r+1 {
                         if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) < r1 * r1 {
                             if (Float(i) - 0.5) * (Float(i) - 0.5) + (Float(j) - 0.5) * (Float(j) - 0.5) + (Float(k) - 0.5) * (Float(k) - 0.5) > (r1 - 1) * (r1 - 1) {
-                                self.setCube(x: Float(x + i) - 0.5, y: Float(y + j) - 0.5, z: Float(z + k) - 0.5)
+                                self.setCube(x: _x + Float(i) - 0.5, y: _y + Float(j) - 0.5, z: _z + Float(k) - 0.5)
                             }
                         }
                     }
@@ -468,12 +884,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setChar(x: Int, y: Int, z: Int, c: String, a: String) {
+    func setChar(x: Float, y: Float, z: Float, c: String, a: String) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
         var k = 0
         let char:String! = Chars.chars[c]
         
@@ -486,7 +906,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     for i in 0..<8 {
                         var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
                         if (flag == "1") {
-                            self.setCube(x: Float(x), y: Float(y - j), z: Float(z + i))
+                            self.setCube(x: _x, y: _y - Float(j), z: _z + Float(i))
                         }
                         k += 1
                     }
@@ -496,7 +916,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     for i in 0..<8 {
                         var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
                         if (flag == "1") {
-                            self.setCube(x: Float(x + i), y: Float(y), z: Float(z + j))
+                            self.setCube(x: _x + Float(i), y: _y, z: _z + Float(j))
                         }
                         k += 1
                     }
@@ -506,7 +926,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     for i in 0..<8 {
                         var flag = char[char.index(char.startIndex, offsetBy: k)..<char.index(char.startIndex, offsetBy: k + 1)]
                         if (flag == "1") {
-                            self.setCube(x: Float(x + i), y: Float(y - j), z: Float(z))
+                            self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z)
                         }
                         k += 1
                     }
@@ -519,15 +939,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setLine(x1: Int, y1: Int, z1: Int, x2: Int, y2: Int, z2: Int) {
+    func setLine(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
-        if !(x1 == x2 && y1 == y2 && z1 == z2) {
-            var vector = [x2 - x1, y2 - y1, z2 - z1]
-            var vector2 = [abs(x2 - x1), abs(y2 - y1), abs(z2 - z1)]
+        let _x1: Float = round(2.0 * x1) / 2.0
+        let _y1: Float = round(2.0 * y1) / 2.0
+        let _z1: Float = round(2.0 * z1) / 2.0
+        let _x2: Float = round(2.0 * x2) / 2.0
+        let _y2: Float = round(2.0 * y2) / 2.0
+        let _z2: Float = round(2.0 * z2) / 2.0
+        
+        if !(_x1 == _x2 && _y1 == _y2 && _z1 == _z2) {
+            var vector = [_x2 - _x1, _y2 - _y1, _z2 - _z1]
+            var vector2 = [abs(_x2 - _x1), abs(_y2 - _y1), abs(_z2 - _z1)]
             var _x: Float
             var _y: Float
             var _z: Float
@@ -536,17 +963,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             switch (index) {
             case 0:
-                for i in 0...vector2[0] {
-                    if (x2 > x1) {
-                        //self.setCube(x: x1 + i, y: y1 + vector[1] * i / vector[0], z: z1 + vector[2] * i / vector[0])
-                        _x = Float(x1) + Float(i)
-                        _y = Float(y1) + Float(vector[1]) * Float(i) / Float(vector[0])
-                        _z = Float(z1) + Float(vector[2]) * Float(i) / Float(vector[0])
+                for i in 0...Int(vector2[0]) {
+                    if (_x2 > _x1) {
+                        _x = Float(_x1) + Float(i)
+                        _y = Float(_y1) + Float(vector[1]) * Float(i) / Float(vector[0])
+                        _z = Float(_z1) + Float(vector[2]) * Float(i) / Float(vector[0])
                     } else {
-                        //self.setCube(x: x2 + i, y: y2 + vector[1] * i / vector[0], z: z2 + vector[2] * i / vector[0])
-                        _x = Float(x2) + Float(i)
-                        _y = Float(y2) + Float(vector[1]) * Float(i) / Float(vector[0])
-                        _z = Float(z2) + Float(vector[2]) * Float(i) / Float(vector[0])
+                        _x = Float(_x2) + Float(i)
+                        _y = Float(_y2) + Float(vector[1]) * Float(i) / Float(vector[0])
+                        _z = Float(_z2) + Float(vector[2]) * Float(i) / Float(vector[0])
                     }
                     _x = round(_x * 2.0) / 2.0
                     _y = round(_y * 2.0) / 2.0
@@ -554,20 +979,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                         // does not contains key
                         self.setCube(x: _x, y: _y, z: _z)
+                    }
+                }
+                if !(abs(vector2[2].truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+                    if !(cubeNodes.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2)) || cubeNodes2.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2)) || cubeNodes3.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2))) {
+                        // does not contains key
+                        self.setCube(x: _x2, y: _y2, z: _z2)
                     }
                 }
             case 1:
-                for i in 0...vector2[1] {
-                    if (y2 > y1) {
-                        //self.setCube(x: x1 + vector[0] * i / vector[1], y: y1 + i, z: z1 + vector[2] * i / vector[1])
-                        _x = Float(x1) + Float(vector[0]) * Float(i) / Float(vector[1])
-                        _y = Float(y1) + Float(i)
-                        _z = Float(z1) + Float(vector[2]) * Float(i) / Float(vector[1])
+                for i in 0...Int(vector2[1]) {
+                    if (_y2 > _y1) {
+                        _x = Float(_x1) + Float(vector[0]) * Float(i) / Float(vector[1])
+                        _y = Float(_y1) + Float(i)
+                        _z = Float(_z1) + Float(vector[2]) * Float(i) / Float(vector[1])
                     } else {
-                        //self.setCube(x: x2 + vector[0] * i / vector[1], y: y2 + i, z: z2 + vector[2] * i / vector[1])
-                        _x = Float(x2) + Float(vector[0]) * Float(i) / Float(vector[1])
-                        _y = Float(y2) + Float(i)
-                        _z = Float(z2) + Float(vector[2]) * Float(i) / Float(vector[1])
+                        _x = Float(_x2) + Float(vector[0]) * Float(i) / Float(vector[1])
+                        _y = Float(_y2) + Float(i)
+                        _z = Float(_z2) + Float(vector[2]) * Float(i) / Float(vector[1])
                     }
                     _x = round(_x * 2.0) / 2.0
                     _y = round(_y * 2.0) / 2.0
@@ -577,18 +1006,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.setCube(x: _x, y: _y, z: _z)
                     }
                 }
+                if !(abs(vector2[2].truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+                    if !(cubeNodes.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2)) || cubeNodes2.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2)) || cubeNodes3.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2))) {
+                        // does not contains key
+                        self.setCube(x: _x2, y: _y2, z: _z2)
+                    }
+                }
             case 2:
-                for i in 0...vector2[2] {
-                    if (z2 > z1) {
-                        //self.setCube(x: x1 + vector[0] * i / vector[2], y: y1 + vector[1] * i / vector[2], z: z1 + i)
-                        _x = Float(x1) + Float(vector[0]) * Float(i) / Float(vector[2])
-                        _y = Float(y1) + Float(vector[1]) * Float(i) / Float(vector[2])
-                        _z = Float(z1) + Float(i)
+                for i in 0...Int(vector2[2]) {
+                    if (_z2 > _z1) {
+                        _x = Float(_x1) + Float(vector[0]) * Float(i) / Float(vector[2])
+                        _y = Float(_y1) + Float(vector[1]) * Float(i) / Float(vector[2])
+                        _z = Float(_z1) + Float(i)
                     } else {
-                        //self.setCube(x: x2 + vector[0] * i / vector[2], y: y2 + vector[1] * i / vector[2], z: z2 + i)
-                        _x = Float(x2) + Float(vector[0]) * Float(i) / Float(vector[2])
-                        _y = Float(y2) + Float(vector[1]) * Float(i) / Float(vector[2])
-                        _z = Float(z2) + Float(i)
+                        _x = Float(_x2) + Float(vector[0]) * Float(i) / Float(vector[2])
+                        _y = Float(_y2) + Float(vector[1]) * Float(i) / Float(vector[2])
+                        _z = Float(_z2) + Float(i)
                     }
                     _x = round(_x * 2.0) / 2.0
                     _y = round(_y * 2.0) / 2.0
@@ -596,6 +1029,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                         // does not contains key
                         self.setCube(x: _x, y: _y, z: _z)
+                    }
+                }
+                if !(abs(vector2[2].truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+                    if !(cubeNodes.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2)) || cubeNodes2.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2)) || cubeNodes3.keys.contains(String(_x2) + "_" + String(_y2) + "_" + String(_z2))) {
+                        // does not contains key
+                        self.setCube(x: _x2, y: _y2, z: _z2)
                     }
                 }
             default:
@@ -607,7 +1046,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func setRoof(_x: Int, _y: Int, _z: Int, w: Int, d: Int, h: Int, a: String) {
+    func setRoof(x: Float, y: Float, z: Float, w: Int, d: Float, h: Int, a: String) {// w, h の Float は後回し
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
@@ -616,6 +1055,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var temp: Float
         var temp1: Float
         var temp2: Float
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        var _d: Float = round(2.0 * d) / 2.0
+        var d_half: Bool = false// With 0.5
+        _d = _d < 0 ? -_d : _d
+        
+        if !(abs(_d.truncatingRemainder(dividingBy: 1.0)).isLess(than: .ulpOfOne)) {
+            // With decimal point
+            d_half = true
+        }
         
         switch (a) {
         case "x":
@@ -629,11 +1080,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             temp1 = 2.0 * (Float(h) + 1.0) * Float(j) / (Float(w) - 2.0)
                             temp2 = 2.0 * (Float(h) + 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         }
-                        for i in _x..<(_x + d) {
+                        for i in 0..<Int(_d) {
                             if (j < w / 2) {
-                                self.setCube(x: Float(i), y: Float(_y) + temp1, z: Float(_z + j))
+                                self.setCube(x: _x + Float(i), y: _y + temp1, z: _z + Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y + temp1, z: _z + Float(j))
+                                }
                             } else {
-                                self.setCube(x: Float(i), y: Float(_y) - temp2, z: Float(_z + j))
+                                self.setCube(x: _x + Float(i), y: _y - temp2, z: _z + Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y - temp2, z: _z + Float(j))
+                                    
+                                }
                             }
                         }
                     }
@@ -641,17 +1099,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if h > 0 {
                         for j in 0..<h {
                             temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) - 1.0))
-                            for i in _x..<(_x + d) {
-                                self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + temp)
-                                self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + Float(w) - temp - 1.0)
+                            for i in 0..<Int(_d) {
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + temp)
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(w) - temp - 1.0)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y + Float(j), z: _z + temp)
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y + Float(j), z: _z + Float(w) - temp - 1.0)
+                                }
                             }
                         }
                     } else {
                         for j in 0..<(-h) {
                             temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) + 1.0))
-                            for i in _x..<(_x + d) {
-                                self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) - temp)
-                                self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) + Float(w) + temp - 1.0)
+                            for i in 0..<Int(_d) {
+                                self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z - temp)
+                                self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z + Float(w) + temp - 1.0)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y - Float(j), z: _z - temp)
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y - Float(j), z: _z + Float(w) + temp - 1.0)
+                                    
+                                }
                             }
                         }
                     }
@@ -666,32 +1133,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             temp1 = 2.0 * (Float(h) + 1) * Float(j) / (Float(w) - 1.0)
                             temp2 = 2.0 * (Float(h) + 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         }
-                        for i in _x..<(_x + d) {
+                        for i in 0..<Int(_d) {
                             if (j < w / 2) {
-                                self.setCube(x: Float(i), y: Float(_y) + temp1, z: Float(_z + j))
+                                self.setCube(x: _x + Float(i), y: _y + temp1, z: _z + Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y + temp1, z: _z + Float(j))
+                                }
                             } else {
-                                self.setCube(x: Float(i), y: Float(_y) - temp2, z: Float(_z + j))
+                                self.setCube(x: _x + Float(i), y: _y - temp2, z: _z + Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y - temp2, z: _z + Float(j))
+                                }
                             }
                         }
                     }
                 } else {
                     if h > 0 {
                         for j in 0..<h {
-                            for i in _x..<(_x + d) {
+                            for i in 0..<Int(_d) {
                                 temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) - 1.0))
-                                self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + temp)
+                                self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + temp)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y + Float(j), z: _z + temp)
+                                }
                                 if j != h - 1 {
-                                    self.setCube(x: Float(i), y: Float(_y + j), z: Float(_z) + Float(w) - temp - 1.0)
+                                    self.setCube(x: _x + Float(i), y: _y + Float(j), z: _z + Float(w) - temp - 1.0)
+                                    if d_half && i == Int(_d) - 1 {
+                                        self.setCube(x: _x + Float(i) + 0.5, y: _y + Float(j), z: _z + Float(w) - temp - 1.0)
+                                    }
                                 }
                             }
                         }
                     } else {
                         for j in 0..<(-h) {
-                            for i in _x..<(_x + d) {
+                            for i in 0..<Int(_d) {
                                 temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) + 1.0))
-                                self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) - temp)
+                                self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z - temp)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(i) + 0.5, y: _y - Float(j), z: _z - temp)
+                                }
                                 if j != h - 1 {
-                                    self.setCube(x: Float(i), y: Float(_y - j), z: Float(_z) + Float(w) + temp - 1.0)
+                                    self.setCube(x: _x + Float(i), y: _y - Float(j), z: _z + Float(w) + temp - 1.0)
+                                    if d_half && i == Int(_d) - 1 {
+                                        self.setCube(x: _x + Float(i) + 0.5, y: _y - Float(j), z: _z + Float(w) + temp - 1.0)
+                                    }
                                 }
                             }
                         }
@@ -709,11 +1194,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             temp1 = 2.0 * (Float(h) + 1.0) * Float(j) / (Float(w) - 2.0)
                             temp2 = 2.0 * (Float(h) + 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         }
-                        for i in _y..<(_y + d) {
+                        for i in 0..<Int(_d) {
                             if (j < w / 2) {
-                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) + temp1)
+                                self.setCube(x: _x + Float(j), y: _y + Float(i), z: _z + temp1)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y + Float(i) + 0.5, z: _z + temp1)
+                                }
                             } else {
-                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) - temp2)
+                                self.setCube(x: _x + Float(j), y: _y + Float(i), z: _z - temp2)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y + Float(i) + 0.5, z: _z - temp2)
+                                }
                             }
                         }
                     }
@@ -721,17 +1212,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if h > 0 {
                         for j in 0..<h {
                             temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) - 1.0))
-                            for i in _y..<(_y + d) {
-                                self.setCube(x: Float(_x) + temp, y: Float(i), z: Float(_z + j))
-                                self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(i), z: Float(_z + j))
+                            for i in 0..<Int(_d) {
+                                self.setCube(x: _x + temp, y: _y + Float(i), z: _z + Float(j))
+                                self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(i), z: _z + Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + temp, y: _y + Float(i) + 0.5, z: _z + Float(j))
+                                    self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(i) + 0.5, z: _z + Float(j))
+                                }
                             }
                         }
                     } else {
                         for j in 0..<(-h) {
                             temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) + 1.0))
-                            for i in _y..<(_y + d) {
-                                self.setCube(x: Float(_x) - temp, y: Float(i), z: Float(_z - j))
-                                self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(i), z: Float(_z - j))
+                            for i in 0..<Int(_d) {
+                                self.setCube(x: _x - temp, y: _y + Float(i), z: _z - Float(j))
+                                self.setCube(x: _x + Float(w) + temp - 1.0, y: _y + Float(i), z: _z - Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x - temp, y: _y + Float(i) + 0.5, z: _z - Float(j))
+                                    self.setCube(x: _x + Float(w) + temp - 1.0, y: _y + Float(i) + 0.5, z: _z - Float(j))
+                                }
                             }
                         }
                     }
@@ -746,32 +1245,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             temp1 = 2.0 * (Float(h) + 1) * Float(j) / (Float(w) - 1.0)
                             temp2 = 2.0 * (Float(h) + 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         }
-                        for i in _y..<(_y + d) {
+                        for i in 0..<Int(_d) {
                             if (j < w / 2) {
-                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) + temp1)
+                                self.setCube(x: _x + Float(j), y: _y + Float(i), z: _z + temp1)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y + Float(i) + 0.5, z: _z + temp1)
+                                }
                             } else {
-                                self.setCube(x: Float(_x + j), y: Float(i), z: Float(_z) - temp2)
+                                self.setCube(x: _x + Float(j), y: _y + Float(i), z: _z - temp2)
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y + Float(i) + 0.5, z: _z - temp2)
+                                }
                             }
                         }
                     }
                 } else {
                     if h > 0 {
                         for j in 0..<h {
-                            for i in _y..<(_y + d) {
+                            for i in 0..<Int(_d) {
                                 let temp: Float = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) - 1.0))
-                                self.setCube(x: Float(_x) + temp, y: Float(i), z: Float(_z + j))
+                                self.setCube(x: _x + temp, y: _y + Float(i), z: _z + Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + temp, y: _y + Float(i) + 0.5, z: _z + Float(j))
+                                }
                                 if j != h - 1 {
-                                    self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(i), z: Float(_z + j))
+                                    self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(i), z: _z + Float(j))
+                                    if d_half && i == Int(_d) - 1 {
+                                        self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(i) + 0.5, z: _z + Float(j))
+                                    }
                                 }
                             }
                         }
                     } else {
                         for j in 0..<(-h) {
-                            for i in _y..<(_y + d) {
+                            for i in 0..<Int(_d) {
                                 let temp: Float = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) + 1.0))
-                                self.setCube(x: Float(_x) - temp, y: Float(i), z: Float(_z - j))
+                                self.setCube(x: _x - temp, y: _y + Float(i), z: _z - Float(j))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x - temp, y: _y + Float(i) + 0.5, z: _z - Float(j))
+                                }
                                 if j != h - 1 {
-                                    self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(i), z: Float(_z - j))
+                                    self.setCube(x: _x + Float(w) + temp - 1.0, y: _y + Float(i), z: _z - Float(j))
+                                    if d_half && i == Int(_d) - 1 {
+                                        self.setCube(x: _x + Float(w) + temp - 1.0, y: _y + Float(i) + 0.5, z: _z - Float(j))
+                                    }
                                 }
                             }
                         }
@@ -789,11 +1306,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             temp1 = 2.0 * (Float(h) + 1.0) * Float(j) / (Float(w) - 2.0)
                             temp2 = 2.0 * (Float(h) + 1.0) * (Float(j) - Float(w) + 1.0) / (Float(w) - 2.0)
                         }
-                        for i in _z..<(_z + d) {
+                        for i in 0..<Int(_d) {
                             if (j < w / 2) {
-                                self.setCube(x: Float(_x + j), y: Float(_y) + temp1, z: Float(i))
+                                self.setCube(x: _x + Float(j), y: _y + temp1, z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y + temp1, z: _z + Float(i) + 0.5)
+                                }
                             } else {
-                                self.setCube(x: Float(_x + j), y: Float(_y) - temp2, z: Float(i))
+                                self.setCube(x: _x + Float(j), y: _y - temp2, z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y - temp2, z: _z + Float(i) + 0.5)
+                                }
                             }
                         }
                     }
@@ -801,17 +1324,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     if h > 0 {
                         for j in 0..<h {
                             temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) - 1.0))
-                            for i in _z..<(_z + d) {
-                                self.setCube(x: Float(_x) + temp, y: Float(_y + j), z: Float(i))
-                                self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(_y + j), z: Float(i))
+                            for i in 0..<Int(_d) {
+                                self.setCube(x: _x + temp, y: _y + Float(j), z: _z + Float(i))
+                                self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(j), z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + temp, y: _y + Float(j), z: _z + Float(i) + 0.5)
+                                    self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(j), z: _z + Float(i) + 0.5)
+                                }
                             }
                         }
                     } else {
                         for j in 0..<(-h) {
                             temp = (Float(w) - 2.0) * Float(j) / (2.0 * (Float(h) + 1.0))
-                            for i in _z..<(_z + d) {
-                                self.setCube(x: Float(_x) - temp, y: Float(_y - j), z: Float(i))
-                                self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(_y - j), z: Float(i))
+                            for i in 0..<Int(_d) {
+                                self.setCube(x: _x - temp, y: _y - Float(j), z: _z + Float(i))
+                                self.setCube(x: _x + Float(w) + temp - 1.0, y: _y - Float(j), z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x - temp, y: _y - Float(j), z: _z + Float(i) + 0.5)
+                                    self.setCube(x: _x + Float(w) + temp - 1.0, y: _y - Float(j), z: _z + Float(i) + 0.5)
+                                }
                             }
                         }
                     }
@@ -826,32 +1357,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             temp1 = 2.0 * (Float(h) + 1) * Float(j) / (Float(w) - 1.0)
                             temp2 = 2.0 * (Float(h) + 1) * (Float(j) - Float(w) + 1.0) / (Float(w) - 1.0)
                         }
-                        for i in _z..<(_z + d) {
+                        for i in 0..<Int(_d) {
                             if (j < w / 2) {
-                                self.setCube(x: Float(_x + j), y: Float(_y) + temp1, z: Float(i))
+                                self.setCube(x: _x + Float(j), y: _y + temp1, z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y + temp1, z: _z + Float(i) + 0.5)
+                                }
                             } else {
-                                self.setCube(x: Float(_x + j), y: Float(_y) - temp2, z: Float(i))
+                                self.setCube(x: _x + Float(j), y: _y - temp2, z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(j), y: _y - temp2, z: _z + Float(i) + 0.5)
+                                }
                             }
                         }
                     }
                 } else {
                     if h > 0 {
                         for j in 0..<h {
-                            for i in _z..<(_z + d) {
+                            for i in 0..<Int(_d) {
                                 temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) - 1.0))
-                                self.setCube(x: Float(_x) + temp, y: Float(_y + j), z: Float(i))
+                                self.setCube(x: _x + temp, y: _y + Float(j), z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + temp, y: _y + Float(j), z: _z + Float(i) + 0.5)
+                                }
                                 if j != h - 1 {
-                                    self.setCube(x: Float(_x) + Float(w) - temp - 1.0, y: Float(_y + j), z: Float(i))
+                                    self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(j), z: _z + Float(i))
+                                    if d_half && i == Int(_d) - 1 {
+                                        self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(j), z: _z + Float(i) + 0.5)
+                                    }
                                 }
                             }
                         }
                     } else {
                         for j in 0..<(-h) {
-                            for i in _z..<(_z + d) {
+                            for i in 0..<Int(_d) {
                                 temp = (Float(w) - 1.0) * Float(j) / (2.0 * (Float(h) + 1.0))
-                                self.setCube(x: Float(_x) - temp, y: Float(_y - j), z: Float(i))
+                                self.setCube(x: _x - temp, y: _y - Float(j), z: _z + Float(i))
+                                if d_half && i == Int(_d) - 1 {
+                                    self.setCube(x: _x + Float(w) - temp - 1.0, y: _y + Float(j), z: _z + Float(i) + 0.5)
+                                }
                                 if j != h - 1 {
-                                    self.setCube(x: Float(_x) + Float(w) + temp - 1.0, y: Float(_y - j), z: Float(i))
+                                    self.setCube(x: _x + Float(w) + temp - 1.0, y: _y - Float(j), z: _z + Float(i))
+                                    if d_half && i == Int(_d) - 1 {
+                                        self.setCube(x: _x + Float(w) + temp - 1.0, y: _y - Float(j), z: _z + Float(i) + 0.5)
+                                    }
                                 }
                             }
                         }
@@ -865,13 +1414,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func polygonFileFormat(x: Int, y: Int, z: Int, ply_file: String) {
+    func polygonFileFormat(x: Float, y: Float, z: Float, ply_file: String) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
-        
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
         
         let loop: Int
         
@@ -885,9 +1437,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             var vertex2: [String]
             var vertex3: [String]
             
-            var _x: Float
-            var _y: Float
-            var _z: Float
+            var _x1: Float
+            var _y1: Float
+            var _z1: Float
             
             for i in 0 ..< loop {
                 vertex1 = ply2[4 * i]
@@ -896,56 +1448,56 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
                 if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
                     if vertex1[1] == vertex2[1] {
-                        _x = Float(x) + Float(vertex1[0])!
-                        _y = Float(y) + Float(vertex1[2])!
-                        _z = Float(z) - Float(vertex1[1])!
+                        _x1 = _x + Float(vertex1[0])!
+                        _y1 = _y + Float(vertex1[2])!
+                        _z1 = _z - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
-                            self.setCube(x: _x, y: _y, z: _z)
+                            self.setCube(x: _x1, y: _y1, z: _z1)
                         }
                     } else {
-                        _x = Float(x) + Float(vertex1[0])! - 1.0
-                        _y = Float(y) + Float(vertex1[2])!
-                        _z = Float(z) - Float(vertex1[1])!
+                        _x1 = _x + Float(vertex1[0])! - 1.0
+                        _y1 = _y + Float(vertex1[2])!
+                        _z1 = _z - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
-                            self.setCube(x: _x, y: _y, z: _z)
+                            self.setCube(x: _x1, y: _y1, z: _z1)
                         }
                     }
                 } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
                     if vertex1[2] == vertex2[2] {
-                        _x = Float(x) + Float(vertex1[0])!
-                        _y = Float(y) + Float(vertex1[2])!
-                        _z = Float(z) - Float(vertex1[1])!
+                        _x1 = _x + Float(vertex1[0])!
+                        _y1 = _y + Float(vertex1[2])!
+                        _z1 = _z - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
-                            self.setCube(x: _x, y: _y, z: _z)
+                            self.setCube(x: _x1, y: _y1, z: _z1)
                         }
                     } else {
-                        _x = Float(x) + Float(vertex1[0])!
-                        _y = Float(y) + Float(vertex1[2])!
-                        _z = Float(z) - Float(vertex1[1])! + 1.0
+                        _x1 = _x + Float(vertex1[0])!
+                        _y1 = _y + Float(vertex1[2])!
+                        _z1 = _z - Float(vertex1[1])! + 1.0
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
-                            self.setCube(x: _x, y: _y, z: _z)
+                            self.setCube(x: _x1, y: _y1, z: _z1)
                         }
                     }
                 } else {//x-y plane
                     if vertex1[0] == vertex2[0] {
-                        _x = Float(x) + Float(vertex1[0])!
-                        _y = Float(y) + Float(vertex1[2])!
-                        _z = Float(z) - Float(vertex1[1])!
+                        _x1 = _x + Float(vertex1[0])!
+                        _y1 = _y + Float(vertex1[2])!
+                        _z1 = _z - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
-                            self.setCube(x: _x, y: _y, z: _z)
+                            self.setCube(x: _x1, y: _y1, z: _z1)
                         }
                     } else {
-                        _x = Float(x) + Float(vertex1[0])!
-                        _y = Float(y) + Float(vertex1[2])! - 1.0
-                        _z = Float(z) - Float(vertex1[1])!
+                        _x1 = _x + Float(vertex1[0])!
+                        _y1 = _y + Float(vertex1[2])! - 1.0
+                        _z1 = _z - Float(vertex1[1])!
                         if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
                             // does not contains key
-                            self.setCube(x: _x, y: _y, z: _z)
+                            self.setCube(x: _x1, y: _y1, z: _z1)
                         }
                     }
                 }
@@ -1002,12 +1554,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func animation(x: Int, y: Int, z: Int, differenceX: Int, differenceY: Int, differenceZ: Int, time: Double, times: Int, files: String) {
+    func animation(x: Float, y: Float, z: Float, differenceX: Float, differenceY: Float, differenceZ: Float, time: Double, times: Int, files: String) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
             return
         }
+        //小数点以下を .0 または .5 に変換
+        let _x: Float = round(2.0 * x) / 2.0
+        let _y: Float = round(2.0 * y) / 2.0
+        let _z: Float = round(2.0 * z) / 2.0
+        let _differenceX: Float = round(2.0 * differenceX) / 2.0
+        let _differenceY: Float = round(2.0 * differenceY) / 2.0
+        let _differenceZ: Float = round(2.0 * differenceZ) / 2.0
         
         let plys = files.components(separatedBy: ",")
         if plys[0].contains(".ply") || plys.count > 3 {
@@ -1019,7 +1578,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     }
                     var i = 0
                     timer = Timer.scheduledTimer(withTimeInterval: time, repeats: true, block: { (timer) in
-                        self.polygonFileFormat(x: x + i * differenceX, y: y + i * differenceY, z: z + i * differenceZ, ply_file: plys[i % plys.count])
+                        self.polygonFileFormat(x: _x + Float(i) * _differenceX, y: _y + Float(i) * _differenceY, z: _z + Float(i) * _differenceZ, ply_file: plys[i % plys.count])
                         DispatchQueue.main.asyncAfter(deadline: .now() + time * 0.8) {
                             // Put your code which should be executed with a delay here
                             self.reset()
@@ -1409,12 +1968,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         var tempArray2: [Float] = []
         
         func standPins(i: Int, j: Int, elevation: Int, magnification: Float, step: Int) {
-            let _x1 = Int(height / 2) - j
-            let _y1 = 0
-            let _z1 = i - Int(width / 2) + step
-            let _x2 = Int(height / 2) - j
-            let _y2 = Int(Float(elevation) * magnification)
-            let _z2 = i - Int(width / 2) + step
+            let _x1: Float = Float(height) / 2.0 - Float(j)
+            let _y1: Float = 0.0
+            let _z1: Float = Float(i + step) - Float(width) / 2.0
+            let _x2: Float = Float(height) / 2.0 - Float(j)
+            let _y2: Float = Float(elevation) * magnification
+            let _z2: Float = Float(i + step) - Float(width) / 2.0
             self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
             //self.setSphere(x: _x2, y: _y2, z: _z2, r: 2)
         }
@@ -1547,16 +2106,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             if mlds.count < 5 || Int(mlds[1]) == nil {
                 throw NSError(domain: "Error message", code: -1, userInfo: nil)
             }
-            var _x: Int
-            var _y: Int
-            var _z: Int
+            var _x: Float
+            var _y: Float
+            var _z: Float
             var _r: Float
-            var _x1: Int
-            var _y1: Int
-            var _z1: Int
-            var _x2: Int
-            var _y2: Int
-            var _z2: Int
+            var _x1: Float
+            var _y1: Float
+            var _z1: Float
+            var _x2: Float
+            var _y2: Float
+            var _z2: Float
             
             let loop1: Int = Int(mlds[1])!
             for i in 0 ..< loop1 {
@@ -1628,22 +2187,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.setColor(r: 192, g: 192, b: 192)
                     break
                 }
-                _x = Int(x + Float(position[i][0])! * magnification)
-                _y = Int(y + Float(position[i][1])! * magnification)
-                _z = Int(z + Float(position[i][2])! * magnification)
+                _x = x + Float(position[i][0])! * magnification
+                _y = y + Float(position[i][1])! * magnification
+                _z = z + Float(position[i][2])! * magnification
                 _r = round(magnification) / 2.0
                 _r = _r < 3.0 ? 3.0 : _r
                 self.setSphere(x: _x, y: _y, z: _z, r: _r)
             }
             
-            self.setColor(r: 127, g: 127, b: 127)
             for j in 0 ..< loop2 {
-                _x1 = Int(x + Float(position[Int(line[j][0])! - 1][0])! * magnification)
-                _y1 = Int(y + Float(position[Int(line[j][0])! - 1][1])! * magnification)
-                _z1 = Int(z + Float(position[Int(line[j][0])! - 1][2])! * magnification)
-                _x2 = Int(x + Float(position[Int(line[j][1])! - 1][0])! * magnification)
-                _y2 = Int(y + Float(position[Int(line[j][1])! - 1][1])! * magnification)
-                _z2 = Int(z + Float(position[Int(line[j][1])! - 1][2])! * magnification)
+                switch line[j][2] {
+                case "1"://単結合
+                    self.setColor(r: 127, g: 127, b: 127)
+                case "2"://二重結合
+                    self.setColor(r: 255, g: 0, b: 0)
+                case "3"://三重結合
+                    self.setColor(r: 0, g: 255, b: 0)
+                default:
+                    self.setColor(r: 127, g: 127, b: 127)
+                }
+                _x1 = x + Float(position[Int(line[j][0])! - 1][0])! * magnification
+                _y1 = y + Float(position[Int(line[j][0])! - 1][1])! * magnification
+                _z1 = z + Float(position[Int(line[j][0])! - 1][2])! * magnification
+                _x2 = x + Float(position[Int(line[j][1])! - 1][0])! * magnification
+                _y2 = y + Float(position[Int(line[j][1])! - 1][1])! * magnification
+                _z2 = z + Float(position[Int(line[j][1])! - 1][2])! * magnification
                 self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
             }
         }
@@ -1882,51 +2450,48 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let w = Float(units[4])
                     let d = Float(units[5])
                     let h = Float(units[6])
-                    if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || h! < 0 {
+                    if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setBox(x: Int(x!), y: Int(y!), z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!))
+                        self.setBox(x: x!, y: y!, z: z!, w: w!, d: d!, h: h!)
                     }
                 case "set_cylinder":
                     let x = Float(units[1])
                     let y = Float(units[2])
                     let z = Float(units[3])
                     let r = Float(units[4])
-                    let _r = round(r! * 2.0) / 2.0
                     let h = Float(units[5])
                     let a = units[6]
-                    if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
+                    if x == nil || y == nil || z == nil || r == nil || h == nil {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setCylinder(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
+                        self.setCylinder(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
                     }
                 case "set_hexagon":
                     let x = Float(units[1])
                     let y = Float(units[2])
                     let z = Float(units[3])
                     let r = Float(units[4])
-                    let _r = round(r! * 2.0) / 2.0
                     let h = Float(units[5])
                     let a = units[6]
-                    if x == nil || y == nil || z == nil || r == nil || h == nil || h! < 0 {
+                    if x == nil || y == nil || z == nil || r == nil || h == nil {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setHexagon(x: Int(x!), y: Int(y!), z: Int(z!), r: _r, h: Int(h!), a: a)
+                        self.setHexagon(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
                     }
                 case "set_sphere":
                     let x = Float(units[1])
                     let y = Float(units[2])
                     let z = Float(units[3])
                     let r = Float(units[4])
-                    let _r = round(r! * 2.0) / 2.0
                     if x == nil || y == nil || z == nil || r == nil {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setSphere(x: Int(x!), y: Int(y!), z: Int(z!), r: _r)
+                        self.setSphere(x: x!, y: y!, z: z!, r: r!)
                     }
                 case "set_char":
                     let x = Float(units[1])
@@ -1938,7 +2503,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setChar(x: Int(x!), y: Int(y!), z: Int(z!), c: c, a: a)
+                        self.setChar(x: x!, y: y!, z: z!, c: c, a: a)
                     }
                 case "set_line":
                     let x1 = Float(units[1])
@@ -1951,7 +2516,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setLine(x1: Int(x1!), y1: Int(y1!), z1: Int(z1!), x2: Int(x2!), y2: Int(y2!), z2: Int(z2!))
+                        self.setLine(x1: x1!, y1: y1!, z1: z1!, x2: x2!, y2: y2!, z2: z2!)
                     }
                 case "set_roof":
                     let x = Float(units[1])
@@ -1961,11 +2526,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let d = Float(units[5])
                     let h = Float(units[6])
                     let a = units[7]
-                    if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil || w! < 0 || d! < 0 || abs(h!) < 0 {
+                    if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.setRoof(_x: Int(x!), _y: Int(y!), _z: Int(z!), w: Int(w!), d: Int(d!), h: Int(h!), a: a)
+                        self.setRoof(x: x!, y: y!, z: z!, w: Int(w!), d: d!, h: Int(h!), a: a)
                     }
                 case "polygon_file_format":
                     let x = Float(units[1])
@@ -1976,7 +2541,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.polygonFileFormat(x: Int(x!), y: Int(y!), z: Int(z!), ply_file: ply_file)
+                        self.polygonFileFormat(x: x!, y: y!, z: z!, ply_file: ply_file)
                     }
                 case "animation":
                     let x = Float(units[1])
@@ -1992,7 +2557,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         //error message
                         self.showMessage(text: "Invalid value")
                     } else {
-                        self.animation(x: Int(x!), y: Int(y!), z: Int(z!), differenceX: Int(differenceX!), differenceY: Int(differenceY!), differenceZ: Int(differenceZ!), time: time!, times: Int(times!), files: files)
+                        self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: Int(times!), files: files)
                     }
                 case "map":
                     let map_data = units[1]
