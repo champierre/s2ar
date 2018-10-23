@@ -2196,23 +2196,90 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
             
             for j in 0 ..< loop2 {
-                switch line[j][2] {
-                case "1"://単結合
-                    self.setColor(r: 127, g: 127, b: 127)
-                case "2"://二重結合
-                    self.setColor(r: 255, g: 0, b: 0)
-                case "3"://三重結合
-                    self.setColor(r: 0, g: 255, b: 0)
-                default:
-                    self.setColor(r: 127, g: 127, b: 127)
-                }
                 _x1 = x + Float(position[Int(line[j][0])! - 1][0])! * magnification
                 _y1 = y + Float(position[Int(line[j][0])! - 1][1])! * magnification
                 _z1 = z + Float(position[Int(line[j][0])! - 1][2])! * magnification
                 _x2 = x + Float(position[Int(line[j][1])! - 1][0])! * magnification
                 _y2 = y + Float(position[Int(line[j][1])! - 1][1])! * magnification
                 _z2 = z + Float(position[Int(line[j][1])! - 1][2])! * magnification
-                self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                let vector2 = [abs(_x2 - _x1), abs(_y2 - _y1), abs(_z2 - _z1)]
+                
+                let index:Int? = vector2.index(of: vector2.max()!)
+                
+                switch (index) {
+                case 0:
+                    if line[j].count >= 3 {
+                        switch line[j][2] {
+                        case "1"://単結合
+                            self.setColor(r: 127, g: 127, b: 127)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                        case "2"://二重結合
+                            self.setColor(r: 255, g: 0, b: 0)
+                            self.setLine(x1: _x1, y1: _y1 + 1.5, z1: _z1, x2: _x2, y2: _y2 + 1.5, z2: _z2)
+                            self.setLine(x1: _x1, y1: _y1 - 1.5, z1: _z1, x2: _x2, y2: _y2 - 1.5, z2: _z2)
+                        case "3"://三重結合
+                            self.setColor(r: 0, g: 255, b: 0)
+                            self.setLine(x1: _x1, y1: _y1 + 1.5, z1: _z1, x2: _x2, y2: _y2 + 1.5, z2: _z2)
+                            self.setLine(x1: _x1, y1: _y1 - 1.0, z1: _z1 + 1.0, x2: _x2, y2: _y2 - 1.0, z2: _z2 + 1.0)
+                            self.setLine(x1: _x1, y1: _y1 - 01.0, z1: _z1 - 1.0, x2: _x2, y2: _y2 - 1.0, z2: _z2 - 1.0)
+                        default:
+                            self.setColor(r: 0, g: 0, b: 0)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                        }
+                    } else {
+                        self.setColor(r: 0, g: 0, b: 0)
+                        self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                    }
+                case 1:
+                    if line[j].count >= 3 {
+                        switch line[j][2] {
+                        case "1"://単結合
+                            self.setColor(r: 127, g: 127, b: 127)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                        case "2"://二重結合
+                            self.setColor(r: 255, g: 0, b: 0)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1 + 1.5, x2: _x2, y2: _y2, z2: _z2 + 1.5)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1 - 1.5, x2: _x2, y2: _y2, z2: _z2 - 1.5)
+                        case "3"://三重結合
+                            self.setColor(r: 0, g: 255, b: 0)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1 + 1.5, x2: _x2, y2: _y2, z2: _z2 + 1.5)
+                            self.setLine(x1: _x1 + 1.0, y1: _y1, z1: _z1 - 1.0, x2: _x2 + 1.0, y2: _y2, z2: _z2 - 1.0)
+                            self.setLine(x1: _x1 - 1.0, y1: _y1, z1: _z1 - 1.0, x2: _x2 - 1.0, y2: _y2, z2: _z2 - 1.0)
+                        default:
+                            self.setColor(r: 0, g: 0, b: 0)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                        }
+                    } else {
+                        self.setColor(r: 0, g: 0, b: 0)
+                        self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                    }
+                case 2:
+                    if line[j].count >= 3 {
+                        switch line[j][2] {
+                        case "1"://単結合
+                            self.setColor(r: 127, g: 127, b: 127)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                        case "2"://二重結合
+                            self.setColor(r: 255, g: 0, b: 0)
+                            self.setLine(x1: _x1 + 1.5, y1: _y1, z1: _z1, x2: _x2 + 1.5, y2: _y2, z2: _z2)
+                            self.setLine(x1: _x1 - 1.5, y1: _y1, z1: _z1, x2: _x2 - 1.5, y2: _y2, z2: _z2)
+                        case "3"://三重結合
+                            self.setColor(r: 0, g: 255, b: 0)
+                            self.setLine(x1: _x1 + 1.5, y1: _y1, z1: _z1, x2: _x2 + 1.5, y2: _y2, z2: _z2)
+                            self.setLine(x1: _x1 - 1.0, y1: _y1 + 1.0, z1: _z1, x2: _x2 - 1.0, y2: _y2 + 1.0, z2: _z2)
+                            self.setLine(x1: _x1 - 1.0, y1: _y1 - 1.0, z1: _z1, x2: _x2 - 1.0, y2: _y2 - 1.0, z2: _z2)
+                        default:
+                            self.setColor(r: 0, g: 0, b: 0)
+                            self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                        }
+                    } else {
+                        self.setColor(r: 0, g: 0, b: 0)
+                        self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
+                    }
+                default:
+                    showMessage(text: "Incorrect format")
+                    break
+                }
             }
         }
         
