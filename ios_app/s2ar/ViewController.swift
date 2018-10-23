@@ -43,6 +43,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     var connectionState: Bool = false
     
+    var Enable_show_message: Bool = true
+    
     var layer: String = "1"
     
     @IBOutlet var roomIDLabel: UILabel!
@@ -52,11 +54,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var helpButton: UIButton!
     
     func showMessage(text: String) {
-        self.roomIDLabel.isHidden = false
-        self.roomIDLabel.text = text
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            // Put your code which should be executed with a delay here
-            self.roomIDLabel.text = "ID: " + self.roomId
+        if Enable_show_message {
+            self.roomIDLabel.isHidden = false
+            self.roomIDLabel.text = text
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                // Put your code which should be executed with a delay here
+                //self.roomIDLabel.text = "ID: " + self.roomId
+                self.roomIDLabel.isHidden = true
+            }
         }
     }
     
@@ -890,6 +895,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        
         //小数点以下を .0 または .5 に変換
         let _x: Float = round(2.0 * x) / 2.0
         let _y: Float = round(2.0 * y) / 2.0
@@ -945,6 +951,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        self.showMessage(text: "Set a line")
+        
         let _x1: Float = round(2.0 * x1) / 2.0
         let _y1: Float = round(2.0 * y1) / 2.0
         let _z1: Float = round(2.0 * z1) / 2.0
@@ -1052,6 +1060,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        
         var temp: Float
         var temp1: Float
         var temp2: Float
@@ -1420,6 +1429,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        self.showMessage(text: "Create 3d model")
+        
+        Enable_show_message = false// 色指定など余計なメッセージを表示させない
+        
         //小数点以下を .0 または .5 に変換
         let _x: Float = round(2.0 * x) / 2.0
         let _y: Float = round(2.0 * y) / 2.0
@@ -1525,10 +1538,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         }
                         try createModel()
                     } else {
+                        Enable_show_message = true
                         //error message
                         self.showMessage(text: "Format error")
                     }
                 } catch {
+                    Enable_show_message = true
                     //error messager
                     self.showMessage(text: "No such file")
                 }
@@ -1536,7 +1551,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         } else {
             //read from scratch
             do {
-                let plys = ply_file.components(separatedBy: " ")
+                let plys = ply_file.components(separatedBy: " ")// separated by " " (MagicaVoxel)
                 var tempArray: [String] = []
                 loop = plys.count / 24
                 for i in 0 ..< 4 * loop {
@@ -1548,10 +1563,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 try createModel()
             } catch {
+                Enable_show_message = true
                 //error message
                 self.showMessage(text: "Format Error")
             }
         }
+        Enable_show_message = true
     }
     
     func animation(x: Float, y: Float, z: Float, differenceX: Float, differenceY: Float, differenceZ: Float, time: Double, times: Int, files: String) {
@@ -1560,6 +1577,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        self.showMessage(text: "Animation")
+        
+        Enable_show_message = false// 色指定など余計なメッセージを表示させない
+        
         //小数点以下を .0 または .5 に変換
         let _x: Float = round(2.0 * x) / 2.0
         let _y: Float = round(2.0 * y) / 2.0
@@ -1589,14 +1610,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         }
                     })
                 } catch {
+                    Enable_show_message = true
                     //error message
                     self.showMessage(text: "No such file")
                 }
             }
         } else {
+            Enable_show_message = true
             //error message
             self.showMessage(text: "Format error")
         }
+        Enable_show_message = true
     }
     
     func map(map_data: String, width: Int, height: Int, magnification: Float, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
@@ -1606,6 +1630,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             return
         }
         self.showMessage(text: "Drawing map...")
+        
+        Enable_show_message = false// 色指定など余計なメッセージを表示させない
+        
         var map2 = [[String]]()
         var map3 = [[String]]()
         var map4 = [[Int]]()
@@ -1877,10 +1904,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         }
                         try mapping()
                     } else {
+                        Enable_show_message = true
                         //error message
                         self.showMessage(text: "Format Error")
                     }
                 } catch {
+                    Enable_show_message = true
                     //error message
                     self.showMessage(text: "No such file")
                 }
@@ -1907,7 +1936,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             if maps[0].contains("map") || maps[0].contains("Map") {
                 maps.removeFirst()
             }
-            if maps.count >= width * height {
+            if maps.count >= width * height {// separated by " "
                 for i in 0 ..< height {
                     for j in 0 ..< width {
                         tempArray.append(maps[i * width + j])
@@ -1921,35 +1950,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     //error message
                     self.showMessage(text: "Format Error")
                 }
-            } else if maps.count >= height {
+            } else if maps.count >= height {// separated by "," or "\t"
                 for i in 0 ..< height {
                     if maps[i].contains(",") {
                         map2.append(maps[i].components(separatedBy: ","))
                     } else if maps[i].contains("\t") {
                         map2.append(maps[i].components(separatedBy: "\t"))
-                    } else {
-                        // replace all
-                        while true {
-                            if let range = maps[i].range(of: "  ") {
-                                maps[i].replaceSubrange(range, with: " ")
-                            } else {
-                                break
-                            }
-                        }
-                        map2.append(maps[i].components(separatedBy: " "))
                     }
                 }
                 do {
                     try mapping()
                 } catch {
+                    Enable_show_message = true
                     //error message
                     self.showMessage(text: "Format Error")
                 }
             } else {
+                Enable_show_message = true
                 //error message
                 self.showMessage(text: "Format Error")
             }
         }
+        Enable_show_message = true
     }
     
     func pin(pin_data: String, width: Int, height: Int, magnification: Float, up_left_latitude: Float, up_left_longitude: Float, down_right_latitude: Float, down_right_longitude: Float, step: Int) {
@@ -1959,6 +1981,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             return
         }
         self.showMessage(text: "Setting pins...")
+        
+        Enable_show_message = false// 色指定など余計なメッセージを表示させない
         
         var pins2: [[String]] = [[String]]()
         var pins3: [[String]] = [[String]]()
@@ -1975,7 +1999,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let _y2: Float = Float(elevation) * magnification
             let _z2: Float = Float(i + step) - Float(width) / 2.0
             self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
-            //self.setSphere(x: _x2, y: _y2, z: _z2, r: 2)
         }
         
         func pinning() throws {
@@ -2040,14 +2063,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         do {
                             try pinning()
                         } catch {
+                            Enable_show_message = true
                             //error message
                             showMessage(text: "Format Error")
                         }
                     } else {
+                        Enable_show_message = true
                         //error message
                         showMessage(text: "Format Error")
                     }
                 } catch {
+                    Enable_show_message = true
                     //error message
                     showMessage(text: "No such file")
                 }
@@ -2065,7 +2091,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             pins2.append(pins[i].components(separatedBy: "\t"))
                         }
                     }
-                } else {
+                } else {// separated by " "
                     if pins.count % 3 == 0 {
                         for i in 0 ..< pins.count / 3 {
                             for j in 0 ..< 3 {
@@ -2075,6 +2101,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                             tempArray = []
                         }
                     } else {
+                        Enable_show_message = true
                         //error message
                         self.showMessage(text: "Format Error")
                     }
@@ -2082,14 +2109,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 do {
                     try pinning()
                 } catch {
+                    Enable_show_message = true
                     //error message
                     self.showMessage(text: "Format Error")
                 }
             } else {
+                Enable_show_message = true
                 //error message
                 self.showMessage(text: "Format Error")
             }
         }
+        Enable_show_message = true
     }
     
     func molecular_structure(x: Float, y: Float, z: Float, magnification: Float, mld_file: String) {
@@ -2098,6 +2128,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        //message
+        self.showMessage(text: "Molecular Structure")
+        
+        Enable_show_message = false// 色指定など余計なメッセージを表示させない
+        
         var position = [[String]]()
         var line = [[String]]()
         var mlds: [String] = []
@@ -2277,6 +2312,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         self.setLine(x1: _x1, y1: _y1, z1: _z1, x2: _x2, y2: _y2, z2: _z2)
                     }
                 default:
+                    Enable_show_message = true
                     showMessage(text: "Incorrect format")
                     break
                 }
@@ -2299,9 +2335,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     do {
                         try createStructure()
                     } catch {
+                        Enable_show_message = true
                         self.showMessage(text: "Format Error")
                     }
                 } catch {
+                    Enable_show_message = true
                     //error message
                     self.showMessage(text: "No such file")
                 }
@@ -2312,10 +2350,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             do {
                 try createStructure()
             } catch {
+                Enable_show_message = true
                 //error message
                 self.showMessage(text: "Format Error")
             }
         }
+        Enable_show_message = true
     }
     
     func setColor(r: Int, g: Int, b: Int) {
@@ -2333,16 +2373,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             _a /= 10.0
         }
         alpha = _a
-        
+
         //message
         self.showMessage(text: "alpha: (\(_a))")
     }
     
     func changeLayer(l: String) {
-        layer = l
-        
-        //message
-        self.showMessage(text: "Change layer: \(l)")
+        if l == "1" || l == "2" || l == "3" {
+            layer = l
+            //message
+            self.showMessage(text: "Change layer: \(l)")
+        } else {
+            //error message
+            self.showMessage(text: "Only 1 or 2 or 3")
+        }
     }
     
     func removeCube(x: Float, y: Float, z: Float) {
@@ -2362,16 +2406,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if (cubeNode == nil && cubeNode2 == nil && cubeNode3 == nil) {
             //error message
             self.showMessage(text: "No block")
-            return
-        }
-        if (cubeNode != nil) {
-            cubeNode?.removeFromParentNode()
-        }
-        if (cubeNode2 != nil) {
-            cubeNode2?.removeFromParentNode()
-        }
-        if (cubeNode3 != nil) {
-            cubeNode3?.removeFromParentNode()
+        } else {
+            if (cubeNode != nil) {
+                //message
+                self.showMessage(text: "Remove a block")
+                cubeNode?.removeFromParentNode()
+            }
+            if (cubeNode2 != nil) {
+                //message
+                self.showMessage(text: "Remove a block")
+                cubeNode2?.removeFromParentNode()
+            }
+            if (cubeNode3 != nil) {
+                //message
+                self.showMessage(text: "Remove a block")
+                cubeNode3?.removeFromParentNode()
+            }
         }
     }
     
@@ -2489,8 +2539,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         socket.on("from_server") { data, ack in
             if self.connectionState == false {
+                self.roomIDLabel.isHidden = false
                 self.showMessage(text: "Connected")
                 self.connectionState = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                    // 3.0秒後に実行したい処理
+                    self.roomIDLabel.isHidden = true
+                }
             }
             if let msg = data[0] as? String {
                 print(msg)
