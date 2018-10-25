@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
-    <device id="retina3_5" orientation="portrait">
+    <device id="ipad12_9" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -15,32 +14,37 @@
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="s2ar" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gbc-bA-e6I">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e8P-1h-OPn" customClass="ARSCNView">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e8P-1h-OPn" customClass="ARSCNView">
+                                <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                             </sceneKitView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ID:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64e-jN-Jqn">
-                                <rect key="frame" x="60" y="435" width="200" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3mO-5r-pkv">
-                                <rect key="frame" x="272" y="430" width="32" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3mO-5r-pkv">
+                                <rect key="frame" x="1314" y="982" width="32" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="WTZ-yL-jph"/>
+                                </constraints>
                                 <state key="normal" title="Help"/>
                                 <connections>
                                     <action selector="helpButtonTapped:" destination="BV1-FR-VrT" eventType="touchUpInside" id="DK0-fq-AHP"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hzq-2R-vFf">
-                                <rect key="frame" x="15" y="430" width="38" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ID:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64e-jN-Jqn">
+                                <rect key="frame" x="672.5" y="982" width="21" height="22"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="cdH-k2-20E"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hzq-2R-vFf">
+                                <rect key="frame" x="20" y="982" width="32" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="CNk-pa-vND"/>
+                                </constraints>
                                 <state key="normal" title="Hide"/>
                                 <connections>
                                     <action selector="togglePlanesButtonTapped:" destination="BV1-FR-VrT" eventType="touchUpInside" id="IqI-Ag-xrX"/>
@@ -48,6 +52,18 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="64e-jN-Jqn" firstAttribute="centerX" secondItem="gbc-bA-e6I" secondAttribute="centerX" id="6T1-wq-o2Y"/>
+                            <constraint firstItem="e8P-1h-OPn" firstAttribute="top" secondItem="gbc-bA-e6I" secondAttribute="top" id="7lp-6r-OcS"/>
+                            <constraint firstAttribute="trailing" secondItem="e8P-1h-OPn" secondAttribute="trailing" id="9DX-0x-6JQ"/>
+                            <constraint firstItem="g9U-oc-ikI" firstAttribute="trailing" secondItem="3mO-5r-pkv" secondAttribute="trailing" constant="20" id="GhL-hg-Q5R"/>
+                            <constraint firstItem="e8P-1h-OPn" firstAttribute="leading" secondItem="gbc-bA-e6I" secondAttribute="leading" id="JVy-Vg-4ub"/>
+                            <constraint firstAttribute="bottom" secondItem="e8P-1h-OPn" secondAttribute="bottom" id="MJg-At-3hO"/>
+                            <constraint firstAttribute="bottom" secondItem="64e-jN-Jqn" secondAttribute="bottom" constant="20" id="efW-Sr-qwa"/>
+                            <constraint firstAttribute="bottom" secondItem="hzq-2R-vFf" secondAttribute="bottom" constant="20" id="gMU-7o-t0m"/>
+                            <constraint firstAttribute="bottom" secondItem="3mO-5r-pkv" secondAttribute="bottom" constant="20" id="qCf-cG-vt8"/>
+                            <constraint firstItem="hzq-2R-vFf" firstAttribute="leading" secondItem="g9U-oc-ikI" secondAttribute="leading" constant="20" id="vmk-ft-iL8"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="g9U-oc-ikI"/>
                     </view>
                     <connections>
@@ -59,7 +75,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="99.400299850074973"/>
+            <point key="canvasLocation" x="135.9375" y="98.4375"/>
         </scene>
     </scenes>
 </document>

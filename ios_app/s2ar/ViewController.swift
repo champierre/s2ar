@@ -46,6 +46,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var Enable_show_message: Bool = true
     
     var layer: String = "1"
+    var layerChanged: Bool = false
     
     @IBOutlet var roomIDLabel: UILabel!
     
@@ -56,7 +57,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func showMessage(text: String) {
         if Enable_show_message {
             self.roomIDLabel.isHidden = false
-            self.roomIDLabel.text = text
+            self.roomIDLabel.text = " " + text + " "
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 // Put your code which should be executed with a delay here
                 //self.roomIDLabel.text = "ID: " + self.roomId
@@ -2373,13 +2374,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             _a /= 10.0
         }
         alpha = _a
-
+        
         //message
         self.showMessage(text: "alpha: (\(_a))")
     }
     
     func changeLayer(l: String) {
         if l == "1" || l == "2" || l == "3" {
+            layerChanged = true
             layer = l
             //message
             self.showMessage(text: "Change layer: \(l)")
@@ -2431,29 +2433,36 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
-        
-        switch layer{
-        case "1":
-            self.showMessage(text: "Reset layer1")
+        if layerChanged {
+            switch layer {
+            case "1":
+                self.showMessage(text: "Reset layer1")
+                for (id, cubeNode) in cubeNodes {
+                    cubeNode.removeFromParentNode()
+                }
+                cubeNodes = [:]
+            case "2":
+                self.showMessage(text: "Reset layer2")
+                for (id, cubeNode) in cubeNodes2 {
+                    cubeNode.removeFromParentNode()
+                }
+                cubeNodes2 = [:]
+            case "3":
+                self.showMessage(text: "Reset layer3")
+                for (id, cubeNode) in cubeNodes3 {
+                    cubeNode.removeFromParentNode()
+                }
+                cubeNodes3 = [:]
+            default:
+                self.showMessage(text: "No layer")
+                break
+            }
+        } else {
+            self.showMessage(text: "Reset")
             for (id, cubeNode) in cubeNodes {
                 cubeNode.removeFromParentNode()
             }
             cubeNodes = [:]
-        case "2":
-            self.showMessage(text: "Reset layer2")
-            for (id, cubeNode) in cubeNodes2 {
-                cubeNode.removeFromParentNode()
-            }
-            cubeNodes2 = [:]
-        case "3":
-            self.showMessage(text: "Reset layer3")
-            for (id, cubeNode) in cubeNodes3 {
-                cubeNode.removeFromParentNode()
-            }
-            cubeNodes3 = [:]
-        default:
-            self.showMessage(text: "No layer")
-            break
         }
     }
     
@@ -2523,7 +2532,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         socket.on(clientEvent: .connect) {data, ack in
             self.roomId = String(format: "%04d", Int(arc4random_uniform(10000))) + "-" + String(format: "%04d", Int(arc4random_uniform(10000)))
             self.roomIDLabel.isHidden = false
-            self.roomIDLabel.text = "ID: " + self.roomId
+            self.roomIDLabel.text = " ID: " + self.roomId + " "
             self.connectionState = false
             var jsonDic = Dictionary<String, Any>()
             jsonDic["roomId"] = self.roomId
