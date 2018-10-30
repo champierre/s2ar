@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
-    <device id="ipad12_9" orientation="landscape">
+    <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -14,14 +14,17 @@
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="s2ar" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="gbc-bA-e6I">
-                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e8P-1h-OPn" customClass="ARSCNView">
-                                <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="jKt-ut-wgt" appends="YES" id="ZEw-9a-CdT"/>
+                                </connections>
                             </sceneKitView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3mO-5r-pkv">
-                                <rect key="frame" x="1314" y="982" width="32" height="22"/>
+                                <rect key="frame" x="716" y="982" width="32" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="WTZ-yL-jph"/>
                                 </constraints>
@@ -31,7 +34,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ID:" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="64e-jN-Jqn">
-                                <rect key="frame" x="672.5" y="982" width="21" height="22"/>
+                                <rect key="frame" x="373.5" y="982" width="21" height="22"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="cdH-k2-20E"/>
@@ -50,17 +53,76 @@
                                     <action selector="togglePlanesButtonTapped:" destination="BV1-FR-VrT" eventType="touchUpInside" id="IqI-Ag-xrX"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NxN-fR-Ba3" customClass="RoundedButton" customModule="s2ar" customModuleProvider="target">
+                                <rect key="frame" x="323" y="942" width="122" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="INm-6I-2cj"/>
+                                </constraints>
+                                <state key="normal" title=" Send World Map ">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="shareSession:" destination="BV1-FR-VrT" eventType="touchUpInside" id="nTj-eS-TdW"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mVp-d8-nIz">
+                                <rect key="frame" x="363" y="913" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="awi-cV-mTK">
+                                <rect key="frame" x="20" y="20" width="191" height="38"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="GV0-ha-7iE">
+                                    <rect key="frame" x="0.0" y="0.0" width="191" height="38"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing AR session." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTN-EO-tsn">
+                                            <rect key="frame" x="8" y="8" width="169" height="22"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="22" id="Rre-gT-oNf"/>
+                                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="fmv-WB-7ll"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="JTN-EO-tsn" secondAttribute="bottom" constant="8" id="13c-2W-ZU4"/>
+                                        <constraint firstAttribute="trailing" secondItem="JTN-EO-tsn" secondAttribute="trailing" constant="14" id="P4f-CS-vzY"/>
+                                        <constraint firstItem="JTN-EO-tsn" firstAttribute="top" secondItem="GV0-ha-7iE" secondAttribute="top" constant="8" id="s5y-tC-uzF"/>
+                                        <constraint firstItem="JTN-EO-tsn" firstAttribute="leading" secondItem="GV0-ha-7iE" secondAttribute="leading" constant="8" id="vAx-1o-tYv"/>
+                                    </constraints>
+                                </view>
+                                <blurEffect style="light"/>
+                            </visualEffectView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mE6-ZF-4rT" userLabel="Restart Experience Button">
+                                <rect key="frame" x="728" y="30" width="20" height="23"/>
+                                <state key="normal" image="reset"/>
+                                <connections>
+                                    <action selector="resetTracking:" destination="BV1-FR-VrT" eventType="touchUpInside" id="4Xq-eu-Ueq"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="g9U-oc-ikI" firstAttribute="trailing" secondItem="mE6-ZF-4rT" secondAttribute="trailing" constant="20" id="0p8-qO-YnC"/>
+                            <constraint firstItem="mVp-d8-nIz" firstAttribute="centerX" secondItem="gbc-bA-e6I" secondAttribute="centerX" id="4UY-OW-22M"/>
+                            <constraint firstItem="NxN-fR-Ba3" firstAttribute="top" secondItem="mVp-d8-nIz" secondAttribute="bottom" constant="8" id="6FN-yD-Fbd"/>
                             <constraint firstItem="64e-jN-Jqn" firstAttribute="centerX" secondItem="gbc-bA-e6I" secondAttribute="centerX" id="6T1-wq-o2Y"/>
                             <constraint firstItem="e8P-1h-OPn" firstAttribute="top" secondItem="gbc-bA-e6I" secondAttribute="top" id="7lp-6r-OcS"/>
                             <constraint firstAttribute="trailing" secondItem="e8P-1h-OPn" secondAttribute="trailing" id="9DX-0x-6JQ"/>
                             <constraint firstItem="g9U-oc-ikI" firstAttribute="trailing" secondItem="3mO-5r-pkv" secondAttribute="trailing" constant="20" id="GhL-hg-Q5R"/>
                             <constraint firstItem="e8P-1h-OPn" firstAttribute="leading" secondItem="gbc-bA-e6I" secondAttribute="leading" id="JVy-Vg-4ub"/>
                             <constraint firstAttribute="bottom" secondItem="e8P-1h-OPn" secondAttribute="bottom" id="MJg-At-3hO"/>
+                            <constraint firstItem="awi-cV-mTK" firstAttribute="leading" secondItem="g9U-oc-ikI" secondAttribute="leading" constant="20" id="Pez-Pn-Bl2"/>
+                            <constraint firstItem="mE6-ZF-4rT" firstAttribute="top" secondItem="g9U-oc-ikI" secondAttribute="top" constant="10" id="Wcx-fh-kV2"/>
                             <constraint firstAttribute="bottom" secondItem="64e-jN-Jqn" secondAttribute="bottom" constant="20" id="efW-Sr-qwa"/>
                             <constraint firstAttribute="bottom" secondItem="hzq-2R-vFf" secondAttribute="bottom" constant="20" id="gMU-7o-t0m"/>
+                            <constraint firstItem="NxN-fR-Ba3" firstAttribute="centerX" secondItem="gbc-bA-e6I" secondAttribute="centerX" id="keO-Ep-82r"/>
+                            <constraint firstItem="64e-jN-Jqn" firstAttribute="top" secondItem="NxN-fR-Ba3" secondAttribute="bottom" constant="10" id="o7d-rn-Q2N"/>
+                            <constraint firstItem="awi-cV-mTK" firstAttribute="top" secondItem="g9U-oc-ikI" secondAttribute="top" id="oMb-UL-4a9"/>
                             <constraint firstAttribute="bottom" secondItem="3mO-5r-pkv" secondAttribute="bottom" constant="20" id="qCf-cG-vt8"/>
                             <constraint firstItem="hzq-2R-vFf" firstAttribute="leading" secondItem="g9U-oc-ikI" secondAttribute="leading" constant="20" id="vmk-ft-iL8"/>
                         </constraints>
@@ -68,14 +130,27 @@
                     </view>
                     <connections>
                         <outlet property="helpButton" destination="3mO-5r-pkv" id="tNC-1k-tBG"/>
+                        <outlet property="mappingStatusLabel" destination="mVp-d8-nIz" id="aLs-vq-Daa"/>
+                        <outlet property="restartButton" destination="mE6-ZF-4rT" id="Ggt-zy-0bu"/>
                         <outlet property="roomIDLabel" destination="64e-jN-Jqn" id="1HP-bg-00k"/>
                         <outlet property="sceneView" destination="e8P-1h-OPn" id="NMd-Ur-a4f"/>
+                        <outlet property="sendMapButton" destination="NxN-fR-Ba3" id="Edu-cp-msW"/>
+                        <outlet property="sessionInfoLabel" destination="JTN-EO-tsn" id="4X0-Bb-Q0n"/>
+                        <outlet property="sessionInfoView" destination="awi-cV-mTK" id="hV1-59-UzI"/>
                         <outlet property="togglePlanesButton" destination="hzq-2R-vFf" id="p7s-fN-CK0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="jKt-ut-wgt">
+                    <connections>
+                        <action selector="handleTapFromRecognizer:" destination="BV1-FR-VrT" id="735-tw-4rw"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="135.9375" y="98.4375"/>
+            <point key="canvasLocation" x="135" y="98.239436619718305"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="reset" width="20" height="23"/>
+    </resources>
 </document>
