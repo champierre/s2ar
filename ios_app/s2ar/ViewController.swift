@@ -2416,12 +2416,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
             if (cubeNode2 != nil) {
                 //message
-                self.showMessage(text: "Remove a block")
+                self.showMessage(text: "Remove a block from layer2")
                 cubeNode2?.removeFromParentNode()
             }
             if (cubeNode3 != nil) {
                 //message
-                self.showMessage(text: "Remove a block")
+                self.showMessage(text: "Remove a block from layer3")
                 cubeNode3?.removeFromParentNode()
             }
         }
@@ -2433,36 +2433,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
-        if layerChanged {
-            switch layer {
-            case "1":
-                self.showMessage(text: "Reset layer1")
-                for (id, cubeNode) in cubeNodes {
-                    cubeNode.removeFromParentNode()
-                }
-                cubeNodes = [:]
-            case "2":
-                self.showMessage(text: "Reset layer2")
-                for (id, cubeNode) in cubeNodes2 {
-                    cubeNode.removeFromParentNode()
-                }
-                cubeNodes2 = [:]
-            case "3":
-                self.showMessage(text: "Reset layer3")
-                for (id, cubeNode) in cubeNodes3 {
-                    cubeNode.removeFromParentNode()
-                }
-                cubeNodes3 = [:]
-            default:
-                self.showMessage(text: "No layer")
-                break
-            }
-        } else {
+        switch layer {
+        case "1":
             self.showMessage(text: "Reset")
             for (id, cubeNode) in cubeNodes {
                 cubeNode.removeFromParentNode()
             }
             cubeNodes = [:]
+        case "2":
+            self.showMessage(text: "Reset layer2")
+            for (id, cubeNode) in cubeNodes2 {
+                cubeNode.removeFromParentNode()
+            }
+            cubeNodes2 = [:]
+        case "3":
+            self.showMessage(text: "Reset layer3")
+            for (id, cubeNode) in cubeNodes3 {
+                cubeNode.removeFromParentNode()
+            }
+            cubeNodes3 = [:]
+        default:
+            self.showMessage(text: "No layer")
+            break
         }
     }
     
