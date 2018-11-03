@@ -24,9 +24,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var originPosition: SCNVector3!
     
     var cubeNode: SCNNode!
-    var cubeNodes: [String:ARAnchor] = [:]
-    var cubeNodes2: [String:ARAnchor] = [:]
-    var cubeNodes3: [String:ARAnchor] = [:]
+    var cubeNodes: [String:SCNNode] = [:]
+    var cubeNodes2: [String:SCNNode] = [:]
+    var cubeNodes3: [String:SCNNode] = [:]
+    var data_all_cubes: [String] = []
     
     var lightNode: SCNNode!
     var backLightNode: SCNNode!
@@ -64,8 +65,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var sessionInfoView: UIVisualEffectView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet weak var restartButton: UIButton!
+    @IBOutlet weak var receivingStatusLabel: UILabel!
+    
     //multiuser
     var multipeerSession: MultipeerSession!
+    var cubes: [String] = []//received_data
+    var sender_id: NSObject!//MCPeerID
+    var receive_mode: Bool = false
     //multiuser_end
     
     func showMessage(text: String) {
@@ -88,6 +94,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var count: Int = 0
     
     func setCube(x: Float, y: Float, z: Float) {
+        //showMessage(text: "Set a cube at \(x), \(y), \(z)")
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin")
@@ -100,34 +107,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let _z: Float = round(2.0 * z) / 2.0
         
         func setCubeMethod(x: Float, y: Float, z: Float) {
-            var translation: simd_float4x4 = hitResult.worldTransform
+            let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
+            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: CGFloat(alpha))
+            cubeNode = SCNNode(geometry: cube)
+            cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
+            let position = SCNVector3Make(
+                originPosition.x + _x * CUBE_SIZE,
+                originPosition.y + _y * CUBE_SIZE,
+                originPosition.z + _z * CUBE_SIZE
+            )
+            cubeNode.position = position
+            sceneView.scene.rootNode.addChildNode(cubeNode)
             
-            //print("hitResult: \(hitResult)")
-            //print("translation1: \(translation)")
-            //anchor の移動
-            translation.columns.3.x = translation.columns.3.x + _x * CUBE_SIZE
-            translation.columns.3.y = translation.columns.3.y + _y * CUBE_SIZE
-            translation.columns.3.z = translation.columns.3.z + _z * CUBE_SIZE
-            //anchor の y軸回転を合わせる
-            translation.columns.0.x = 1.0
-            translation.columns.0.z = 0.0
-            translation.columns.2.x = 0.0
-            translation.columns.2.z = 1.0
-            //print("translation2: \(translation)")
-            
-            // Add a new anchor to the session
-            let anchor = ARAnchor(name: "cube", transform: translation)
-            print("anchor: \(anchor)")
-            
-            sceneView.session.add(anchor: anchor)
+            //multiuser
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01))
             
             switch layer {
             case "2":
-                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = anchor
+                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
             case "3":
-                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = anchor
+                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
             default:
-                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = anchor
+                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
             }
         }
         if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
@@ -1692,7 +1693,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let _x = Int(height / 2) - i
             let _y = elevation
             let _z = j - Int(width / 2)
-            print("i: \(i), j: \(j), elevation: \(elevation), gap: \(gap), minY: \(minY), maxY: \(maxY), upward: \(upward)")
+            //print("i: \(i), j: \(j), elevation: \(elevation), gap: \(gap), minY: \(minY), maxY: \(maxY), upward: \(upward)")
             if _y > 0 {
                 heightSetColor(y: _y, minY: minY, maxY: maxY)
                 self.setCube(x: Float(_x), y: Float(_y + upward), z: Float(_z))
@@ -2438,20 +2439,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             if (cubeNode != nil) {
                 //message
                 self.showMessage(text: "Remove a block")
-                //cubeNode?.removeFromParentNode()
-                sceneView.session.remove(anchor: cubeNode!)
+                cubeNode?.removeFromParentNode()
+                //sceneView.session.remove(anchor: cubeNode!)
             }
             if (cubeNode2 != nil) {
                 //message
                 self.showMessage(text: "Remove a block from layer2")
-                //cubeNode2?.removeFromParentNode()
-                sceneView.session.remove(anchor: cubeNode2!)
+                cubeNode2?.removeFromParentNode()
+                //sceneView.session.remove(anchor: cubeNode2!)
             }
             if (cubeNode3 != nil) {
                 //message
                 self.showMessage(text: "Remove a block from layer3")
-                //cubeNode3?.removeFromParentNode()
-                sceneView.session.remove(anchor: cubeNode3!)
+                cubeNode3?.removeFromParentNode()
+                //sceneView.session.remove(anchor: cubeNode3!)
             }
         }
     }
@@ -2462,26 +2463,27 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin")
             return
         }
+        data_all_cubes = []
         switch layer {
         case "1":
             self.showMessage(text: "Reset")
             for (id, cubeNode) in cubeNodes {
-                //cubeNode.removeFromParentNode()
-                sceneView.session.remove(anchor: cubeNode)
+                cubeNode.removeFromParentNode()
+                //sceneView.session.remove(anchor: cubeNode)
             }
             cubeNodes = [:]
         case "2":
             self.showMessage(text: "Reset layer2")
             for (id, cubeNode) in cubeNodes2 {
-                //cubeNode.removeFromParentNode()
-                sceneView.session.remove(anchor: cubeNode)
+                cubeNode.removeFromParentNode()
+                //sceneView.session.remove(anchor: cubeNode)
             }
             cubeNodes2 = [:]
         case "3":
             self.showMessage(text: "Reset layer3")
             for (id, cubeNode) in cubeNodes3 {
-                //cubeNode.removeFromParentNode()
-                sceneView.session.remove(anchor: cubeNode)
+                cubeNode.removeFromParentNode()
+                //sceneView.session.remove(anchor: cubeNode)
             }
             cubeNodes3 = [:]
         default:
@@ -2503,6 +2505,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             sendMapButton.isHidden = true
             mappingStatusLabel.isHidden = true
             sessionInfoView.isHidden = true
+            sessionInfoLabel.isHidden = true
             restartButton.isHidden = true
             
             for (identifier, planeNode) in planeNodes {
@@ -2521,6 +2524,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             sendMapButton.isHidden = false
             mappingStatusLabel.isHidden = false
             sessionInfoView.isHidden = false
+            sessionInfoLabel.isHidden = false
             restartButton.isHidden = false
             
             for (identifier, planeNode) in planeNodes {
@@ -2555,7 +2559,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Run the view's session
         sceneView.session.run(configuration)
         
-        //sceneView.autoenablesDefaultLighting = false
+        sceneView.autoenablesDefaultLighting = false
         /*
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapFrom))
         tapGestureRecognizer.numberOfTapsRequired = 1
@@ -2954,11 +2958,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             backLightNode.constraints = [constraint]
             sceneView.scene.rootNode.addChildNode(backLightNode)
+            
+            //multiuser  データを受信時に、Origin が置かれていなかった時の処理
+            if receive_mode {
+                showMessage(text: "Reproducing data...")
+                reproduce_cubes()
+            }
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        /* エラーになるので planeAnchor は断念
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
         
         let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
@@ -2979,19 +2988,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         DispatchQueue.main.async(execute: {
             node.addChildNode(planeNode)
         })
-        */
-        //multiuser
-        if let name = anchor.name, name.hasPrefix("cube") {
-            let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
-            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: CGFloat(alpha))
-            cubeNode = SCNNode(geometry: cube)
-            cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-            node.addChildNode(cubeNode)
-        }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-         /* エラーになるので planeAnchor は断念
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
         
         let planeNode = planeNodes[anchor.identifier]
@@ -3016,10 +3015,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         planeNode?.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z);
         
         planeNodes[anchor.identifier] = planeNode
- */
     }
     
-    //multiuser
+    //Creating a Multiuser AR Experience https://developer.apple.com/documentation/arkit/creating_a_multiuser_ar_experience
+    
     /*  上に移動
     @IBOutlet weak var sessionInfoView: UIView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
@@ -3060,7 +3059,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set a delegate to track the number of plane anchors for providing UI feedback.
         //sceneView.session.delegate = self
         
-        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
+        //sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         // Prevent the screen from being dimmed after a while as users will likely
         // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
@@ -3125,7 +3124,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     // MARK: - Multiuser shared session
-    /* scratchから命令でブロックを置くように修正→ setCube に統合
+    /* setCube に統合
     /// - Tag: PlaceCharacter
     @IBAction func handleSceneTap(_ sender: UITapGestureRecognizer) {
         
@@ -3148,12 +3147,20 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     /// - Tag: GetWorldMap
     @IBAction func shareSession(_ button: UIButton) {
+        /* ARAnchor を置いた worldmap を送信する方法は setColor がうまく機能しないので断念する
         sceneView.session.getCurrentWorldMap { worldMap, error in
             guard let map = worldMap
                 else { print("Error: \(error!.localizedDescription)"); return }
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
                 else { fatalError("can't encode map") }
             self.multipeerSession.sendToAllPeers(data)
+        }*/
+        if data_all_cubes != [] {
+            guard let data = try? NSKeyedArchiver.archivedData(withRootObject: data_all_cubes, requiringSecureCoding: true)
+                else { fatalError("can't encode data_all_cubes") }
+            self.multipeerSession.sendToAllPeers(data)
+        } else {
+            showMessage(text: "No cube data")
         }
     }
     
@@ -3161,28 +3168,85 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     /// - Tag: ReceiveData
     func receivedData(_ data: Data, from peer: MCPeerID) {
+        //receivingStatausMessage(text: "Received data from \(peer)")
         
-        do {
-            if let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data) {
-                // Run the session with the received world map.
-                let configuration = ARWorldTrackingConfiguration()
-                configuration.planeDetection = .horizontal
-                configuration.initialWorldMap = worldMap
-                sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-                
-                // Remember who provided the map for showing UI feedback.
-                mapProvider = peer
-            }
-            else
-                if let anchor = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARAnchor.self, from: data) {
-                    // Add anchor to the session, ARSCNView delegate adds visible content.
-                    sceneView.session.add(anchor: anchor)
+        let alertController:UIAlertController = UIAlertController(title:"alert", message: "Allow to receive data  for multiuser session", preferredStyle: .alert)
+        
+        // Default のaction
+        let defaultAction:UIAlertAction = UIAlertAction(title: "OK", style: .default, handler:{(action:UIAlertAction!) -> Void in
+            // 処理
+                            
+            self.receive_mode = true
+            do {
+                if let received_data = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: data) {
+                    // Run the session with the received data_all_cubes
+                    self.cubes = received_data as! [String]
+                    self.sender_id = peer
+                    if (self.originPosition == nil) {
+                        //error message
+                        self.receivingStatausMessage(text: "Set origin to reproduce cubes from received data")
+                    } else {
+                        self.reproduce_cubes()
+                    }
                 }
                 else {
-                    print("unknown data recieved from \(peer)")
+                    self.receivingStatausMessage(text: "unknown data recieved from \(peer)")
+                }
+            } catch {
+                self.receivingStatausMessage(text: "can't decode data recieved from \(peer)")
             }
-        } catch {
-            print("can't decode data recieved from \(peer)")
+        })
+        
+        /*
+        // Destructive のaction
+        let destructiveAction:UIAlertAction = UIAlertAction(title: "Destructive", style: .destructive, handler:{(action:UIAlertAction!) -> Void in
+            // 処理
+        })
+ */
+        
+        // Cancel のaction
+        let cancelAction:UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler:{(action:UIAlertAction!) -> Void in
+            // 処理
+        })
+        
+        // actionを追加
+        alertController.addAction(cancelAction)
+        alertController.addAction(defaultAction)
+        //alertController.addAction(destructiveAction)
+        
+        // UIAlertControllerの起動
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func reproduce_cubes() {
+        var count = 0
+        for cube in cubes {
+            let cube_array = cube.split(separator: "_")
+            if cube_array.count == 8 {
+                if count == 0 {
+                    changeCubeSize(magnification: Float(cube_array[7])!)
+                    setAlpha(a: Float(cube_array[6])!)
+                }
+                setColor(r: Int(cube_array[3])!, g: Int(cube_array[4])!, b: Int(cube_array[5])!)
+                setCube(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!)
+                count += 1
+            } else {
+                receivingStatausMessage(text: "unknown data recieved from \(String(describing: sender_id))")
+            }
+            
+        }
+        
+        // Remember who provided the map for showing UI feedback.
+        mapProvider = sender_id as? MCPeerID
+    }
+    
+    func receivingStatausMessage(text: String) {
+        //self.receivingStatusLabel.isHidden = false
+        self.receivingStatusLabel.text = text
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            // Put your code which should be executed with a delay here
+            //self.roomIDLabel.text = "ID: " + self.roomId
+            self.receivingStatusLabel.text = ""
         }
     }
     
