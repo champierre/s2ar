@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -104,15 +104,6 @@
                                     <action selector="resetTracking:" destination="BV1-FR-VrT" eventType="touchUpInside" id="4Xq-eu-Ueq"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a4m-Rj-UhN">
-                                <rect key="frame" x="384" y="512" width="0.0" height="0.0"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="300" id="lFl-NC-e0M"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -127,11 +118,9 @@
                             <constraint firstAttribute="bottom" secondItem="e8P-1h-OPn" secondAttribute="bottom" id="MJg-At-3hO"/>
                             <constraint firstItem="awi-cV-mTK" firstAttribute="leading" secondItem="g9U-oc-ikI" secondAttribute="leading" constant="20" id="Pez-Pn-Bl2"/>
                             <constraint firstItem="mE6-ZF-4rT" firstAttribute="top" secondItem="g9U-oc-ikI" secondAttribute="top" constant="10" id="Wcx-fh-kV2"/>
-                            <constraint firstItem="a4m-Rj-UhN" firstAttribute="centerY" secondItem="gbc-bA-e6I" secondAttribute="centerY" id="afs-Ja-qCc"/>
                             <constraint firstAttribute="bottom" secondItem="64e-jN-Jqn" secondAttribute="bottom" constant="20" id="efW-Sr-qwa"/>
                             <constraint firstAttribute="bottom" secondItem="hzq-2R-vFf" secondAttribute="bottom" constant="20" id="gMU-7o-t0m"/>
                             <constraint firstItem="NxN-fR-Ba3" firstAttribute="centerX" secondItem="gbc-bA-e6I" secondAttribute="centerX" id="keO-Ep-82r"/>
-                            <constraint firstItem="a4m-Rj-UhN" firstAttribute="centerX" secondItem="gbc-bA-e6I" secondAttribute="centerX" id="nws-to-Pot"/>
                             <constraint firstItem="64e-jN-Jqn" firstAttribute="top" secondItem="NxN-fR-Ba3" secondAttribute="bottom" constant="10" id="o7d-rn-Q2N"/>
                             <constraint firstItem="awi-cV-mTK" firstAttribute="top" secondItem="g9U-oc-ikI" secondAttribute="top" id="oMb-UL-4a9"/>
                             <constraint firstAttribute="bottom" secondItem="3mO-5r-pkv" secondAttribute="bottom" constant="20" id="qCf-cG-vt8"/>
@@ -142,7 +131,6 @@
                     <connections>
                         <outlet property="helpButton" destination="3mO-5r-pkv" id="tNC-1k-tBG"/>
                         <outlet property="mappingStatusLabel" destination="mVp-d8-nIz" id="aLs-vq-Daa"/>
-                        <outlet property="receivingStatusLabel" destination="a4m-Rj-UhN" id="A0g-Tb-0CR"/>
                         <outlet property="restartButton" destination="mE6-ZF-4rT" id="Ggt-zy-0bu"/>
                         <outlet property="roomIDLabel" destination="64e-jN-Jqn" id="1HP-bg-00k"/>
                         <outlet property="sceneView" destination="e8P-1h-OPn" id="NMd-Ur-a4f"/>
@@ -155,7 +143,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="jKt-ut-wgt">
                     <connections>
-                        <action selector="handleTapFromRecognizer:" destination="BV1-FR-VrT" id="735-tw-4rw"/>
+                        <action selector="handleTapFrom:" destination="BV1-FR-VrT" id="RsE-Qb-pNU"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>
