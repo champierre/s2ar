@@ -145,7 +145,7 @@
           molecular_structure: '分子構造モデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、拡大倍率を %n 、MLDファイル %s',
           set_color: 'ブロックの色を変える。r: %n g: %n b: %n',
           set_alpha: 'ブロックの透明度を変える。alpha: %n',
-          change_layer: 'ＡＲのレイヤを変える。レイヤ: %m.layer',
+          change_layer: 'ARのレイヤを変える。レイヤ: %m.layer',
           remove_cube: 'ブロックを消す。x座標を %n 、y座標を %n 、z座標を %n',
           reset: 'リセット'
         },
