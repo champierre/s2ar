@@ -28,11 +28,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var cubeNodes2: [String:ARAnchor] = [:]
     var cubeNodes3: [String:ARAnchor] = [:]
     
-    var lightNode: SCNNode!
-    var backLightNode: SCNNode!
+    var light: ARAnchor!
+    var backLight: ARAnchor!
     
     var planeNode: SCNNode!
     var planeNodes: [UUID:SCNNode] = [:]
+    
+    var originX: ARAnchor!
+    var originY: ARAnchor!
+    var originZ: ARAnchor!
     
     var red: Int = 255
     var green: Int = 255
@@ -51,8 +55,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var layer: String = "1"
     var layerChanged: Bool = false
     
-    //var translation: simd_float4x4!
-    var hitResult: ARHitTestResult!
+    var world_origin: simd_float4x4!
+    //var hitResult: ARHitTestResult!
     //@NSCopying
     //var currentFrame: ARFrame!// { get }
     
@@ -85,7 +89,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         CUBE_SIZE = round(0.01 * magnification * 1000.0) / 1000.0
     }
     
-    var count: Int = 0
+    //var count: Int = 0
     
     func setCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
@@ -100,24 +104,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let _z: Float = round(2.0 * z) / 2.0
         
         func setCubeMethod(x: Float, y: Float, z: Float) {
-            var translation: simd_float4x4 = hitResult.worldTransform
-            
-            //print("hitResult: \(hitResult)")
-            //print("translation1: \(translation)")
+            var translation: simd_float4x4 = world_origin
             //anchor の移動
             translation.columns.3.x = translation.columns.3.x + _x * CUBE_SIZE
             translation.columns.3.y = translation.columns.3.y + _y * CUBE_SIZE
             translation.columns.3.z = translation.columns.3.z + _z * CUBE_SIZE
-            //anchor の y軸回転を合わせる
-            translation.columns.0.x = 1.0
-            translation.columns.0.z = 0.0
-            translation.columns.2.x = 0.0
-            translation.columns.2.z = 1.0
-            //print("translation2: \(translation)")
             
             // Add a new anchor to the session
-            let anchor = ARAnchor(name: "cube", transform: translation)
-            print("anchor: \(anchor)")
+            let name = "cube_\(CUBE_SIZE)_\(red)_\(green)_\(blue)_\(alpha)"
+            let anchor = ARAnchor(name: name, transform: translation)
             
             sceneView.session.add(anchor: anchor)
             
@@ -1485,61 +1480,43 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 vertex1 = ply2[4 * i]
                 vertex2 = ply2[4 * i + 1]
                 vertex3 = ply2[4 * i + 2]
-                self.setColor(r: Int(vertex1[3])!, g: Int(vertex1[4])!, b: Int(vertex1[5])!)
+                red = Int(vertex1[3])!
+                green = Int(vertex1[4])!
+                blue = Int(vertex1[5])!
                 if vertex1[0] == vertex2[0] && vertex2[0] == vertex3[0] {// y-z plane
                     if vertex1[1] == vertex2[1] {
                         _x1 = _x + Float(vertex1[0])!
                         _y1 = _y + Float(vertex1[2])!
                         _z1 = _z - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does not contains key
-                            self.setCube(x: _x1, y: _y1, z: _z1)
-                        }
                     } else {
                         _x1 = _x + Float(vertex1[0])! - 1.0
                         _y1 = _y + Float(vertex1[2])!
                         _z1 = _z - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does not contains key
-                            self.setCube(x: _x1, y: _y1, z: _z1)
-                        }
                     }
                 } else if vertex1[1] == vertex2[1] && vertex2[1] == vertex3[1] {//z-x plane
                     if vertex1[2] == vertex2[2] {
                         _x1 = _x + Float(vertex1[0])!
                         _y1 = _y + Float(vertex1[2])!
                         _z1 = _z - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does not contains key
-                            self.setCube(x: _x1, y: _y1, z: _z1)
-                        }
                     } else {
                         _x1 = _x + Float(vertex1[0])!
                         _y1 = _y + Float(vertex1[2])!
                         _z1 = _z - Float(vertex1[1])! + 1.0
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does not contains key
-                            self.setCube(x: _x1, y: _y1, z: _z1)
-                        }
                     }
                 } else {//x-y plane
                     if vertex1[0] == vertex2[0] {
                         _x1 = _x + Float(vertex1[0])!
                         _y1 = _y + Float(vertex1[2])!
                         _z1 = _z - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does not contains key
-                            self.setCube(x: _x1, y: _y1, z: _z1)
-                        }
                     } else {
                         _x1 = _x + Float(vertex1[0])!
                         _y1 = _y + Float(vertex1[2])! - 1.0
                         _z1 = _z - Float(vertex1[1])!
-                        if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
-                            // does not contains key
-                            self.setCube(x: _x1, y: _y1, z: _z1)
-                        }
                     }
+                }
+                if !(cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z))) {
+                    // does not contains key
+                    self.setCube(x: _x1, y: _y1, z: _z1)
                 }
             }
         }
@@ -2546,7 +2523,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.session.delegate = self
         
         // Set the scene to the view
-        sceneView.scene = SCNScene(named: "art.scnassets/main.scn")!
+        sceneView.scene = SCNScene()
+        //sceneView.debugOptions = .showWireframe
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
@@ -2557,10 +2535,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         //sceneView.autoenablesDefaultLighting = false
         /*
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapFrom))
-        tapGestureRecognizer.numberOfTapsRequired = 1
-        sceneView.addGestureRecognizer(tapGestureRecognizer)
-        */
+         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapFrom))
+         tapGestureRecognizer.numberOfTapsRequired = 1
+         sceneView.addGestureRecognizer(tapGestureRecognizer)
+         */
         // WebSocket
         let socket = manager.defaultSocket
         
@@ -2861,182 +2839,125 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sessionInfoLabel.text = "Session interruption ended"
     }
     
-    @IBAction func handleTapFrom(recognizer: UITapGestureRecognizer) {
+    @IBAction func handleTapFrom(_ sender: UITapGestureRecognizer) {
         
         if !settingOrigin {
             return
         }
-        let pos = recognizer.location(in: sceneView)
-        let results = sceneView.hitTest(pos, types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
-        if results.count == 0 {
-            return
-        }
-        //guard let
-            hitResult = results.first// else { return }
+        let results = sceneView.hitTest(sender.location(in: sceneView),
+                                        types: [.existingPlaneUsingGeometry])
+        
+        guard let hitResult = results.first else { return }
+        world_origin = hitResult.worldTransform
+        //y軸回転を合わせる
+        world_origin.columns.0.x = 1.0
+        world_origin.columns.0.z = 0.0
+        world_origin.columns.2.x = 0.0
+        world_origin.columns.2.z = 1.0
         
         if originPosition != nil {
             originPosition = SCNVector3Make(hitResult.worldTransform.columns.3.x,
                                             hitResult.worldTransform.columns.3.y,
                                             hitResult.worldTransform.columns.3.z)
-            xAxisNode.position = SCNVector3Make(originPosition.x + 0.2, originPosition.y, originPosition.z)
-            yAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y + 0.2, originPosition.z)
-            zAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y, originPosition.z + 0.2)
+            //アンカーを削除
+            sceneView.session.remove(anchor: originX)
+            sceneView.session.remove(anchor: originY)
+            sceneView.session.remove(anchor: originZ)
+            sceneView.session.remove(anchor: light)
+            sceneView.session.remove(anchor: backLight)
+            // アンカーを追加する
+            originX = ARAnchor(name: "axisX", transform: world_origin)
+            sceneView.session.add(anchor: originX)
+            originY = ARAnchor(name: "axisY", transform: world_origin)
+            sceneView.session.add(anchor: originY)
+            originZ = ARAnchor(name: "axisZ", transform: world_origin)
+            sceneView.session.add(anchor: originZ)
             
-            lightNode.position = SCNVector3Make(originPosition.x + CUBE_SIZE * 100,
-                                                originPosition.y + CUBE_SIZE * 100,
-                                                originPosition.z + CUBE_SIZE * 100)
+            var translation: simd_float4x4 = world_origin
             
-            backLightNode.position = SCNVector3Make(originPosition.x - CUBE_SIZE * 100,
-                                                    originPosition.y + CUBE_SIZE * 100,
-                                                    originPosition.z - CUBE_SIZE * 100)
+            translation.columns.3.x = translation.columns.3.x + 100 * CUBE_SIZE
+            translation.columns.3.y = translation.columns.3.y + 100 * CUBE_SIZE
+            translation.columns.3.z = translation.columns.3.z + 100 * CUBE_SIZE
+            
+            // Add a new anchor to the session
+            light = ARAnchor(name: "light_1000", transform: translation)
+            sceneView.session.add(anchor: light)
+            
+            translation.columns.3.x = translation.columns.3.x - 200 * CUBE_SIZE
+            
+            // Add a new anchor to the session
+            backLight = ARAnchor(name: "light_500", transform: translation)
+            sceneView.session.add(anchor: backLight)
         } else {
-            let xAxisGeometry = SCNCylinder(radius: CGFloat(0.002), height: CGFloat(0.4))//CUBE SIZE を変更できるように定数に変更した
-            xAxisGeometry.firstMaterial?.diffuse.contents = UIColor(red: 1, green: 0, blue: 0, alpha: 1)
-            xAxisNode = SCNNode(geometry: xAxisGeometry)
-            xAxisNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 0, 0, 1)
-            
-            let yAxisGeometry = SCNCylinder(radius: CGFloat(0.002), height: CGFloat(0.4))
-            yAxisGeometry.firstMaterial?.diffuse.contents = UIColor(red: 0, green: 1, blue: 0, alpha: 1)
-            yAxisNode = SCNNode(geometry: yAxisGeometry)
-            
-            let zAxisGeometry = SCNCylinder(radius: CGFloat(0.002), height: CGFloat(0.4))
-            zAxisGeometry.firstMaterial?.diffuse.contents = UIColor(red: 0, green: 0, blue: 1, alpha: 1)
-            zAxisNode = SCNNode(geometry: zAxisGeometry)
-            zAxisNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
-            
-            xAxisNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-            yAxisNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-            zAxisNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-            
             originPosition = SCNVector3Make(hitResult.worldTransform.columns.3.x,
                                             hitResult.worldTransform.columns.3.y,
                                             hitResult.worldTransform.columns.3.z)
+            // アンカーを追加する
+            originX = ARAnchor(name: "axisX", transform: world_origin)
+            sceneView.session.add(anchor: originX)
+            originY = ARAnchor(name: "axisY", transform: world_origin)
+            sceneView.session.add(anchor: originY)
+            originZ = ARAnchor(name: "axisZ", transform: world_origin)
+            sceneView.session.add(anchor: originZ)
+
+            var translation: simd_float4x4 = world_origin
             
-            xAxisNode.position = SCNVector3Make(originPosition.x + 0.2, originPosition.y, originPosition.z)
-            yAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y + 0.2, originPosition.z)
-            zAxisNode.position = SCNVector3Make(originPosition.x, originPosition.y, originPosition.z + 0.2)
+            translation.columns.3.x = translation.columns.3.x + 100 * CUBE_SIZE
+            translation.columns.3.y = translation.columns.3.y + 100 * CUBE_SIZE
+            translation.columns.3.z = translation.columns.3.z + 100 * CUBE_SIZE
             
-            xAxisNode.name = "Axis"
-            yAxisNode.name = "Axis"
-            zAxisNode.name = "Axis"
+            // Add a new anchor to the session
+            light = ARAnchor(name: "light_1000", transform: translation)
+            sceneView.session.add(anchor: light)
             
-            sceneView.scene.rootNode.addChildNode(xAxisNode)
-            sceneView.scene.rootNode.addChildNode(yAxisNode)
-            sceneView.scene.rootNode.addChildNode(zAxisNode)
+            translation.columns.3.x = translation.columns.3.x - 200 * CUBE_SIZE
             
-            let light = SCNLight()
-            light.type = .directional
-            light.intensity = 1000
-            light.castsShadow = true
-            
-            lightNode = SCNNode()
-            lightNode.light = light
-            lightNode.position = SCNVector3Make(originPosition.x + CUBE_SIZE * 100,
-                                                originPosition.y + CUBE_SIZE * 100,
-                                                originPosition.z + CUBE_SIZE * 100)
-            
-            let constraint = SCNLookAtConstraint(target: xAxisNode)
-            constraint.isGimbalLockEnabled = true
-            
-            lightNode.constraints = [constraint]
-            sceneView.scene.rootNode.addChildNode(lightNode)
-            
-            let backLight = SCNLight()
-            backLight.type = .directional
-            backLight.intensity = 100
-            light.castsShadow = true
-            
-            backLightNode = SCNNode()
-            backLightNode.light = backLight
-            backLightNode.position = SCNVector3Make(originPosition.x - CUBE_SIZE * 100,
-                                                    originPosition.y + CUBE_SIZE * 100,
-                                                    originPosition.z - CUBE_SIZE * 100)
-            
-            backLightNode.constraints = [constraint]
-            sceneView.scene.rootNode.addChildNode(backLightNode)
+            // Add a new anchor to the session
+            backLight = ARAnchor(name: "light_500", transform: translation)
+            sceneView.session.add(anchor: backLight)
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        /* エラーになるので planeAnchor は断念
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-        
-        let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
-                                height: CGFloat(planeAnchor.extent.z))
-        
-        geometry.materials.first?.diffuse.contents = UIImage(named: "grid.png")
-        let material = geometry.materials.first
-        material?.diffuse.contentsTransform = SCNMatrix4MakeScale(planeAnchor.extent.x, planeAnchor.extent.z, 1)
-        material?.diffuse.wrapS = SCNWrapMode.repeat
-        material?.diffuse.wrapT = SCNWrapMode.repeat
-        
-        let planeNode = SCNNode(geometry: geometry)
-        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
-        planeNode.isHidden = !settingOrigin
-        
-        planeNodes[anchor.identifier] = planeNode
-        
-        DispatchQueue.main.async(execute: {
-            node.addChildNode(planeNode)
-        })
-        */
-        //multiuser
+        // set light
+        if let name = anchor.name, name.hasPrefix("light") {
+            let light_property = name.components(separatedBy: "_")
+            node.addChildNode(LightNode(intensity: Int(light_property[1])!))
+        }
+        // set plane
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+            node.addChildNode(PlaneNode(anchor: planeAnchor))
+            return
+        }
+        // set origin
+        if let name = anchor.name, name.hasPrefix("axis") {
+            if name.hasSuffix("X") {
+                xAxisNode = ConeNodeX()
+                node.addChildNode(xAxisNode)
+            } else if name.hasSuffix("Y") {
+                yAxisNode = ConeNodeY()
+                node.addChildNode(yAxisNode)
+            } else if name.hasSuffix("Z") {
+                zAxisNode = ConeNodeZ()
+                node.addChildNode(zAxisNode)
+            }
+        }
+        // set cube
         if let name = anchor.name, name.hasPrefix("cube") {
-            let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
-            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: CGFloat(alpha))
-            cubeNode = SCNNode(geometry: cube)
-            cubeNode.physicsBody = SCNPhysicsBody(type: .static, shape: nil)
-            node.addChildNode(cubeNode)
+            let cube_property = name.components(separatedBy: "_")
+            node.addChildNode(CubeNode(CUBE_SIZE: Float(cube_property[1])!, red: Int(cube_property[2])!, green: Int(cube_property[3])!, blue: Int(cube_property[4])!, alpha: Float(cube_property[5])!))
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-         /* エラーになるので planeAnchor は断念
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-        
-        let planeNode = planeNodes[anchor.identifier]
-        if planeNode == nil {
-            return
-        }
-        
-        let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
-                                height: CGFloat(planeAnchor.extent.z))
-        
-        geometry.materials.first?.diffuse.contents = UIImage(named: "grid.png")
-        
-        let material = geometry.materials.first
-        material?.diffuse.contentsTransform = SCNMatrix4MakeScale(planeAnchor.extent.x, planeAnchor.extent.z, 1)
-        material?.diffuse.wrapS = SCNWrapMode.repeat
-        material?.diffuse.wrapT = SCNWrapMode.repeat
-        
-        planeNode?.geometry = geometry
-        planeNode?.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
-        planeNode?.isHidden = !settingOrigin
-        
-        planeNode?.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z);
+        //update plane
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return  }
+        guard let planeNode = node.childNodes.first as? PlaneNode else { return  }
+        planeNode.update(anchor: planeAnchor)
         
         planeNodes[anchor.identifier] = planeNode
- */
     }
     
-    //multiuser
-    /*  上に移動
-    @IBOutlet weak var sessionInfoView: UIView!
-    @IBOutlet weak var sessionInfoLabel: UILabel!
-    @IBOutlet weak var sceneView: ARSCNView!
-    @IBOutlet weak var sendMapButton: UIButton!
-    @IBOutlet weak var mappingStatusLabel: UILabel!
-    */
-    // MARK: - View Life Cycle
-    /* 上に移動
-    var multipeerSession: MultipeerSession!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        multipeerSession = MultipeerSession(receivedDataHandler: receivedData)
-    }
- */
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -3052,36 +2973,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             """) // For details, see https://developer.apple.com/documentation/arkit
         }
         
-        // Start the view's AR session.
-        //let configuration = ARWorldTrackingConfiguration()
-        //configuration.planeDetection = .horizontal
-        //sceneView.session.run(configuration)
-        
-        // Set a delegate to track the number of plane anchors for providing UI feedback.
-        //sceneView.session.delegate = self
-        
-        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints]
         // Prevent the screen from being dimmed after a while as users will likely
         // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
         
     }
-    /* 同一コードあり
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Pause the view's AR session.
-        sceneView.session.pause()
-    }
-    */
-    // MARK: - ARSCNViewDelegate
-    /* 同名ファンクションに統合し、loadRedPandaModel()から読み込まなくてよいようにコードを修正
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        if let name = anchor.name, name.hasPrefix("panda") {
-            node.addChildNode(loadRedPandaModel())
-        }
-    }
-    */
+    
     // MARK: - ARSessionDelegate
     
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
@@ -3102,50 +2999,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         updateSessionInfoLabel(for: frame, trackingState: frame.camera.trackingState)
     }
     
-    // MARK: - ARSessionObserver
-    /* 同名ファンクションに統合する
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay.
-        sessionInfoLabel.text = "Session was interrupted"
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required.
-        sessionInfoLabel.text = "Session interruption ended"
-    }
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user.
-        sessionInfoLabel.text = "Session failed: \(error.localizedDescription)"
-        resetTracking(nil)
-    }
-    */
-    func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool {
-        return true
-    }
-    
-    // MARK: - Multiuser shared session
-    /* scratchから命令でブロックを置くように修正→ setCube に統合
-    /// - Tag: PlaceCharacter
-    @IBAction func handleSceneTap(_ sender: UITapGestureRecognizer) {
-        
-        // Hit test to find a place for a virtual object.
-        guard let hitTestResult = sceneView
-            .hitTest(sender.location(in: sceneView), types: [.existingPlaneUsingGeometry, .estimatedHorizontalPlane])
-            .first
-            else { return }
-        
-        // Place an anchor for a virtual character. The model appears in renderer(_:didAdd:for:).
-        let anchor = ARAnchor(name: "panda", transform: hitTestResult.worldTransform)
-        sceneView.session.add(anchor: anchor)
-        
-        // Send the anchor info to peers, so they can place the same content.
-        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: anchor, requiringSecureCoding: true)
-            else { fatalError("can't encode anchor") }
-        self.multipeerSession.sendToAllPeers(data)
-    }
- */
-    
     /// - Tag: GetWorldMap
     @IBAction func shareSession(_ button: UIButton) {
         sceneView.session.getCurrentWorldMap { worldMap, error in
@@ -3162,28 +3015,47 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     /// - Tag: ReceiveData
     func receivedData(_ data: Data, from peer: MCPeerID) {
         
-        do {
-            if let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data) {
-                // Run the session with the received world map.
-                let configuration = ARWorldTrackingConfiguration()
-                configuration.planeDetection = .horizontal
-                configuration.initialWorldMap = worldMap
-                sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-                
-                // Remember who provided the map for showing UI feedback.
-                mapProvider = peer
-            }
-            else
-                if let anchor = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARAnchor.self, from: data) {
-                    // Add anchor to the session, ARSCNView delegate adds visible content.
-                    sceneView.session.add(anchor: anchor)
+        let alertController:UIAlertController = UIAlertController(title:"alert", message: "Allow to receive data  for multiuser session", preferredStyle: .alert)
+        
+        // Default action
+        let defaultAction:UIAlertAction = UIAlertAction(title: "OK", style: .default, handler:{(action:UIAlertAction!) -> Void in
+            // action
+            do {
+                if let worldMap = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data) {
+                    // Run the session with the received world map.
+                    let configuration = ARWorldTrackingConfiguration()
+                    configuration.planeDetection = .horizontal
+                    configuration.initialWorldMap = worldMap
+                    self.sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+                    
+                    // Remember who provided the map for showing UI feedback.
+                    self.mapProvider = peer
                 }
-                else {
-                    print("unknown data recieved from \(peer)")
+                else
+                    if let anchor = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARAnchor.self, from: data) {
+                        // Add anchor to the session, ARSCNView delegate adds visible content.
+                        self.sceneView.session.add(anchor: anchor)
+                    }
+                    else {
+                        print("unknown data recieved from \(peer)")
+                }
+            } catch {
+                print("can't decode data recieved from \(peer)")
             }
-        } catch {
-            print("can't decode data recieved from \(peer)")
-        }
+        })
+        
+        // Cancel action
+        let cancelAction:UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler:{(action:UIAlertAction!) -> Void in
+            // action
+            self.showMessage(text: "Cancel multipeer session")
+        })
+        
+        // Add action
+        alertController.addAction(cancelAction)
+        alertController.addAction(defaultAction)
+        
+        // Run UIAlertController
+        present(alertController, animated: true, completion: nil)
     }
     
     // MARK: - AR session management
@@ -3235,26 +3107,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        //add code
         self.reset()
-        // "Axis"という名前のノードがあったら、消去する。
-        for _ in 0..<3 {
-            if let theNode = sceneView.scene.rootNode.childNode(withName: "Axis", recursively: true) {
-                theNode.removeFromParentNode()
-            }
-        }
         originPosition = nil
     }
-    // MARK: - AR session management
-    /* func renderer(_ renderer: SCNSceneRenderer, didAdd に統合
-    private func loadRedPandaModel() -> SCNNode {
-        let sceneURL = Bundle.main.url(forResource: "max", withExtension: "scn", subdirectory: "Assets.scnassets")!
-        let referenceNode = SCNReferenceNode(url: sceneURL)!
-        referenceNode.load()
-        
-        return referenceNode
-    }
- */
 }
 
 
@@ -3280,5 +3135,190 @@ extension String {
     /// StringからCharacterSetを抽出する
     func extract(characterSet: CharacterSet) -> String {
         return remove(characterSet: characterSet.inverted)
+    }
+}
+
+// xAxis
+class ConeNodeX: SCNNode {
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override init() {
+        super.init()
+        let cone = SCNCone(topRadius: 0.0, bottomRadius: 0.005, height: 0.1)
+        cone.firstMaterial?.diffuse.contents = UIColor.red
+        geometry = cone
+        self.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 0, 0, 1)
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(h, 0, 0)
+    }
+}
+
+// yAxis
+class ConeNodeY: SCNNode {
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override init() {
+        super.init()
+        let cone = SCNCone(topRadius: 0.0, bottomRadius: 0.005, height: 0.1)
+        cone.firstMaterial?.diffuse.contents = UIColor.green
+        geometry = cone
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(0, h, 0)
+    }
+}
+
+// zAxis
+class ConeNodeZ: SCNNode {
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override init() {
+        super.init()
+        let cone = SCNCone(topRadius: 0.0, bottomRadius: 0.005, height: 0.1)
+        cone.firstMaterial?.diffuse.contents = UIColor.blue
+        geometry = cone
+        self.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, -1, 0, 0)
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(0, 0, h)
+    }
+}
+
+// Cube
+class CubeNode: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+        super.init()
+        let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
+        cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        geometry = cube
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
+    }
+}
+
+// Sphere
+class SphereNode: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+        super.init()
+        let sphere = SCNSphere(radius: CGFloat(CUBE_SIZE) / 2)
+        sphere.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        geometry = sphere
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
+    }
+}
+
+// Cylinder
+class CyinderNode: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+        super.init()
+        let cylinder = SCNCylinder(radius: CGFloat(CUBE_SIZE) / 2, height: CGFloat(CUBE_SIZE))
+        cylinder.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        geometry = cylinder
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
+    }
+}
+
+// Cone
+class ConeNode: SCNNode {
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+     init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+        super.init()
+        let cone = SCNCone(topRadius: 0.0, bottomRadius: CGFloat(CUBE_SIZE) / 2, height: CGFloat(CUBE_SIZE))
+        cone.firstMaterial?.diffuse.contents = UIColor.red
+        geometry = cone
+        self.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 0, 0, 1)
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
+    }
+}
+
+// Cube
+class PyramidNode: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+        super.init()
+        let pyramid = SCNPyramid(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE))
+        pyramid.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        geometry = pyramid
+        let h = self.boundingBox.max.y
+        self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
+    }
+}
+
+// light
+class LightNode: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(intensity: Int) {
+        super.init()
+        let light = SCNLight()
+        light.type = .omni
+        light.intensity = CGFloat(intensity)
+        light.castsShadow = true
+        self.light = light
+    }
+}
+
+// plane
+class PlaneNode: SCNNode {
+    
+    var detection = ARWorldTrackingConfiguration.PlaneDetection.horizontal
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(anchor: ARPlaneAnchor) {
+        super.init()
+        
+        let plane = SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))
+        plane.materials.first?.diffuse.contents = UIImage(named: "grid.png")
+        let material = plane.materials.first
+        material?.diffuse.contentsTransform = SCNMatrix4MakeScale(anchor.extent.x, anchor.extent.z, 1)
+        material?.diffuse.wrapS = SCNWrapMode.repeat
+        material?.diffuse.wrapT = SCNWrapMode.repeat
+        
+        geometry = plane
+        transform = SCNMatrix4MakeRotation(-Float.pi/2, 1, 0, 0)
+        position = SCNVector3(anchor.center.x, 0, anchor.center.z)
+    }
+    
+    func update(anchor: ARPlaneAnchor) {
+        
+        let plane = geometry as! SCNPlane
+        plane.width = CGFloat(anchor.extent.x)
+        plane.height = CGFloat(anchor.extent.z)
+        position = SCNVector3(anchor.center.x, 0, anchor.center.z)
     }
 }
