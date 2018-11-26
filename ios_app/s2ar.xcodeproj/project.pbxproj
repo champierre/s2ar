@@ -18,6 +18,9 @@
 		6662226C214607CF00EC9BB6 /* chars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6662226B214607CF00EC9BB6 /* chars.swift */; };
 		66E76767214DF48800A3175F /* grid.png in Resources */ = {isa = PBXBuildFile; fileRef = 66E76766214DF48800A3175F /* grid.png */; };
 		F70B7005E2B4ED3FAACD522C /* Pods_s2ar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA9C61443A28332F1C8DC73 /* Pods_s2ar.framework */; };
+		F9A4FD8021ABBB7E00B3B691 /* MultipeerSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD7F21ABBB7E00B3B691 /* MultipeerSession.swift */; };
+		F9A4FD8221ABBBFB00B3B691 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD8121ABBBFB00B3B691 /* Utilities.swift */; };
+		F9A4FD8421ABBC0400B3B691 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD8321ABBC0400B3B691 /* RoundedButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,9 @@
 		6662226B214607CF00EC9BB6 /* chars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chars.swift; sourceTree = "<group>"; };
 		66E76766214DF48800A3175F /* grid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grid.png; sourceTree = "<group>"; };
 		C1E0D2B8AE84C1B776981011 /* Pods-s2ar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-s2ar.release.xcconfig"; path = "Pods/Target Support Files/Pods-s2ar/Pods-s2ar.release.xcconfig"; sourceTree = "<group>"; };
+		F9A4FD7F21ABBB7E00B3B691 /* MultipeerSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipeerSession.swift; sourceTree = "<group>"; };
+		F9A4FD8121ABBBFB00B3B691 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		F9A4FD8321ABBC0400B3B691 /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +120,9 @@
 				66305923213D5DFB0082D2EA /* AppDelegate.swift */,
 				66305925213D5DFB0082D2EA /* art.scnassets */,
 				66305927213D5DFB0082D2EA /* ViewController.swift */,
+				F9A4FD8321ABBC0400B3B691 /* RoundedButton.swift */,
+				F9A4FD8121ABBBFB00B3B691 /* Utilities.swift */,
+				F9A4FD7F21ABBB7E00B3B691 /* MultipeerSession.swift */,
 				66305929213D5DFB0082D2EA /* Main.storyboard */,
 				6630592C213D5DFE0082D2EA /* Assets.xcassets */,
 				6630592E213D5DFE0082D2EA /* LaunchScreen.storyboard */,
@@ -170,7 +179,6 @@
 				6630591D213D5DFB0082D2EA /* Frameworks */,
 				6630591E213D5DFB0082D2EA /* Resources */,
 				C579B37D3620BDA3B435184B /* [CP] Embed Pods Frameworks */,
-				BFA0A07973F2E29506AF9F7B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -308,21 +316,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BFA0A07973F2E29506AF9F7B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-s2ar/Pods-s2ar-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C579B37D3620BDA3B435184B /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -350,8 +343,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9A4FD8021ABBB7E00B3B691 /* MultipeerSession.swift in Sources */,
+				F9A4FD8421ABBC0400B3B691 /* RoundedButton.swift in Sources */,
 				66305928213D5DFB0082D2EA /* ViewController.swift in Sources */,
 				66305924213D5DFB0082D2EA /* AppDelegate.swift in Sources */,
+				F9A4FD8221ABBBFB00B3B691 /* Utilities.swift in Sources */,
 				6662226C214607CF00EC9BB6 /* chars.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -527,14 +523,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 75W9NK7L47;
+				DEVELOPMENT_TEAM = 7Q4JA6F3UU;
 				INFOPLIST_FILE = s2ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.tsukurusha.s2ar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.creativival.s2ar3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -547,14 +543,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 75W9NK7L47;
+				DEVELOPMENT_TEAM = 7Q4JA6F3UU;
 				INFOPLIST_FILE = s2ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.tsukurusha.s2ar;
+				PRODUCT_BUNDLE_IDENTIFIER = com.creativival.s2ar3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
