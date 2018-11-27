@@ -78,14 +78,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             sendMapButton.isHidden = false
             mappingStatusLabel.isHidden = false
             multipeerButton.titleLabel?.numberOfLines = 0
-            multipeerButton.setTitle("Multipeer OFF", for: .normal)
+            multipeerButton.setTitle("Multipeer OFF".localized, for: .normal)
             multipeerButton.setTitleColor(UIColor.red, for: .normal)
             multipeerSession.startSession()
         } else {
             multipeerState = false
             sendMapButton.isHidden = true
             mappingStatusLabel.isHidden = true
-            multipeerButton.setTitle("Multipeer", for: .normal)
+            multipeerButton.setTitle("Multipeer".localized, for: .normal)
             multipeerButton.setTitleColor(UIColor.blue, for: .normal)
             multipeerSession.stopSession()
         }
@@ -108,14 +108,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     func changeCubeSize(magnification: Float) {
-        self.showMessage(text: "Resize x\(magnification)")
+        self.showMessage(text: "Resize x ".localized + String(magnification))
         CUBE_SIZE = round(0.01 * magnification * 1000.0) / 1000.0
     }
     
     func changeLight(x: Float, y: Float, z: Float, intensity: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         lightChanged = true
@@ -149,7 +149,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         // 3Dモデル作成のデータ（.ply）は整数のみではなく 0.5 を含むため、setCube を 0.5 刻みで置けるように改造した。
@@ -207,7 +207,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setBox(x: Float, y: Float, z: Float, w: Float, d: Float, h: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -473,7 +473,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                                 if !w_plus && !h_plus && !d_plus {
                                     self.setCube(x: _x - 0.5 - Float(i), y: _y - 0.5 - Float(j), z: _z - 0.5 - Float(k))
                                 }
-                                showMessage(text: "End to set a box")
+                                showMessage(text: "End to set a box".localized)
                             }
                         }
                     }
@@ -485,7 +485,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setCylinder(x: Float, y: Float, z: Float, r: Float, h: Float, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -662,7 +662,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.showMessage(text: "Axis: x or y or z")
+                self.showMessage(text: "Axis: x or y or z".localized)
                 break
             }
         } else {
@@ -823,7 +823,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.showMessage(text: "Axis: x or y or z")
+                self.showMessage(text: "Axis: x or y or z".localized)
                 break
             }
         }
@@ -832,7 +832,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setHexagon(x: Float, y: Float, z: Float, r: Float, h: Float, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -932,7 +932,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.showMessage(text: "Axis: x or y or z")
+            self.showMessage(text: "Axis: x or y or z".localized)
             break
         }
     }
@@ -940,7 +940,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setSphere(x: Float, y: Float, z: Float, r: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -983,7 +983,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setChar(x: Float, y: Float, z: Float, c: String, a: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         
@@ -995,7 +995,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let char:String! = Chars.chars[c]
         
         if char == nil {
-            showMessage(text: "Invalid character")
+            showMessage(text: "Invalid character".localized)
         } else {
             switch (a) {
             case "x":
@@ -1030,7 +1030,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             default:
                 //error message
-                self.showMessage(text: "Axis: x or y or z")
+                self.showMessage(text: "Axis: x or y or z".localized)
                 break
             }
         }
@@ -1039,10 +1039,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setLine(x1: Float, y1: Float, z1: Float, x2: Float, y2: Float, z2: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
-        self.showMessage(text: "Set a line")
+        self.showMessage(text: "Set a line".localized)
         
         let _x1: Float = round(2.0 * x1) / 2.0
         let _y1: Float = round(2.0 * y1) / 2.0
@@ -1141,14 +1141,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         } else {
             //error message
-            self.showMessage(text: "Same points")
+            self.showMessage(text: "Same points".localized)
         }
     }
     
     func setRoof(x: Float, y: Float, z: Float, w: Int, d: Float, h: Int, a: String) {// w, h の Float は後回し
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         
@@ -1509,7 +1509,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
         default:
             //error message
-            self.showMessage(text: "Axis: x or y or z")
+            self.showMessage(text: "Axis: x or y or z".localized)
             break
         }
     }
@@ -1517,10 +1517,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func polygonFileFormat(x: Float, y: Float, z: Float, ply_file: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
-        self.showMessage(text: "Create 3d model")
+        self.showMessage(text: "Create 3d model".localized)
         
         Enable_show_message = false// 色指定など余計なメッセージを表示させない
         
@@ -1613,12 +1613,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         Enable_show_message = true
                         //error message
-                        self.showMessage(text: "Format error")
+                        self.showMessage(text: "Format error".localized)
                     }
                 } catch {
                     Enable_show_message = true
                     //error messager
-                    self.showMessage(text: "No such file")
+                    self.showMessage(text: "No such file".localized)
                 }
             }
         } else {
@@ -1638,7 +1638,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             } catch {
                 Enable_show_message = true
                 //error message
-                self.showMessage(text: "Format Error")
+                self.showMessage(text: "Format Error".localized)
             }
         }
         Enable_show_message = true
@@ -1647,10 +1647,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func animation(x: Float, y: Float, z: Float, differenceX: Float, differenceY: Float, differenceZ: Float, time: Double, times: Int, files: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
-        self.showMessage(text: "Animation")
+        self.showMessage(text: "Animation...".localized)
         
         Enable_show_message = false// 色指定など余計なメッセージを表示させない
         
@@ -1685,13 +1685,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 } catch {
                     Enable_show_message = true
                     //error message
-                    self.showMessage(text: "No such file")
+                    self.showMessage(text: "No such file".localized)
                 }
             }
         } else {
             Enable_show_message = true
             //error message
-            self.showMessage(text: "Format error")
+            self.showMessage(text: "Format error".localized)
         }
         Enable_show_message = true
     }
@@ -1699,10 +1699,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func map(map_data: String, width: Int, height: Int, magnification: Float, r1: Int, g1: Int, b1: Int, r2: Int, g2: Int, b2: Int, upward: Int) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
-        self.showMessage(text: "Drawing map...")
+        self.showMessage(text: "Drawing map...".localized)
         
         Enable_show_message = false// 色指定など余計なメッセージを表示させない
         
@@ -1979,12 +1979,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         Enable_show_message = true
                         //error message
-                        self.showMessage(text: "Format Error")
+                        self.showMessage(text: "Format Error".localized)
                     }
                 } catch {
                     Enable_show_message = true
                     //error message
-                    self.showMessage(text: "No such file")
+                    self.showMessage(text: "No such file".localized)
                 }
             }
         } else {
@@ -2021,7 +2021,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     try mapping()
                 } catch {
                     //error message
-                    self.showMessage(text: "Format Error")
+                    self.showMessage(text: "Format Error".localized)
                 }
             } else if maps.count >= height {// separated by "," or "\t"
                 for i in 0 ..< height {
@@ -2036,12 +2036,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 } catch {
                     Enable_show_message = true
                     //error message
-                    self.showMessage(text: "Format Error")
+                    self.showMessage(text: "Format Error".localized)
                 }
             } else {
                 Enable_show_message = true
                 //error message
-                self.showMessage(text: "Format Error")
+                self.showMessage(text: "Format Error".localized)
             }
         }
         Enable_show_message = true
@@ -2050,10 +2050,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func pin(pin_data: String, width: Int, height: Int, magnification: Float, up_left_latitude: Float, up_left_longitude: Float, down_right_latitude: Float, down_right_longitude: Float, step: Int) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
-        self.showMessage(text: "Setting pins...")
+        self.showMessage(text: "Setting pins...".localized)
         
         Enable_show_message = false// 色指定など余計なメッセージを表示させない
         
@@ -2138,17 +2138,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         } catch {
                             Enable_show_message = true
                             //error message
-                            showMessage(text: "Format Error")
+                            showMessage(text: "Format Error".localized)
                         }
                     } else {
                         Enable_show_message = true
                         //error message
-                        showMessage(text: "Format Error")
+                        showMessage(text: "Format Error".localized)
                     }
                 } catch {
                     Enable_show_message = true
                     //error message
-                    showMessage(text: "No such file")
+                    showMessage(text: "No such file".localized)
                 }
             }
         } else {
@@ -2176,7 +2176,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         Enable_show_message = true
                         //error message
-                        self.showMessage(text: "Format Error")
+                        self.showMessage(text: "Format Error".localized)
                     }
                 }
                 do {
@@ -2184,12 +2184,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 } catch {
                     Enable_show_message = true
                     //error message
-                    self.showMessage(text: "Format Error")
+                    self.showMessage(text: "Format Error".localized)
                 }
             } else {
                 Enable_show_message = true
                 //error message
-                self.showMessage(text: "Format Error")
+                self.showMessage(text: "Format Error".localized)
             }
         }
         Enable_show_message = true
@@ -2198,11 +2198,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func molecular_structure(x: Float, y: Float, z: Float, magnification: Float, mld_file: String) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         //message
-        self.showMessage(text: "Molecular Structure")
+        self.showMessage(text: "Molecular Structure".localized)
         
         Enable_show_message = false// 色指定など余計なメッセージを表示させない
         
@@ -2386,7 +2386,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     }
                 default:
                     Enable_show_message = true
-                    showMessage(text: "Incorrect format")
+                    showMessage(text: "Incorrect format".localized)
                     break
                 }
             }
@@ -2409,12 +2409,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         try createStructure()
                     } catch {
                         Enable_show_message = true
-                        self.showMessage(text: "Format Error")
+                        self.showMessage(text: "Format Error".localized)
                     }
                 } catch {
                     Enable_show_message = true
                     //error message
-                    self.showMessage(text: "No such file")
+                    self.showMessage(text: "No such file".localized)
                 }
             }
         } else {
@@ -2425,7 +2425,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             } catch {
                 Enable_show_message = true
                 //error message
-                self.showMessage(text: "Format Error")
+                self.showMessage(text: "Format Error".localized)
             }
         }
         Enable_show_message = true
@@ -2456,10 +2456,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             layerChanged = true
             layer = l
             //message
-            self.showMessage(text: "Change layer: \(l)")
+            self.showMessage(text: "Change layer: ".localized + String(l))
         } else {
             //error message
-            self.showMessage(text: "Only 1 or 2 or 3")
+            self.showMessage(text: "Only 1 or 2 or 3".localized)
         }
     }
     
@@ -2467,17 +2467,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if shape == "cube" || shape == "sphere" || shape == "cylinder" || shape == "cone" || shape == "pyramid" {
             basicShape = shape
             //message
-            self.showMessage(text: "Change basic shape: \(shape)")
+            self.showMessage(text: "Change basic shape: ".localized + shape)
         } else {
             //error message
-            self.showMessage(text: "Undefined shape")
+            self.showMessage(text: "Undefined shape".localized)
         }
     }
     
     func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         //小数点以下を .0 または .5 に変換
@@ -2490,21 +2490,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let cubeNode3 = cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)]
         if (cubeNode == nil && cubeNode2 == nil && cubeNode3 == nil) {
             //error message
-            self.showMessage(text: "No block")
+            self.showMessage(text: "No block".localized)
         } else {
             if (cubeNode != nil) {
                 //message
-                self.showMessage(text: "Remove a block")
+                self.showMessage(text: "Remove a block".localized)
                 cubeNode?.removeFromParentNode()
             }
             if (cubeNode2 != nil) {
                 //message
-                self.showMessage(text: "Remove a block from layer2")
+                self.showMessage(text: "Remove a block from layer2".localized)
                 cubeNode2?.removeFromParentNode()
             }
             if (cubeNode3 != nil) {
                 //message
-                self.showMessage(text: "Remove a block from layer3")
+                self.showMessage(text: "Remove a block from layer3".localized)
                 cubeNode3?.removeFromParentNode()
             }
         }
@@ -2513,7 +2513,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func reset() {
         if (originPosition == nil) {
             //error message
-            self.showMessage(text: "Set origin")
+            self.showMessage(text: "Set origin".localized)
             return
         }
         // remove the light you added yourself
@@ -2526,25 +2526,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         switch layer {
         case "1":
-            self.showMessage(text: "Reset")
+            self.showMessage(text: "Reset".localized)
             for (id, cubeNode) in cubeNodes {
                 cubeNode.removeFromParentNode()
             }
             cubeNodes = [:]
         case "2":
-            self.showMessage(text: "Reset layer2")
+            self.showMessage(text: "Reset layer2".localized)
             for (id, cubeNode) in cubeNodes2 {
                 cubeNode.removeFromParentNode()
             }
             cubeNodes2 = [:]
         case "3":
-            self.showMessage(text: "Reset layer3")
+            self.showMessage(text: "Reset layer3".localized)
             for (id, cubeNode) in cubeNodes3 {
                 cubeNode.removeFromParentNode()
             }
             cubeNodes3 = [:]
         default:
-            self.showMessage(text: "No layer")
+            self.showMessage(text: "No layer".localized)
             break
         }
     }
@@ -2556,7 +2556,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.yAxisNode?.isHidden = true
             self.zAxisNode?.isHidden = true
             
-            togglePlanesButton.setTitle("Show", for: .normal)
+            togglePlanesButton.setTitle("Show".localized, for: .normal)
             helpButton.isHidden = true
             roomIDLabel.isHidden = true
             sendMapButton.isHidden = true
@@ -2575,7 +2575,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.yAxisNode?.isHidden = false
             self.zAxisNode?.isHidden = false
             
-            togglePlanesButton.setTitle("Hide", for: .normal)
+            togglePlanesButton.setTitle("Hide".localized, for: .normal)
             helpButton.isHidden = false
             roomIDLabel.isHidden = false
             sessionInfoView.isHidden = false
@@ -2620,14 +2620,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Run the view's session
         sceneView.session.run(configuration)
         
-        //receivingStatusLabel.text = ""
-        
-        //sceneView.autoenablesDefaultLighting = false
-        /*
-         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapFrom))
-         tapGestureRecognizer.numberOfTapsRequired = 1
-         sceneView.addGestureRecognizer(tapGestureRecognizer)
-         */
         // WebSocket
         let socket = manager.defaultSocket
         
@@ -2651,7 +2643,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         socket.on("from_server") { data, ack in
             if self.connectionState == false {
                 self.roomIDLabel.isHidden = false
-                self.showMessage(text: "Connected")
+                self.showMessage(text: "Connected".localized)
                 self.connectionState = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                     // 3.0秒後に実行したい処理
@@ -2672,7 +2664,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Float(units[3])
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setCube(x: x!, y: y!, z: z!)
                     }
@@ -2685,7 +2677,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let h = Float(units[6])
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setBox(x: x!, y: y!, z: z!, w: w!, d: d!, h: h!)
                     }
@@ -2698,7 +2690,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setCylinder(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
                     }
@@ -2711,7 +2703,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[6]
                     if x == nil || y == nil || z == nil || r == nil || h == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setHexagon(x: x!, y: y!, z: z!, r: r!, h: h!, a: a)
                     }
@@ -2722,7 +2714,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let r = Float(units[4])
                     if x == nil || y == nil || z == nil || r == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setSphere(x: x!, y: y!, z: z!, r: r!)
                     }
@@ -2734,7 +2726,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[5]
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setChar(x: x!, y: y!, z: z!, c: c, a: a)
                     }
@@ -2747,7 +2739,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z2 = Float(units[6])
                     if x1 == nil || y1 == nil || z1 == nil || x2 == nil || y2 == nil || z2 == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setLine(x1: x1!, y1: y1!, z1: z1!, x2: x2!, y2: y2!, z2: z2!)
                     }
@@ -2761,7 +2753,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = units[7]
                     if x == nil || y == nil || z == nil || w == nil || d == nil || h == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setRoof(x: x!, y: y!, z: z!, w: Int(w!), d: d!, h: Int(h!), a: a)
                     }
@@ -2772,7 +2764,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let ply_file = units[4]
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.polygonFileFormat(x: x!, y: y!, z: z!, ply_file: ply_file)
                     }
@@ -2788,7 +2780,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let files = units[9]
                     if x == nil || y == nil || z == nil || differenceX == nil || differenceY == nil || differenceZ == nil || time == nil || times == nil || time! <= 0 || times! <= 0 {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.animation(x: x!, y: y!, z: z!, differenceX: differenceX!, differenceY: differenceY!, differenceZ: differenceZ!, time: time!, times: Int(times!), files: files)
                     }
@@ -2806,7 +2798,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let upward = Float(units[11])
                     if width == nil || height == nil || magnification == nil || r1 == nil || g1 == nil || b1 == nil || r2 == nil || g2 == nil || b2 == nil || upward == nil || width! < 1 || height! < 1 || magnification! <= 0.0 {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.map(map_data: map_data, width: Int(width!), height: Int(height!), magnification: magnification!, r1: Int(r1!), g1: Int(g1!), b1: Int(b1!), r2: Int(r2!), g2: Int(g2!), b2: Int(b2!), upward: Int(upward!))
                     }
@@ -2822,7 +2814,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let step = Float(units[9])
                     if width == nil || height == nil || magnification == nil || up_left_latitude == nil || up_left_longitude == nil || down_right_latitude == nil || down_right_longitude == nil || step == nil || width! < 1 || height! < 1 {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.pin(pin_data: pin_data, width: Int(width!), height: Int(height!), magnification: magnification!, up_left_latitude: up_left_latitude!, up_left_longitude: up_left_longitude!, down_right_latitude: down_right_latitude!, down_right_longitude: down_right_longitude!, step: Int(step!))
                     }
@@ -2834,7 +2826,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let mld_file = units[5]
                     if x == nil || y == nil || z == nil || magnification == nil || magnification! <= 0.0 {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.molecular_structure(x: x!, y: y!, z: z!, magnification: magnification!, mld_file: mld_file)
                     }
@@ -2844,7 +2836,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let b = Float(units[3])
                     if r == nil || g == nil || b == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
                     }
@@ -2852,7 +2844,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let a = Float(units[1])
                     if a == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.setAlpha(a: Float(a!))
                     }
@@ -2860,7 +2852,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let layer: String? = units[1]// 1 or 2 or 3
                     if layer == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.changeLayer(l: layer!)
                     }
@@ -2868,7 +2860,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let shape: String? = units[1]// cube or spehre or cylinder or cone or pyramid
                     if shape == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.changeShape(shape: shape!)
                     }
@@ -2879,7 +2871,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let intensity = Float(units[4])
                     if x == nil || y == nil || z == nil || intensity == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.changeLight(x: x!, y: y!, z: z!, intensity: intensity!)
                     }
@@ -2889,7 +2881,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let z = Float(units[3])
                     if x == nil || y == nil || z == nil {
                         //error message
-                        self.showMessage(text: "Invalid value")
+                        self.showMessage(text: "Invalid value".localized)
                     } else {
                         self.removeCube(x: x!, y: y!, z: z!)
                     }
@@ -2932,19 +2924,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
      */
     
     func session(_ session: ARSession, didFailWithError error: Error) {
-        sessionInfoLabel.text = "Session failed: \(error.localizedDescription)"
+        sessionInfoLabel.text = "Session failed: ".localized + error.localizedDescription
         resetTracking(nil)
         // Present an error message to the user
     }
     
     func sessionWasInterrupted(_ session: ARSession) {
         // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        sessionInfoLabel.text = "Session was interrupted"
+        sessionInfoLabel.text = "Session was interrupted".localized
     }
     
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
-        sessionInfoLabel.text = "Session interruption ended"
+        sessionInfoLabel.text = "Session interruption ended".localized
     }
     
     @IBAction func handleTapFrom(_ sender: UITapGestureRecognizer) {
@@ -3031,7 +3023,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         //multiuser  データを受信時に、Origin が置かれていなかった時の処理
         if receive_mode {
-            showMessage(text: "Reproducing data...")
+            showMessage(text: "Reproducing data...".localized)
             reproduce_cubes()
         }
     }
@@ -3072,6 +3064,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
         
+        togglePlanesButton.setTitle("Hide".localized, for: .normal)
+        helpButton.setTitle("Help".localized, for: .normal)
+        multipeerButton.setTitle("Multipeer".localized, for: .normal)
+        sendMapButton.setTitle("Send Virtual Objects".localized, for: .normal)
     }
     
     // MARK: - ARSessionDelegate
@@ -3101,15 +3097,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
          guard let map = worldMap
          else { print("Error: \(error!.localizedDescription)"); return }
          guard let data = try? NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
-         else { fatalError("can't encode map") }
+         else { fatalError("can't encode map".localized) }
          self.multipeerSession.sendToAllPeers(data)
          }*/
         if data_all_cubes != [] {
             guard let data = try? NSKeyedArchiver.archivedData(withRootObject: data_all_cubes, requiringSecureCoding: true)
-                else { fatalError("can't encode data_all_cubes") }
+                else { fatalError("can't encode virtual objects".localized) }
             self.multipeerSession.sendToAllPeers(data)
         } else {
-            showMessage(text: "No cube data")
+            showMessage(text: "No cube data".localized)
         }
     }
     
@@ -3117,12 +3113,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     /// - Tag: ReceiveData
     func receivedData(_ data: Data, from peer: MCPeerID) {
-        //receivingStatausMessage(text: "Received data from \(peer)")
         
-        let alertController:UIAlertController = UIAlertController(title:"alert", message: "Allow to receive data  for multiuser session", preferredStyle: .alert)
+        let alertController:UIAlertController = UIAlertController(title:"alert".localized, message: "Allow to receive data for multiuser session".localized, preferredStyle: .alert)
         
         // Default のaction
-        let defaultAction:UIAlertAction = UIAlertAction(title: "OK", style: .default, handler:{(action:UIAlertAction!) -> Void in
+        let defaultAction:UIAlertAction = UIAlertAction(title: "OK".localized, style: .default, handler:{(action:UIAlertAction!) -> Void in
             // 処理
             
             self.receive_mode = true
@@ -3133,28 +3128,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     self.sender_id = peer
                     if (self.originPosition == nil) {
                         //error message
-                        self.receivingStatausMessage(text: "Set origin to reproduce cubes from received data")
+                        self.receivingStatusMessage(text: "Set origin to reproduce cubes from received data".localized)
                     } else {
                         self.reproduce_cubes()
                     }
                 }
                 else {
-                    self.receivingStatausMessage(text: "unknown data recieved from \(peer)")
+                    self.receivingStatusMessage(text: "unknown data recieved from ".localized + "\(peer)")
                 }
             } catch {
-                self.receivingStatausMessage(text: "can't decode data recieved from \(peer)")
+                self.receivingStatusMessage(text: "can't decode data recieved from ".localized + "\(peer)")
             }
         })
         
         /*
          // Destructive のaction
-         let destructiveAction:UIAlertAction = UIAlertAction(title: "Destructive", style: .destructive, handler:{(action:UIAlertAction!) -> Void in
+         let destructiveAction:UIAlertAction = UIAlertAction(title: "Destructive".localized, style: .destructive, handler:{(action:UIAlertAction!) -> Void in
          // 処理
          })
          */
         
         // Cancel のaction
-        let cancelAction:UIAlertAction = UIAlertAction(title: "Cancel", style: .cancel, handler:{(action:UIAlertAction!) -> Void in
+        let cancelAction:UIAlertAction = UIAlertAction(title: "Cancel".localized, style: .cancel, handler:{(action:UIAlertAction!) -> Void in
             // 処理
         })
         
@@ -3179,7 +3174,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 setColor(r: Int(cube_array[3])!, g: Int(cube_array[4])!, b: Int(cube_array[5])!)
                 setCube(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!)
             } else {
-                receivingStatausMessage(text: "unknown data recieved from \(String(describing: sender_id))")
+                receivingStatusMessage(text: "unknown data recieved from ".localized + "\(String(describing: sender_id))")
             }
             
         }
@@ -3188,7 +3183,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         mapProvider = sender_id as? MCPeerID
     }
     
-    func receivingStatausMessage(text: String) {
+    func receivingStatusMessage(text: String) {
         //self.receivingStatusLabel.isHidden = false
         self.receivingStatusLabel.text = text
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
@@ -3208,38 +3203,38 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         case .normal where frame.anchors.isEmpty && multipeerSession.connectedPeers.isEmpty:
             // No planes detected; provide instructions for this app's AR interactions.
             if multipeerState {
-                message = "Move around to map the environment, or wait to join a shared session."
+                message = "Move around to map the environment, or wait to join a shared session.".localized
             } else {
-                message = "Move around to map the environment and set AR planes"
+                message = "Move around to map the environment and set AR planes".localized
             }
             
         case .normal where !multipeerSession.connectedPeers.isEmpty && mapProvider == nil:
             let peerNames = multipeerSession.connectedPeers.map({ $0.displayName }).joined(separator: ", ")
             if multipeerState {
-                message = "Connected with \(peerNames)."
+                message = "Connected with ".localized + "\(peerNames)."
                 
             } else {
                 message = ""
             }
             
         case .notAvailable:
-            message = "Tracking unavailable."
+            message = "Tracking unavailable.".localized
             
         case .limited(.excessiveMotion):
-            message = "Tracking limited - Move the device more slowly."
+            message = "Tracking limited - Move the device more slowly.".localized
             
         case .limited(.insufficientFeatures):
-            message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions."
+            message = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions.".localized
             
         case .limited(.initializing) where mapProvider != nil,
              .limited(.relocalizing) where mapProvider != nil:
-            message = "Received map from \(mapProvider!.displayName)."
+            message = "Received data from ".localized + "\(mapProvider!.displayName)."
             
         case .limited(.relocalizing):
-            message = "Resuming session — move to where you were when the session was interrupted."
+            message = "Resuming session — move to where you were when the session was interrupted.".localized
             
         case .limited(.initializing):
-            message = "Initializing AR session."
+            message = "Initializing AR session.".localized
             
         default:
             // No feedback needed when tracking is normal and planes are visible.
@@ -3472,5 +3467,16 @@ class PlaneNode: SCNNode {
         plane.width = CGFloat(anchor.extent.x)
         plane.height = CGFloat(anchor.extent.z)
         position = SCNVector3(anchor.center.x, 0, anchor.center.z)
+    }
+}
+
+extension String
+{
+    // 多言語対応
+    // 対象言語の「Localizable.strings」ファイルがない場合は、(Base)が使用されます。
+    // 指定の文字列が「Localizable.strings」にない場合は、commentが採用されます。本実装では元の文字列が選択されます。
+    var localized: String
+    {
+        return NSLocalizedString(self, tableName: nil, bundle: Bundle.main, value: "", comment: self)
     }
 }

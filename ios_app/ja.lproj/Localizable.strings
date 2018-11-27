@@ -1,0 +1,68 @@
+/*
+ Localizable.strings
+ s2ar
+ 
+ Created by kokucy MacBookPro on 2018/11/27.
+ Copyright © 2018年 Junya Ishihara. All rights reserved.
+ */
+
+"OK" = "はい";
+"Cancel" = "キャンセル";
+"Help" = "ヘルプ";
+"Hide" = "隠す";
+"Show" = "表示";
+"Multipeer" = "マルチ";
+"Multipeer OFF" = "マルチ　オフ";
+"Send Virtual Objects" = " 仮想オブジェクトの転送 ";
+"Set origin" = "原点を置いてください";
+"Resize x " = "リサイズ x ";
+"End to set a box" = "直方体を設置した";
+"Axis: x or y or z" = "x, y, z から選ぶ";
+"Invalid character" = "無効な文字が含まれる";
+"Set a line" = "直線を設置した";
+"Same points" = "同じ点を選んだ";
+"Create 3d model" = "3Dモデルを作成";
+"Format error" = "フォーマットエラー";
+"No such file" = "ファイルがありません";
+"Animation..." = "アニメーションを作成...";
+"Drawing map..." = "地図を描画中...";
+"Setting pins..." = "ピンを設置中...";
+"Molecular Structure" = "分子構造模型";
+"Incorrect format" = "間違ったフォーマット";
+"Change layer: " = "レイヤを変更: ";
+"Only 1 or 2 or 3" = "1, 2, 3 から選ぶ";
+"Change basic shape: " = "基本形状の変更: ";
+"Undefined shape" = "定義されていない形状";
+"No block" = "ブロックがありません";
+"Remove a block" = "ブロックを削除した";
+"Remove a block from layer2" = "レイヤ２からブロックを削除";
+"Remove a block from layer3" = "レイヤー３からブロックを削除";
+"Reset" = "リセット";
+"Reset layer2" = "レイヤ２のリセット";
+"Reset layer3" = "レイヤ３のリセット";
+"No layer" = "レイヤがありません";
+"Connected" = "接続完了";
+"Session failed: " = "マルチセッション失敗: ";
+"Session was interrupted" = "マルチセッション中断";
+"Session interruption ended" = "マルチセッション中断が終了";
+"Reproducing data..." = "オブジェクトを再現中...";
+"can't encode map" = "ワールドマップをエンコードできない";
+"can't encode virtual objects" = "仮想オブジェクトをエンコードできない";
+"No cube data" = "ブロックデータがありません";
+"Received data from " = "データを受信：";
+"alert" = "確認ダイアログ";
+"Allow to receive data for multiuser session" = "マルチセッションのデータ受信を許可しますか？ 現在作成中のオブジェクトを全て削除されます。";
+"Set origin to reproduce cubes from received data" = "原点を設置して仮想オブジェクトを再現してください";
+"unknown data recieved from " = "不明なデータを受信：";
+"can't decode data recieved from " = "受信したデータをデコードできない";
+"Destructive" = "破壊的";
+"Move around to map the environment, or wait to join a shared session." = "カメラを動かして環境をマッピングするか、マルチセッションに加わるのを待ってください";
+"Move around to map the environment and set AR planes" = "カメラを動かして環境をマッピングして、AR平面を置いてください";
+"Connected with " = "マルチセッション成功：";
+"Tracking unavailable." = "トラッキング利用不可";
+"Tracking limited - Move the device more slowly." = "限定的トラッキング：カメラをゆっくり動かしてください";
+"Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions." = "限定的トラッキング：表面がよく見える方向にカメラを向けるか、照明を改善してください";
+"Received data from " = "データを受信：";
+"Resuming session — move to where you were when the session was interrupted." = "セッションの再開：セッションが中断されたときの位置に移動してください";
+"Initializing AR session." = "ARの初期化";
+
