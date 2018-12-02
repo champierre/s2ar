@@ -22,6 +22,7 @@
 		F9A4FD8221ABBBFB00B3B691 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD8121ABBBFB00B3B691 /* Utilities.swift */; };
 		F9A4FD8421ABBC0400B3B691 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD8321ABBC0400B3B691 /* RoundedButton.swift */; };
 		F9A4FD9121AD7DF500B3B691 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F9A4FD9321AD7DF500B3B691 /* Localizable.strings */; };
+		F9D24AAD21B3F00700782A8A /* material in Resources */ = {isa = PBXBuildFile; fileRef = F9D24AAC21B3F00700782A8A /* material */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		F9A4FD8E21AD7D8100B3B691 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		F9A4FD9221AD7DF500B3B691 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F9A4FD9421AD7DF800B3B691 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F9D24AAC21B3F00700782A8A /* material */ = {isa = PBXFileReference; lastKnownFileType = folder; path = material; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				66E76766214DF48800A3175F /* grid.png */,
+				F9D24AAC21B3F00700782A8A /* material */,
 				66305923213D5DFB0082D2EA /* AppDelegate.swift */,
 				66305925213D5DFB0082D2EA /* art.scnassets */,
 				66305927213D5DFB0082D2EA /* ViewController.swift */,
@@ -279,6 +282,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9D24AAD21B3F00700782A8A /* material in Resources */,
 				66305926213D5DFB0082D2EA /* art.scnassets in Resources */,
 				F9A4FD9121AD7DF500B3B691 /* Localizable.strings in Resources */,
 				66305930213D5DFE0082D2EA /* LaunchScreen.storyboard in Resources */,
