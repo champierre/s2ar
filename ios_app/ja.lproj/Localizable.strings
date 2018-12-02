@@ -33,6 +33,8 @@
 "Only 1 or 2 or 3" = "1, 2, 3 から選ぶ";
 "Change basic shape: " = "基本形状の変更: ";
 "Undefined shape" = "定義されていない形状";
+"Change material: " = "テクスチャの変更: ";
+"Undefined material" = "定義されていないテクスチャ";
 "No block" = "ブロックがありません";
 "Remove a block" = "ブロックを削除した";
 "Remove a block from layer2" = "レイヤ２からブロックを削除";

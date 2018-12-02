@@ -39,6 +39,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var blue: Int = 255
     var alpha: Float = 1.0
     var basicShape: String = "cube"
+    var material: String = "none"
     
     var roomId: String = "0000 0000"
     var CUBE_SIZE: Float = 0.01
@@ -161,17 +162,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         func setCubeMethod(x: Float, y: Float, z: Float) {
             switch basicShape {
             case "cube":
-                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha)
+                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
             case "sphere":
-                cubeNode = SphereNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha)
+                cubeNode = SphereNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
             case "cylinder":
-                cubeNode = CylinderNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha)
+                cubeNode = CylinderNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
             case "cone":
-                cubeNode = ConeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha)
+                cubeNode = ConeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
             case "pyramid":
-                cubeNode = PyramidNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha)
+                cubeNode = PyramidNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
             default:
-                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha)
+                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
             }
             let position = SCNVector3Make(
                 originPosition.x + (_x + 0.5) * CUBE_SIZE,
@@ -182,7 +183,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             sceneView.scene.rootNode.addChildNode(cubeNode)
             
             //multiuser
-            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape)
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material)
             
             switch layer {
             case "2":
@@ -2474,6 +2475,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
+    func changeMaterial(_material: String) {
+        if _material == "none" {
+            material = _material
+        } else if _material == "aluminum" || _material == "asphalt" || _material == "brick" || _material == "cedar" || _material == "craft" || _material == "brass" || _material == "maple" || _material == "marble01" || _material == "marble02" || _material == "punching metal" || _material == "stainless steel" || _material == "stone01" || _material == "stone02" || _material == "terra cotta" || _material == "grass" {
+            material = _material
+            //message
+            self.showMessage(text: "Change material: ".localized + _material)
+        } else {
+            //error message
+            self.showMessage(text: "Undefined material".localized)
+        }
+    }
+    
     func removeCube(x: Float, y: Float, z: Float) {
         if (originPosition == nil) {
             //error message
@@ -2864,6 +2878,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         self.changeShape(shape: shape!)
                     }
+                case "change_material":
+                    let material: String? = units[1]// cube or spehre or cylinder or cone or pyramid
+                    if material == nil {
+                        //error message
+                        self.showMessage(text: "Invalid value".localized)
+                    } else {
+                        self.changeMaterial(_material: material!)
+                    }
                 case "change_light":
                     let x = Float(units[1])
                     let y = Float(units[2])
@@ -3167,7 +3189,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let cube_array = cube.split(separator: "_")
             if cube_array.count == 4 {
                 changeLight(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, intensity: Float(cube_array[3])!)
-            } else if cube_array.count == 9 {
+            } else if cube_array.count == 10 {
+                material = String(cube_array[9])
                 basicShape = String(cube_array[8])
                 changeCubeSize(magnification: Float(cube_array[7])!)
                 setAlpha(a: Float(cube_array[6])!)
@@ -3343,10 +3366,14 @@ class CubeNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
         super.init()
         let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
-        cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        if material == "none" {
+            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            cube.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
         geometry = cube
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
@@ -3360,10 +3387,14 @@ class SphereNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
         super.init()
         let sphere = SCNSphere(radius: CGFloat(CUBE_SIZE) / 2)
-        sphere.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        if material == "none" {
+            sphere.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            sphere.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
         geometry = sphere
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
@@ -3377,10 +3408,14 @@ class CylinderNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
         super.init()
         let cylinder = SCNCylinder(radius: CGFloat(CUBE_SIZE) / 2, height: CGFloat(CUBE_SIZE))
-        cylinder.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        if material == "none" {
+            cylinder.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            cylinder.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
         geometry = cylinder
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
@@ -3393,10 +3428,14 @@ class ConeNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
         super.init()
         let cone = SCNCone(topRadius: 0.0, bottomRadius: CGFloat(CUBE_SIZE) / 2, height: CGFloat(CUBE_SIZE))
-        cone.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        if material == "none" {
+            cone.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            cone.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
         geometry = cone
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
@@ -3410,10 +3449,14 @@ class PyramidNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
         super.init()
         let pyramid = SCNPyramid(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE))
-        pyramid.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        if material == "none" {
+            pyramid.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            pyramid.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
         geometry = pyramid
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
