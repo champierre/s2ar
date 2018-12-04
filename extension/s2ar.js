@@ -119,6 +119,11 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
+      ext.rotation_shape = function(rotation) {
+        let command = "rotation_shape:" + rotation;
+        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
+      }
+
       ext.change_material = function(material) {
         let command = "change_material:" + material;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
@@ -162,6 +167,7 @@
           set_alpha: 'ブロックの透明度を変える。alpha: %n',
           change_layer: 'ARのレイヤを変える。レイヤ: %m.layer',
           change_shape: '基本形状を変える。 %m.shape',
+          rotation_shape: '基本形状を回転する。 %m.rotation',
           change_material: 'テクスチャを変える。 %m.material',
           change_light: 'ライティングの変更。x: %n y: %n z: %n intensity: %n',
           remove_cube: 'ブロックを消す。x座標を %n 、y座標を %n 、z座標を %n',
@@ -188,6 +194,7 @@
           set_alpha: 'set transparency to alpha: %n',
           change_layer: 'change AR layer: %m.layer',
           change_shape: 'change basic shape: %m.shape',
+          rotation_shape: 'rotation basic shape: %m.rotation',
           change_material: 'change material: %m.material',
           change_light: 'change lighting at x: %n y: %n z: %n intensity: %n',
           remove_cube: 'remove cube at x: %n y: %n z: %n',
@@ -217,6 +224,7 @@
           [' ', locale[lang].set_alpha, 'set_alpha', 1.0],
           [' ', locale[lang].change_layer, 'change_layer', '1'],
           [' ', locale[lang].change_shape, 'change_shape', 'cube'],
+          [' ', locale[lang].rotation_shape, 'rotation_shape', 'y'],
           [' ', locale[lang].change_material, 'change_material', 'none'],
           [' ', locale[lang].change_light, 'change_light', 10, 10, 10, 1000],
           [' ', locale[lang].remove_cube, 'remove_cube', 1, 0, 1],
@@ -226,6 +234,7 @@
           axes: ['x', 'y', 'z'],
           layer: ['1', '2', '3'],
           shape: ['cube', 'sphere', 'cylinder', 'cone', 'pyramid'],
+          rotation: ['y', 'z', 'x', '-z', '-x', '-y'],
           material: ['none', 'aluminum', 'asphalt', 'brass', 'brick', 'cedar', 'craft', 'grass', 'maple', 'marble01', 'marble02', 'punching metal', 'stainless steel', 'stone01', 'stone02', 'terra cotta']
         }
       };

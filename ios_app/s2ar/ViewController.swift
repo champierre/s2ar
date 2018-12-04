@@ -40,6 +40,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var alpha: Float = 1.0
     var basicShape: String = "cube"
     var material: String = "none"
+    var rotation_angle: Float = -Float.pi / 2.0
+    var rotationX: Float = 0
+    var rotationZ: Float = 0
     
     var roomId: String = "0000 0000"
     var CUBE_SIZE: Float = 0.01
@@ -162,17 +165,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         func setCubeMethod(x: Float, y: Float, z: Float) {
             switch basicShape {
             case "cube":
-                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
+                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotation_angle: rotation_angle, rotationX: rotationX, rotationZ: rotationZ)
             case "sphere":
-                cubeNode = SphereNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
+                cubeNode = SphereNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotation_angle: rotation_angle, rotationX: rotationX, rotationZ: rotationZ)
             case "cylinder":
-                cubeNode = CylinderNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
+                cubeNode = CylinderNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotation_angle: rotation_angle, rotationX: rotationX, rotationZ: rotationZ)
             case "cone":
-                cubeNode = ConeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
+                cubeNode = ConeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotation_angle: rotation_angle, rotationX: rotationX, rotationZ: rotationZ)
             case "pyramid":
-                cubeNode = PyramidNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
+                cubeNode = PyramidNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotation_angle: rotation_angle, rotationX: rotationX, rotationZ: rotationZ)
             default:
-                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material)
+                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotation_angle: rotation_angle, rotationX: rotationX, rotationZ: rotationZ)
             }
             let position = SCNVector3Make(
                 originPosition.x + (_x + 0.5) * CUBE_SIZE,
@@ -183,7 +186,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             sceneView.scene.rootNode.addChildNode(cubeNode)
             
             //multiuser
-            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material)
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotation_angle) + "_" + String(rotationX) + "_" + String(rotationZ))
             
             switch layer {
             case "2":
@@ -2475,6 +2478,41 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
+    func rotationShape(rotation: String) {
+        switch rotation {
+        case "y":
+            rotation_angle = -Float.pi / 2.0
+            rotationX = 0
+            rotationZ = 0
+        case "z":
+            rotation_angle = -Float.pi / 2.0
+            rotationX = -1
+            rotationZ = 0
+        case "x":
+            rotation_angle = -Float.pi / 2.0
+            rotationX = 0
+            rotationZ = 1
+        case "-z":
+            rotation_angle = -Float.pi / 2.0
+            rotationX = 1
+            rotationZ = 0
+        case "-x":
+            rotation_angle = -Float.pi / 2.0
+            rotationX = 0
+            rotationZ = -1
+        case "-y":
+            rotation_angle = -Float.pi
+            rotationX = 1
+            rotationZ = 0
+        default:
+            rotation_angle = -Float.pi / 2.0
+            rotationX = 0
+            rotationZ = 0
+        }
+        //message
+        self.showMessage(text: "rotaion basic shape: ".localized + String(rotation))
+    }
+    
     func changeMaterial(_material: String) {
         if _material == "none" {
             material = _material
@@ -2530,6 +2568,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin".localized)
             return
         }
+        // remove data of sending virtual objects
+        data_all_cubes = []
         // remove the light you added yourself
         if lightChanged {
             for (id, lightNode) in lightNodes {
@@ -2878,8 +2918,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         self.changeShape(shape: shape!)
                     }
+                case "rotation_shape":
+                    let rotation: String? = units[1]
+                    if rotation == nil {
+                        //error message
+                        self.showMessage(text: "Invalid value".localized)
+                    } else {
+                        self.rotationShape(rotation: rotation!)
+                    }
                 case "change_material":
-                    let material: String? = units[1]// cube or spehre or cylinder or cone or pyramid
+                    let material: String? = units[1]
                     if material == nil {
                         //error message
                         self.showMessage(text: "Invalid value".localized)
@@ -3036,7 +3084,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             
             
-            backLightNode = LightNode(intensity: 1000)
+            backLightNode = LightNode(intensity: 100)
             backLightNode.position = SCNVector3Make(originPosition.x - CUBE_SIZE * 100,
                                                     originPosition.y + CUBE_SIZE * 100,
                                                     originPosition.z + CUBE_SIZE * 100)
@@ -3189,7 +3237,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             let cube_array = cube.split(separator: "_")
             if cube_array.count == 4 {
                 changeLight(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, intensity: Float(cube_array[3])!)
-            } else if cube_array.count == 10 {
+            } else if cube_array.count == 13 {
+                rotationZ = Float(cube_array[12])!
+                rotationX = Float(cube_array[11])!
+                rotation_angle = Float(cube_array[10])!
                 material = String(cube_array[9])
                 basicShape = String(cube_array[8])
                 changeCubeSize(magnification: Float(cube_array[7])!)
@@ -3199,7 +3250,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             } else {
                 receivingStatusMessage(text: "unknown data recieved from ".localized + "\(String(describing: sender_id))")
             }
-            
         }
         
         // Remember who provided the map for showing UI feedback.
@@ -3366,7 +3416,7 @@ class CubeNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotation_angle: Float, rotationX: Float, rotationZ: Float) {
         super.init()
         let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0)
         if material == "none" {
@@ -3375,6 +3425,7 @@ class CubeNode: SCNNode {
             cube.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
         }
         geometry = cube
+        self.transform = SCNMatrix4MakeRotation(rotation_angle, rotationX, 0, rotationZ)
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
     }
@@ -3387,7 +3438,7 @@ class SphereNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotation_angle: Float, rotationX: Float, rotationZ: Float) {
         super.init()
         let sphere = SCNSphere(radius: CGFloat(CUBE_SIZE) / 2)
         if material == "none" {
@@ -3396,6 +3447,7 @@ class SphereNode: SCNNode {
             sphere.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
         }
         geometry = sphere
+        self.transform = SCNMatrix4MakeRotation(rotation_angle, rotationX, 0, rotationZ)
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
     }
@@ -3408,7 +3460,7 @@ class CylinderNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotation_angle: Float, rotationX: Float, rotationZ: Float) {
         super.init()
         let cylinder = SCNCylinder(radius: CGFloat(CUBE_SIZE) / 2, height: CGFloat(CUBE_SIZE))
         if material == "none" {
@@ -3417,6 +3469,7 @@ class CylinderNode: SCNNode {
             cylinder.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
         }
         geometry = cylinder
+        self.transform = SCNMatrix4MakeRotation(rotation_angle, rotationX, 0, rotationZ)
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
     }
@@ -3428,7 +3481,7 @@ class ConeNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotation_angle: Float, rotationX: Float, rotationZ: Float) {
         super.init()
         let cone = SCNCone(topRadius: 0.0, bottomRadius: CGFloat(CUBE_SIZE) / 2, height: CGFloat(CUBE_SIZE))
         if material == "none" {
@@ -3437,6 +3490,7 @@ class ConeNode: SCNNode {
             cone.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
         }
         geometry = cone
+        self.transform = SCNMatrix4MakeRotation(rotation_angle, rotationX, 0, rotationZ)
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
     }
@@ -3449,7 +3503,7 @@ class PyramidNode: SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String) {
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotation_angle: Float, rotationX: Float, rotationZ: Float) {
         super.init()
         let pyramid = SCNPyramid(width: CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE))
         if material == "none" {
@@ -3458,6 +3512,7 @@ class PyramidNode: SCNNode {
             pyramid.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
         }
         geometry = pyramid
+        self.transform = SCNMatrix4MakeRotation(rotation_angle, rotationX, 0, rotationZ)
         let h = self.boundingBox.max.y
         self.position = SCNVector3(h/2.0, h/2.0, h/2.0)
     }
