@@ -3254,9 +3254,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.reset()
         originPosition = nil
         // remove origin
-        xAxisNode.removeFromParentNode()
-        yAxisNode.removeFromParentNode()
-        zAxisNode.removeFromParentNode()
+        xAxisNode?.removeFromParentNode()
+        yAxisNode?.removeFromParentNode()
+        zAxisNode?.removeFromParentNode()
     }
 }
 
