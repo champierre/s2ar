@@ -1,0 +1,67 @@
+/*
+ Localizable.strings
+ s2ar
+ 
+ Created by kokucy MacBookPro on 2018/11/27.
+ Copyright © 2018年 Junya Ishihara. All rights reserved.
+ */
+
+"OK" = "OK";
+"Cancel" = "Cancel";
+"Help" = "Help";
+"Hide" = "Hide";
+"Show" = "Show";
+"Multipeer" = "Multipeer";
+"Multipeer OFF" = "Multipeer OFF";
+"Send Virtual Objects" = " Send Virtual Objects ";
+"Set origin" = "Set origin";
+"Resize x " = "Resize x ";
+"End to set a box" = "End to set a box";
+"Axis: x or y or z" = "Axis: x or y or z";
+"Invalid character" = "Invalid character";
+"Set a line" = "Set a line";
+"Same points" = "Same points";
+"Create 3d model" = "Create 3d model";
+"Format error" = "Format error";
+"No such file" = "No such file";
+"Animation..." = "Animation...";
+"Drawing map..." = "Drawing map...";
+"Setting pins..." = "Setting pins...";
+"Molecular Structure" = "Molecular Structure";
+"Incorrect format" = "Incorrect format";
+"Change layer: " = "Change layer: ";
+"Only 1 or 2 or 3" = "Only 1 or 2 or 3";
+"Change basic shape: " = "Change basic shape: ";
+"Undefined shape" = "Undefined shape";
+"No block" = "No block";
+"Remove a block" = "Remove a block";
+"Remove a block from layer2" = "Remove a block from layer2";
+"Remove a block from layer3" = "Remove a block from layer3";
+"Reset" = "Reset";
+"Reset layer2" = "Reset layer2";
+"Reset layer3" = "Reset layer3";
+"No layer" = "No layer";
+"Connected" = "Connected";
+"Session failed: " = "Session failed: ";
+"Session was interrupted" = "Session was interrupted";
+"Session interruption ended" = "Session interruption ended";
+"Reproducing data..." = "Reproducing data...";
+"can't encode map" = "can't encode map";
+"can't encode virtual objects" = "can't encode virtual objects";
+"No cube data" = "No cube data";
+"Received data from " = "Received data from ";
+"alert" = "alert";
+"Allow to receive data for multiuser session" = "Allow to receive data for multiuser session";
+"Set origin to reproduce cubes from received data" = "Set origin to reproduce cubes from received data";
+"unknown data recieved from " = "unknown data recieved from ";
+"can't decode data recieved from " = "can't decode data recieved from ";
+"Destructive" = "Destructive";
+"Move around to map the environment, or wait to join a shared session." = "Move around to map the environment, or wait to join a shared session.";
+"Move around to map the environment and set AR planes" = "Move around to map the environment and set AR planes";
+"Connected with " = "Connected with ";
+"Tracking unavailable." = "Tracking unavailable.";
+"Tracking limited - Move the device more slowly." = "Tracking limited - Move the device more slowly.";
+"Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions." = "Tracking limited - Point the device at an area with visible surface detail, or improve lighting conditions.";
+"Received data from " = "Received map from ";
+"Resuming session — move to where you were when the session was interrupted." = "Resuming session — move to where you were when the session was interrupted.";
+"Initializing AR session." = "Initializing AR session.";

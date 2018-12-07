@@ -1,0 +1,21 @@
+
+/* Class = "UIButton"; normalTitle = "Help"; ObjectID = "3mO-5r-pkv"; */
+"3mO-5r-pkv.normalTitle" = "Help";
+
+/* Class = "UILabel"; text = "ID:"; ObjectID = "64e-jN-Jqn"; */
+"64e-jN-Jqn.text" = "ID:";
+
+/* Class = "UILabel"; text = "Initializing AR session."; ObjectID = "JTN-EO-tsn"; */
+"JTN-EO-tsn.text" = "Initializing AR session.";
+
+/* Class = "UIButton"; normalTitle = "Multipeer"; ObjectID = "M1W-To-DYu"; */
+"M1W-To-DYu.normalTitle" = "Multipeer";
+
+/* Class = "UIButton"; normalTitle = " Send World Map "; ObjectID = "NxN-fR-Ba3"; */
+"NxN-fR-Ba3.normalTitle" = " Send World Map ";
+
+/* Class = "UIButton"; normalTitle = "Hide"; ObjectID = "hzq-2R-vFf"; */
+"hzq-2R-vFf.normalTitle" = "Hide";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "mVp-d8-nIz"; */
+"mVp-d8-nIz.text" = "Label";

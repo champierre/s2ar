@@ -21,6 +21,7 @@
 		F9A4FD8021ABBB7E00B3B691 /* MultipeerSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD7F21ABBB7E00B3B691 /* MultipeerSession.swift */; };
 		F9A4FD8221ABBBFB00B3B691 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD8121ABBBFB00B3B691 /* Utilities.swift */; };
 		F9A4FD8421ABBC0400B3B691 /* RoundedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A4FD8321ABBC0400B3B691 /* RoundedButton.swift */; };
+		F9A4FD9121AD7DF500B3B691 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F9A4FD9321AD7DF500B3B691 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,10 @@
 		F9A4FD7F21ABBB7E00B3B691 /* MultipeerSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipeerSession.swift; sourceTree = "<group>"; };
 		F9A4FD8121ABBBFB00B3B691 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		F9A4FD8321ABBC0400B3B691 /* RoundedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedButton.swift; sourceTree = "<group>"; };
+		F9A4FD8D21AD7D8100B3B691 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Main.strings; sourceTree = "<group>"; };
+		F9A4FD8E21AD7D8100B3B691 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		F9A4FD9221AD7DF500B3B691 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F9A4FD9421AD7DF800B3B691 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +99,7 @@
 		66305917213D5DFB0082D2EA = {
 			isa = PBXGroup;
 			children = (
+				F9A4FD9321AD7DF500B3B691 /* Localizable.strings */,
 				66305922213D5DFB0082D2EA /* s2ar */,
 				66305939213D5DFF0082D2EA /* s2arTests */,
 				66305944213D5DFF0082D2EA /* s2arUITests */,
@@ -274,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				66305926213D5DFB0082D2EA /* art.scnassets in Resources */,
+				F9A4FD9121AD7DF500B3B691 /* Localizable.strings in Resources */,
 				66305930213D5DFE0082D2EA /* LaunchScreen.storyboard in Resources */,
 				6630592D213D5DFE0082D2EA /* Assets.xcassets in Resources */,
 				6630592B213D5DFB0082D2EA /* Main.storyboard in Resources */,
@@ -388,6 +395,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				6630592A213D5DFB0082D2EA /* Base */,
+				F9A4FD8D21AD7D8100B3B691 /* ja */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -396,8 +404,18 @@
 			isa = PBXVariantGroup;
 			children = (
 				6630592F213D5DFE0082D2EA /* Base */,
+				F9A4FD8E21AD7D8100B3B691 /* ja */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		F9A4FD9321AD7DF500B3B691 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F9A4FD9221AD7DF500B3B691 /* ja */,
+				F9A4FD9421AD7DF800B3B691 /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -407,6 +425,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -467,6 +486,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
