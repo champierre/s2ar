@@ -2478,7 +2478,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func changeMaterial(_material: String) {
         if _material == "none" {
             material = _material
-        } else if _material == "aluminum" || _material == "asphalt" || _material == "brick" || _material == "cedar" || _material == "craft" || _material == "brass" || _material == "maple" || _material == "marble01" || _material == "marble02" || _material == "punching metal" || _material == "stainless steel" || _material == "stone01" || _material == "stone02" || _material == "terra cotta" || _material == "grass" {
+        } else if _material == "aluminum" || _material == "asphalt" || _material == "brick" || _material == "cedar" || _material == "craft" || _material == "brass" || _material == "maple" || _material == "marble01" || _material == "marble02" || _material == "punching metal" || _material == "stainless steel" || _material == "stone01" || _material == "stone02" || _material == "terra cotta" || _material == "grass" || _material == "earth" {
             material = _material
             //message
             self.showMessage(text: "Change material: ".localized + _material)
