@@ -1,5 +1,7 @@
 # S2AR(Scratch2ARKit)
 
+[English](https://github.com/champierre/s2ar) [日本語](https://github.com/champierre/s2ar/blob/master/README_JA.md)
+
 S2AR(Scratch2ARKit) connects Scratch* (more specifically ScratchX) and ARKit, then enables anyone to program building blocks in Augmented Reality world.
 
 ![](images/random_tower.png)

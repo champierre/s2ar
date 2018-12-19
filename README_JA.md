@@ -1,9 +1,10 @@
+GitHub README_JA
+
 # S2AR(Scratch2ARKit)
 
-[English](https://github.com/champierre/s2ar) [日本語](https://github.com/champierre/s2ar/blob/master/README_JP.md)
+[English](https://github.com/champierre/s2ar) [日本語](https://github.com/champierre/s2ar/blob/master/README_JA.md)
 
 S2AR（Scratch2ARKit）は Scratch*（ScratchX）と ARKit を接続します。Scratch プログラミングで、拡張現実（Augmented Reality world）にブロックを積み上げて、仮想オブジェクト（Virtual Objects）を作成できます。
-
 
 ![](images/polyhedron.png)
 
@@ -39,7 +40,6 @@ S2AR は [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8) よ
 
 1. iOSデバイス（iPhone、iPad）で S2AR を起動します。アプリの中央下に表示される ID（接続 ID）を確認しておきます。
 
-
 ![](images/ss_connection_id.png)
 
 2. PC（Mac、Widows）でインターネットブラウザ（Chrome ブラウザを推奨）を開き、[ScratchX ウェブサイト](http://scratchx.org/) に接続します。
@@ -58,48 +58,33 @@ S2AR は [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8) よ
 
 「ID: [ ] - [ ] で接続する」をスクリプトエリアにドラッグしてください。S2AR の接続ID を入力してからブロックをクリックすると、iOSデバイスと PC が接続され、ARプログラミングができるようになります。
 
-![](images/connect_2.png)
-
-![](images/connect_jp.png)
+![](images/ja/connect.png)
 
 6. iOSデバイスのカメラを動かして、ARKit に現実世界を認識させてください。青グリッド（格子）の平面が表示されたら、任意の場所をタッチして「原点」を置くことができます。原点は３次元の座標軸で表され、仮想オブジェクト（ブロック）を置く時の基準点 (0, 0, 0) になります。X軸（横方向）は赤、Y軸（上方向）は緑、Z軸（手前方向）は青で表されます。
-
 
 ![](images/ss_set_origin.png)
 
 7. 「ブロックを置く」をスクリプトエリアにドラッグします。クリックすると、原点の近くの座標値 (1, 0, 1) に白のブロックが現れます。座標値を変えることで、任意の場所にブロックを置くことができます。
 
-![](images/set_cube_2.png)
-
-![](images/set_cube_jp.png)
-
+![](images/ja/set_cube.png)
 
 ![](images/ss_set_cube.png)
 
 8. 「ブロックの色を変える」で、設置するブロックの色を変えることができます。色は r, g, b の３つの整数（0 〜 255）で表されます。
 
-![](images/set_color_2.png)
-
-![](images/set_color_jp.png)
-
+![](images/ja/set_color.png)
 
 ![](images/ss_set_color.png)
 
 9. 「ブロックを消す」で、ブロックを一つ削除できます。
 
-![](images/remove_cube.png)
-
-![](images/remove_cube_jp.png)
-
+![](images/ja/remove_cube.png)
 
 ![](images/ss_remove_cube.png)
 
 10. 「ブロックサイズの変更」で、ブロックのサイズを変更できます。
 
-![](images/cube_size.png)
-
-![](images/cube_size_jp.png)
-
+![](images/ja/cube_size.png)
 
 ![](images/ss_cube_size.png)
 
@@ -107,9 +92,7 @@ S2AR は [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8) よ
 
 11.  「リセット」で、設置した全てのブロックを消すことができます。以上で、基本の使用法の説明を終わります。
 
-  ![](images/reset_2.png)
-
-![](images/reset_jp.png)
+![](images/ja/reset.png)
 
 ## 使用法（応用）
 
@@ -119,10 +102,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、幅、奥行、高さを指定します。
 
-![](images/set_box.png)
-
-![](images/set_box_jp.png)
-
+![](images/ja/set_box.png)
 
 ![](images/ss_set_box.png)
 
@@ -130,10 +110,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、円の半径、高さ、軸方向を指定します。
 
-![](images/set_cylinder.png)
-
-![](images/set_cylinder_jp.png)
-
+![](images/ja/set_cylinder.png)
 
 ![](images/ss_set_cylinder.png)
 
@@ -141,11 +118,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、（六角形の外接）円の半径、高さ、軸方向を指定します。
 
-
-![](images/set_hexagon.png)
-
-![](images/set_hexagon_jp.png)
-
+![](images/ja/set_hexagon.png)
 
 ![](images/ss_set_hexagon.png)
 
@@ -153,10 +126,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、円の半径を指定します。
 
-![](images/set_sphere.png)
-
-![](images/set_sphere_jp.png)
-
+![](images/ja/set_sphere.png)
 
 ![](images/ss_set_sphere.png)
 
@@ -164,10 +134,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、文字（英数字、ひらがな、カタカナ、漢字、記号）、軸方向を指定します。JIS 第１、第２水準の約６０００文字の漢字に対応しています。
 
-![](images/set_char.png)
-
-![](images/set_char_jp.png)
-
+![](images/ja/set_char.png)
 
 ![](images/ss_set_char.png)
 
@@ -175,10 +142,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 始点 (x1, y1, z1) と終点 (x2, y2, z2) の間に線を引きます。
 
-![](images/set_line.png)
-
-![](images/set_line_jp.png)
-
+![](images/ja/set_line.png)
 
 ![](images/ss_set_line.png)
 
@@ -186,10 +150,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、屋根の幅、奥行、高さ、軸方向を指定します。
 
-![](images/set_roof.png)
-
-![](images/set_roof_jp.png)
-
+![](images/ja/set_roof.png)
 
 ![](images/ss_set_roof.png)
 
@@ -198,10 +159,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 原点からの座標 (x, y, z) と、3Dモデルのファイル名を指定します。
 3Dモデルは「MagicaVoxel」で作成し、「.ply」ファイルとして書き出（Export）してください。iTunes共有機能で、３Dモデルのデータを iOSデバイスに転送すると、３Dモデルを仮想オブジェクトとして作成できます。
 
-![](images/3d_model.png)
-
-![](images/3d_model_jp.png)
-
+![](images/ja/3d_model.png)
 
 ![](images/ss_3d_model.png)
 
@@ -209,10 +167,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、移動距離（diffX, diffY, diffZ）、遷移時間（time）と繰り返し回数（times）、２つ以上の3Dモデルのファイル名を指定します。
 
-![](images/animation.png)
-
-![](images/animation_jp.png)
-
+![](images/ja/animation.png)
 
 ![](images/ss_animation.gif)
 
@@ -220,10 +175,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 地図データのファイル名、地図の縦横のサイズ、高さ方向の拡大率、低地の色 (r1, g1, b1)、高地の色 (r2, g2, b2)、高さ方向の移動距離を指定します。
 
-![](images/map.png)
-
-![](images/map_jp.png)
-
+![](images/ja/map.png)
 
 ![](images/ss_map_kamio.png)
 
@@ -233,7 +185,6 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 [地形自動作成ツール](http://www.bekkoame.ne.jp/ro/kami/LandMaker/LandMaker.html)
  をインターネットブラウザで開きます。地形自動作成ツールで任意のサイズの地図を作成し、「csv高低データ」をダウンロードします。iTunes共有機能で、地図データを iOSデバイスに転送すると、地図を仮想オブジェクトとして作成できます。
-
 
 ![](images/ss_map_japan.png)
 
@@ -247,10 +198,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 地理院地図にピンを立てることができます。ピンのデータ作成と設定値は [解説本](http://amzn.asia/d/73qpvTi) を参照してください。
 
-![](images/pin.png)
-
-![](images/pin_jp.png)
-
+![](images/ja/pin.png)
 
 ![](images/ss_pin.png)
 
@@ -260,10 +208,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 原点からの座標 (x, y, z) と、拡大倍率、MLDファイル名を指定します。
 
-![](images/molecular_structure.png)
-
-![](images/molecular_structure_jp.png)
-
+![](images/ja/molecular_structure.png)
 
 ![](images/ss_molecular_structure.png)
 
@@ -279,10 +224,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 透明度（アルファ値）を指定します。「0〜1」の小数値で表します。
 
-![](images/set_transparency.png)
-
-![](images/set_transparency_jp.png)
-
+![](images/ja/set_transparency.png)
 
 ![](images/ss_set_transparency.png)
 
@@ -290,9 +232,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 14. 「ARのレイヤを変える」ブロック
 
-![](images/change_layer.png)
-
-![](images/change_layer_jp.png)
+![](images/ja/change_layer.png)
 
 レイヤーを「1」「2」「3」の中から選びます。レイヤーごとに仮想オブジェクトの作成や削除が行えます。
 
@@ -300,10 +240,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 基本形状を「立方体（cube）」「球（sphere）」「円柱（cylinder）」「円錐（cone）」「ピラミッド（pyramid）」の中から選択できます。
 
-![](images/change_shape.png)
-
-![](images/change_shape_jp.png)
-
+![](images/ja/change_shape.png)
 
 ![](images/ss_change_shape.png)
 
@@ -313,12 +250,9 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 基本形状の回転をX軸回転（rotationX）、Y軸回転（rotationY）Z軸回転（rotationZ）で指定します。単位は度（degree）を使ってください。回転の合成は、X軸回転→Y軸回転→Z軸回転の順に基本形状が回転します。
 
-![](images/rotation_shape2.png)
+![](images/ja/rotate_shape2.png)
 
-![](images/rotation_shape2_jp.png)
-
-
-![](images/ss_rotation_shape2.png)
+![](images/ss_rotate_shape2.png)
 
  回転角度を (rotationX, rotationY, rotationZ) で表示しました。
 
@@ -326,15 +260,11 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 テクスチャを変更できます。「なし（none）」「アルミ（aluminum）」「アスファルト（asphalt）」「真鍮（brass）」「レンガ（brick）」「杉（cedar）」「クラフト紙（craft）」「草（grass）」「カエデ（maple）」「マーブル１（marble01）」「マーブル２（marble02）」「パンチングメタル（punching metal）」「ステンレス（stainless steel）」「石１（stone01）」「石２（stone02）」「テラコッタ（terra cotta）」「地球（earth）」から選べます。
 
-![](images/change_material.png)
-
-![](images/change_material_jp.png)
-
+![](images/ja/change_material.png)
 
 ![](images/ss_change_material.png)
 
 左から「アルミ（aluminum）」「アスファルト（asphalt）」「真鍮（brass）」「レンガ（brick）」「杉（cedar）」「クラフト紙（craft）」「草（grass）」「カエデ（maple）」「マーブル１（marble01）」「マーブル２（marble02）」「パンチングメタル（punching metal）」「ステンレス（stainless steel）」「石１（stone01）」「石２（stone02）」「テラコッタ（terra cotta）」「なし（none）」
-
 
 ![](images/ss_change_material2.png)
 
@@ -348,10 +278,7 @@ Masaya Nagaoka により「地球地図全球版 標高」の写真をリサイ�
 
 ライティングの位置と強度（＝intensity）を変更できます。デフォルトのライトは消されます。
 
-![](images/lighting.png)
-
-![](images/lighting_jp.png)
-
+![](images/ja/lighting.png)
 
 ![](images/ss_lighting.png)
 
@@ -361,8 +288,6 @@ Masaya Nagaoka により「地球地図全球版 標高」の写真をリサイ�
 
 Multipeer Connection で接続された iOSデバイス間で、仮想オブジェクトの共有が行えます。画面右の「マルチ（Multipeer）」ボタンを押してください。同じ Wi-Fi 回線でつながった近くの iOSデバイスと自動で接続されます。仮想オブジェクトの作成を行い、「仮想オブジェクトの転送（Send Virtual Objects）」ボタンが青に変わったらクリックしてください。受信側の原点を基準点にして仮想オブジェクトが転送されます。
 
-
-
 ![](images/ss_share_virtual_objects.png)
 
 送信側（iPhone ）より受信側（iPad）に3Dモデルを転送できました
@@ -370,6 +295,4 @@ Multipeer Connection で接続された iOSデバイス間で、仮想オブジ�
 ## サンプルプロジェクト
 
 ![](images/random_tower_script.png)
-
-
 
