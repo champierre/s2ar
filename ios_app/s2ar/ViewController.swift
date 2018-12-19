@@ -2478,7 +2478,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    func rotationShape(_rotationX: Float, _rotationY: Float, _rotationZ: Float) {
+    func rotateShape(_rotationX: Float, _rotationY: Float, _rotationZ: Float) {
         rotationX = _rotationX
         rotationY = _rotationY
         rotationZ = _rotationZ
@@ -2899,7 +2899,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         //error message
                         self.showMessage(text: "Invalid value".localized)
                     } else {
-                        self.rotationShape(_rotationX: _rotationX!, _rotationY: _rotationY!, _rotationZ: _rotationZ!)
+                        self.rotateShape(_rotationX: _rotationX!, _rotationY: _rotationY!, _rotationZ: _rotationZ!)
                     }
                 case "change_material":
                     let material: String? = units[1]// cube or spehre or cylinder or cone or pyramid
