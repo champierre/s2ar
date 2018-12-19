@@ -2530,6 +2530,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.showMessage(text: "Set origin".localized)
             return
         }
+        // remove data of sending virtual objects
+        data_all_cubes = []
         // remove the light you added yourself
         if lightChanged {
             for (id, lightNode) in lightNodes {
@@ -3036,7 +3038,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             
             
             
-            backLightNode = LightNode(intensity: 1000)
+            backLightNode = LightNode(intensity: 100)
             backLightNode.position = SCNVector3Make(originPosition.x - CUBE_SIZE * 100,
                                                     originPosition.y + CUBE_SIZE * 100,
                                                     originPosition.z + CUBE_SIZE * 100)
