@@ -2483,7 +2483,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         rotationY = _rotationY
         rotationZ = _rotationZ
         //message
-        self.showMessage(text: "rotaion basic shape: ".localized + String(rotationX) + ", " + String(rotationY) + ", " + String(rotationZ))
+        self.showMessage(text: "rotate basic shape: ".localized + String(rotationX) + ", " + String(rotationY) + ", " + String(rotationZ))
     }
     
     func changeMaterial(_material: String) {
@@ -2891,7 +2891,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         self.changeShape(shape: shape!)
                     }
-                case "rotation_shape":
+                case "rotate_shape":
                     let _rotationX: Float? = Float(units[1])
                     let _rotationY: Float? = Float(units[2])
                     let _rotationZ: Float? = Float(units[3])

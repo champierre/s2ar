@@ -119,8 +119,8 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
-      ext.rotation_shape = function(rotationX, rotationY, rotationZ) {
-        let command = "rotation_shape:" + rotationX + ":" + rotationY + ":" + rotationZ;
+      ext.rotate_shape = function(rotationX, rotationY, rotationZ) {
+        let command = "rotate_shape:" + rotationX + ":" + rotationY + ":" + rotationZ;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
@@ -167,7 +167,7 @@
           set_alpha: 'ブロックの透明度を変える。alpha: %n',
           change_layer: 'ARのレイヤを変える。レイヤ: %m.layer',
           change_shape: '基本形状を変える。 %m.shape',
-          rotation_shape: '基本形状を回転する。rotationX: %n rotationY: %n rotationZ: %n',
+          rotate_shape: '基本形状を回転する。rotationX: %n rotationY: %n rotationZ: %n',
           change_material: 'テクスチャを変える。 %m.material',
           change_light: 'ライティングの変更。x: %n y: %n z: %n intensity: %n',
           remove_cube: 'ブロックを消す。x座標を %n 、y座標を %n 、z座標を %n',
@@ -194,7 +194,7 @@
           set_alpha: 'set transparency to alpha: %n',
           change_layer: 'change AR layer: %m.layer',
           change_shape: 'change basic shape: %m.shape',
-          rotation_shape: 'rotation basic shape: rotationX: %n rotationY: %n rotationZ: %n',
+          rotate_shape: 'rotate basic shape: rotationX: %n rotationY: %n rotationZ: %n',
           change_material: 'change material: %m.material',
           change_light: 'change lighting at x: %n y: %n z: %n intensity: %n',
           remove_cube: 'remove cube at x: %n y: %n z: %n',
@@ -224,7 +224,7 @@
           [' ', locale[lang].set_alpha, 'set_alpha', 1.0],
           [' ', locale[lang].change_layer, 'change_layer', '1'],
           [' ', locale[lang].change_shape, 'change_shape', 'cube'],
-          [' ', locale[lang].rotation_shape, 'rotation_shape', 0, 0 ,0],
+          [' ', locale[lang].rotate_shape, 'rotate_shape', 0, 0 ,0],
           [' ', locale[lang].change_material, 'change_material', 'none'],
           [' ', locale[lang].change_light, 'change_light', 10, 10, 10, 1000],
           [' ', locale[lang].remove_cube, 'remove_cube', 1, 0, 1],
