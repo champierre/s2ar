@@ -2,7 +2,7 @@ GitHub README_JA
 
 # S2AR(Scratch2ARKit)
 
-[English](https://github.com/champierre/s2ar) [日本語](https://github.com/champierre/s2ar/blob/master/README_JA.md)
+&raquo; [English](https://github.com/champierre/s2ar)
 
 S2AR（Scratch2ARKit）は Scratch*（ScratchX）と ARKit を接続します。Scratch プログラミングで、拡張現実（Augmented Reality world）にブロックを積み上げて、仮想オブジェクト（Virtual Objects）を作成できます。
 
