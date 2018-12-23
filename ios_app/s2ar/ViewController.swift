@@ -2435,7 +2435,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         Enable_show_message = true
     }
     
-    func arGame(x: Float, y: Float, z: Float, model: String, color: String, direction: String) {
+    func arGame(x: Float, y: Float, z: Float, sprite: String, costume: String, color: String, direction: String) {
         if (originPosition == nil) {
             //error message
             self.showMessage(text: "Set origin".localized)
@@ -2491,43 +2491,43 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             defaultG = 0
             defaultB = 0
         }
-        switch model {
+        switch sprite {
         case "spaceship":
-            cubes = Models.spaceship
+            cubes = costume == "b" ? Sprites.spaceship_b : Sprites.spaceship
         case "invader":
-            cubes = Models.invader
+            cubes = costume == "b" ? Sprites.invader_b : Sprites.invader
         case "human":
-            cubes = Models.human
+            cubes = costume == "b" ? Sprites.human_b : Sprites.human
         case "cat":
-            cubes = Models.cat
+            cubes = costume == "b" ? Sprites.cat_b : Sprites.cat
         case "dinosaur":
-            cubes = Models.dinosaur
+            cubes = costume == "b" ? Sprites.dinosaur_b : Sprites.dinosaur
         case "frog":
-            cubes = Models.frog
+            cubes = costume == "b" ? Sprites.frog_b : Sprites.frog
         case "tree":
-            cubes = Models.tree
+            cubes = costume == "b" ? Sprites.tree_b : Sprites.tree
         case "car":
-            cubes = Models.car
+            cubes = costume == "b" ? Sprites.car_b : Sprites.car
         case "airplane":
-            cubes = Models.airplane
+            cubes = costume == "b" ? Sprites.airplane_b : Sprites.airplane
         case "sword":
-            cubes = Models.sword
+            cubes = costume == "b" ? Sprites.sword_b : Sprites.sword
         case "fire":
-            cubes = Models.fire
+            cubes = costume == "b" ? Sprites.fire_b : Sprites.fire
         case "explosion":
-            cubes = Models.explosion
+            cubes = costume == "b" ? Sprites.explosion_b : Sprites.explosion
         case "1x1x1":
-            cubes = Models.box1
+            cubes = costume == "b" ? Sprites.box1_b : Sprites.box1
         case "2x2x2":
-            cubes = Models.box2
+            cubes = costume == "b" ? Sprites.box2_b : Sprites.box2
         case "4x4x4":
-            cubes = Models.box4
+            cubes = costume == "b" ? Sprites.box4_b : Sprites.box4
         case "8x8x8":
-            cubes = Models.box8
+            cubes = costume == "b" ? Sprites.box8_b : Sprites.box8
         default:
-            cubes = Models.default_model
+            cubes = costume == "b" ? Sprites.box1_b : Sprites.box1
         }
-        if model == "1x1x1" {
+        if sprite == "1x1x1" {
             if cubes[0].count == 7{
                 red = cubes[0][4]
                 green = cubes[0][5]
@@ -2540,7 +2540,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             _x = (2 * (x + Float(cubes[0][1]))) / 2
             _y = (2 * (y + Float(cubes[0][2]))) / 2
             _z = (2 * (z + Float(cubes[0][3]))) / 2
-            setCube(x: _x - 0.5, y: _y - 0.5, z: _z - 0.5)
+            if costume == "b" {
+                rotationZ = 45.0
+                setCube(x: _x - 0.5, y: _y - 0.5, z: _z - 0.5)
+                rotationZ = 0.0
+            } else {
+                setCube(x: _x - 0.5, y: _y - 0.5, z: _z - 0.5)
+            }
         } else {
             for cube in cubes {
                 print(cube)
@@ -2555,6 +2561,91 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 
                 switch direction {
+                case "-z":
+                    _x = (2 * (x + Float(cube[1]))) / 2
+                    _y = (2 * (y + Float(cube[2]))) / 2
+                    _z = (2 * (z - 1 - Float(cube[3]))) / 2
+                    _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
+                    _y_mirror = (2 * (y - 1 - Float(cube[2]))) / 2
+                    _z_mirror = (2 * (z + Float(cube[3]))) / 2
+                    switch cube[0]{
+                    case 2:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                    case 4:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                    case 8:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                        setCube(x: _x, y: _y_mirror, z: _z)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
+                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
+                    default:
+                        setCube(x: _x, y: _y, z: _z)
+                    }
+                case "-y":
+                    _x = (2 * (x + Float(cube[1]))) / 2
+                    _y = (2 * (y - 1 - Float(cube[3]))) / 2
+                    _z = (2 * (z + Float(cube[2]))) / 2
+                    _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
+                    _y_mirror = (2 * (y + Float(cube[3]))) / 2
+                    _z_mirror = (2 * (z - 1 - Float(cube[2]))) / 2
+                    switch cube[0]{
+                    case 2:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                    case 4:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                    case 8:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                        setCube(x: _x, y: _y_mirror, z: _z)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
+                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
+                    default:
+                        setCube(x: _x, y: _y, z: _z)
+                    }
+                case "-x":
+                    _x = (2 * (x - 1 - Float(cube[3]))) / 2
+                    _y = (2 * (y + Float(cube[2]))) / 2
+                    _z = (2 * (z + Float(cube[1]))) / 2
+                    _x_mirror = (2 * (x + Float(cube[3]))) / 2
+                    _y_mirror = (2 * (y - 1 - Float(cube[2]))) / 2
+                    _z_mirror = (2 * (z - 1 - Float(cube[1]))) / 2
+                    switch cube[0]{
+                    case 2:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                    case 4:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                    case 8:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                        setCube(x: _x, y: _y_mirror, z: _z)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
+                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
+                    default:
+                        setCube(x: _x, y: _y, z: _z)
+                    }
+                    
                 case "+z":
                     _x = (2 * (x + Float(cube[1]))) / 2
                     _y = (2 * (y + Float(cube[2]))) / 2
@@ -2562,6 +2653,34 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
                     _y_mirror = (2 * (y - 1 - Float(cube[2]))) / 2
                     _z_mirror = (2 * (z - 1 - Float(cube[3]))) / 2
+                    switch cube[0]{
+                    case 2:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                    case 4:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                    case 8:
+                        setCube(x: _x, y: _y, z: _z)
+                        setCube(x: _x_mirror, y: _y, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
+                        setCube(x: _x, y: _y_mirror, z: _z)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
+                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
+                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
+                    default:
+                        setCube(x: _x, y: _y, z: _z)
+                    }
+                case "+y":
+                    _x = (2 * (x + Float(cube[1]))) / 2
+                    _y = (2 * (y + Float(cube[3]))) / 2
+                    _z = (2 * (z + Float(cube[2]))) / 2
+                    _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
+                    _y_mirror = (2 * (y - 1 - Float(cube[3]))) / 2
+                    _z_mirror = (2 * (z - 1 - Float(cube[2]))) / 2
                     switch cube[0]{
                     case 2:
                         setCube(x: _x, y: _y, z: _z)
@@ -2611,122 +2730,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     default:
                         setCube(x: _x, y: _y, z: _z)
                     }
-                case "+y":
-                    _x = (2 * (x + Float(cube[1]))) / 2
-                    _y = (2 * (y + Float(cube[3]))) / 2
-                    _z = (2 * (z - Float(cube[2]))) / 2
-                    _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
-                    _y_mirror = (2 * (y - 1 - Float(cube[3]))) / 2
-                    _z_mirror = (2 * (z + 1 + Float(cube[2]))) / 2
-                    switch cube[0]{
-                    case 2:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                    case 4:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
-                    case 8:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
-                        setCube(x: _x, y: _y_mirror, z: _z)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
-                    default:
-                        setCube(x: _x, y: _y, z: _z)
-                    }
-                    
-                case "-z":
-                    _x = (2 * (x + Float(cube[1]))) / 2
-                    _y = (2 * (y + Float(cube[2]))) / 2
-                    _z = (2 * (z - Float(cube[3]))) / 2
-                    _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
-                    _y_mirror = (2 * (y - 1 - Float(cube[2]))) / 2
-                    _z_mirror = (2 * (z + 1 + Float(cube[3]))) / 2
-                    switch cube[0]{
-                    case 2:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                    case 4:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
-                    case 8:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
-                        setCube(x: _x, y: _y_mirror, z: _z)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
-                    default:
-                        setCube(x: _x, y: _y, z: _z)
-                    }
-                case "-x":
-                    _x = (2 * (x - Float(cube[3]))) / 2
-                    _y = (2 * (y + Float(cube[2]))) / 2
-                    _z = (2 * (z + Float(cube[1]))) / 2
-                    _x_mirror = (2 * (x + 1 + Float(cube[3]))) / 2
-                    _y_mirror = (2 * (y - 1 - Float(cube[2]))) / 2
-                    _z_mirror = (2 * (z - 1 - Float(cube[1]))) / 2
-                    switch cube[0]{
-                    case 2:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                    case 4:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
-                    case 8:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
-                        setCube(x: _x, y: _y_mirror, z: _z)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
-                    default:
-                        setCube(x: _x, y: _y, z: _z)
-                    }
-                case "-y":
-                    _x = (2 * (x + Float(cube[1]))) / 2
-                    _y = (2 * (y - Float(cube[3]))) / 2
-                    _z = (2 * (z - Float(cube[2]))) / 2
-                    _x_mirror = (2 * (x - 1 - Float(cube[1]))) / 2
-                    _y_mirror = (2 * (y + 1 + Float(cube[3]))) / 2
-                    _z_mirror = (2 * (z + 1 + Float(cube[2]))) / 2
-                    switch cube[0]{
-                    case 2:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                    case 4:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
-                    case 8:
-                        setCube(x: _x, y: _y, z: _z)
-                        setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y, z: _z_mirror)
-                        setCube(x: _x, y: _y_mirror, z: _z)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z_mirror)
-                        setCube(x: _x_mirror, y: _y_mirror, z: _z_mirror)
-                    default:
-                        setCube(x: _x, y: _y, z: _z)
-                    }
-                    
+                
                 default:
-                    print("default")
                     _x = (2 * (x + Float(cube[1]))) / 2
                     _y = (2 * (y + Float(cube[2]))) / 2
                     _z = (2 * (z + Float(cube[3]))) / 2
@@ -2740,7 +2745,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     case 4:
                         setCube(x: _x, y: _y, z: _z)
                         setCube(x: _x_mirror, y: _y, z: _z)
-                        setCube(x: _x, y: _y_mirror, z: _z)
+                        setCube(x: _x, y: _y, z: _z_mirror)
                         setCube(x: _x_mirror, y: _y, z: _z_mirror)
                     case 8:
                         setCube(x: _x, y: _y, z: _z)
@@ -3185,14 +3190,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     let x = Float(units[1])
                     let y = Float(units[2])
                     let z = Float(units[3])
-                    let model = units[4]
-                    let color = units[5]
-                    let direction = units[6]
+                    let sprite = units[4]
+                    let costume = units[5]
+                    let color = units[6]
+                    let direction = units[7]
                     if x == nil || y == nil || z == nil {
                         //error message
                         self.showMessage(text: "Invalid value".localized)
                     } else {
-                        self.arGame(x: x!, y: y!, z: z!, model: model, color: color, direction: direction)
+                        self.arGame(x: x!, y: y!, z: z!, sprite: sprite, costume: costume, color: color, direction: direction)
                     }
                 case "set_color":
                     let r = Float(units[1])

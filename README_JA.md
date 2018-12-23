@@ -298,17 +298,19 @@ Scratchでゲームを作り、それをS2AR内蔵モデルを使って ARに変
 
 ![](images/ja/github_space_invader.gif)
 
-![](images/en/scratch_game.png)
-
 ![](images/ja/scratch_game.png)
 
-![](images/ss_buildin_model.png)
+![](images/ss_sprites_a.png)
 
 モデルは１６種類。左上から
 スペースシップ（spaceship）、インベーダー（invader）、人間（human）、猫（cat）、
 恐竜（dinosaur）、カエル（frog）、木（tree）、車（car）、
 飛行機（airplane）、剣（sword）、炎（fire）、爆発（explosion）
 1x1x1、2x2x2、4x4x4、8x8x8
+
+![](images/ss_sprites_b.png)
+
+コスチューム b を選ぶと、スプライトの形が変わります。
 
 ## サンプルプロジェクト
 
