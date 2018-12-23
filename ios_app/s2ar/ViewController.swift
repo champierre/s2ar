@@ -2730,7 +2730,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     default:
                         setCube(x: _x, y: _y, z: _z)
                     }
-                
+                    
                 default:
                     _x = (2 * (x + Float(cube[1]))) / 2
                     _y = (2 * (y + Float(cube[2]))) / 2
