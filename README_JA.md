@@ -288,6 +288,26 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
   送信側（iPhone ）より受信側（iPad）に3Dモデルを転送できました
 
+20. ScratchゲームをARに変換
+
+Scratchでゲームを作り、それをS2AR内蔵モデルを使って ARに変換できます。スプライトの位置やイベント通知を利用して、ARゲームを作成できます。スプライトと同じ座標にARモデルを作成する例を示します。待つ秒数はゲームの種類によって調整してください。
+
+![](images/ja/github_space_invader.gif)
+
+![](images/ja/scratch_game.png)
+
+![](images/ss_sprites_a.png)
+
+モデルは１６種類。左上から
+スペースシップ（spaceship）、インベーダー（invader）、人間（human）、猫（cat）、
+恐竜（dinosaur）、カエル（frog）、木（tree）、車（car）、
+飛行機（airplane）、剣（sword）、炎（fire）、爆発（explosion）
+1x1x1、2x2x2、4x4x4、8x8x8
+
+![](images/ss_sprites_b.png)
+
+コスチューム b を選ぶと、スプライトの形が変わります。
+
 ## サンプルプロジェクト
 
 ![](images/random_tower_script.png)
