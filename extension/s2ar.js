@@ -20,8 +20,8 @@
         hostname = str;
       };
 
-      ext.connect = function(str1, str2) {
-        roomId = str1 + "-" + str2;
+      ext.connect = function(str) {
+        roomId = str;
         socket = io.connect('http://' + hostname);
         socket.on("connect", function() {
           connected = true;
@@ -153,7 +153,7 @@
       var locale = {
         ja: {
           set_hostname: '接続先を %s に設定する',
-          connect: 'ID: %s - %s で接続する',
+          connect: 'ID: %s で接続する',
           change_cube_size: 'ブロックサイズの変更。拡大倍率を %n',
           set_cube: 'ブロックを置く。x座標を %n 、y座標を %n 、z座標を %n',
           set_box: '直方体を置く。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n',
@@ -181,7 +181,7 @@
         },
         en: {
           set_hostname: 'Set hostname to %s',
-          connect: 'Connect with ID: %s -  %s',
+          connect: 'Connect with ID: %s',
           change_cube_size: 'change cube size maginification: %n',
           set_cube: 'set cube at x: %n y: %n z: %n',
           set_box: 'set box at x: %n y: %n z: %n wide: %n depth: %n height: %n',

@@ -44,7 +44,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var rotationY: Float = 0
     var rotationZ: Float = 0
     
-    var roomId: String = "0000 0000"
+    var roomId: String = "0000"
     var CUBE_SIZE: Float = 0.01
     
     var timer = Timer()
@@ -2980,7 +2980,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let socket = manager.defaultSocket
         
         socket.on(clientEvent: .connect) {data, ack in
-            self.roomId = String(format: "%04d", Int(arc4random_uniform(10000))) + "-" + String(format: "%04d", Int(arc4random_uniform(10000)))
+            self.roomId = String(format: "%04d", Int(arc4random_uniform(10000)))
             self.roomIDLabel.isHidden = false
             self.roomIDLabel.text = " ID: " + self.roomId + " "
             self.connectionState = false
