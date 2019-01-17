@@ -58,7 +58,7 @@ Demo Movies
 
 9. Use "reset" to delete all blocks.
 
-  ![](images/reset.png)
+  ![](images/reset.png =39x25)
 
 ## Sample Scratch Script
 
