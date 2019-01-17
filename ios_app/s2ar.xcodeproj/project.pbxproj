@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6603ADD321F0070300E2DDC3 /* Sprites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6603ADD221F0070300E2DDC3 /* Sprites.swift */; };
 		66305924213D5DFB0082D2EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66305923213D5DFB0082D2EA /* AppDelegate.swift */; };
 		66305926213D5DFB0082D2EA /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 66305925213D5DFB0082D2EA /* art.scnassets */; };
 		66305928213D5DFB0082D2EA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66305927213D5DFB0082D2EA /* ViewController.swift */; };
@@ -45,6 +46,7 @@
 /* Begin PBXFileReference section */
 		2DA9C61443A28332F1C8DC73 /* Pods_s2ar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_s2ar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		58BD61E224A9590FE90B4033 /* Pods-s2ar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-s2ar.debug.xcconfig"; path = "Pods/Target Support Files/Pods-s2ar/Pods-s2ar.debug.xcconfig"; sourceTree = "<group>"; };
+		6603ADD221F0070300E2DDC3 /* Sprites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sprites.swift; sourceTree = "<group>"; };
 		66305920213D5DFB0082D2EA /* s2ar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = s2ar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66305923213D5DFB0082D2EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66305925213D5DFB0082D2EA /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 		66305922213D5DFB0082D2EA /* s2ar */ = {
 			isa = PBXGroup;
 			children = (
+				6603ADD221F0070300E2DDC3 /* Sprites.swift */,
 				66E76766214DF48800A3175F /* grid.png */,
 				F9D24AAC21B3F00700782A8A /* material */,
 				66305923213D5DFB0082D2EA /* AppDelegate.swift */,
@@ -356,6 +359,7 @@
 			files = (
 				F9A4FD8021ABBB7E00B3B691 /* MultipeerSession.swift in Sources */,
 				F9A4FD8421ABBC0400B3B691 /* RoundedButton.swift in Sources */,
+				6603ADD321F0070300E2DDC3 /* Sprites.swift in Sources */,
 				66305928213D5DFB0082D2EA /* ViewController.swift in Sources */,
 				66305924213D5DFB0082D2EA /* AppDelegate.swift in Sources */,
 				F9A4FD8221ABBBFB00B3B691 /* Utilities.swift in Sources */,
