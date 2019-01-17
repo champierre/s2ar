@@ -60,6 +60,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var world_origin: simd_float4x4!
     
     @IBOutlet var roomIDLabel: UILabel!
+    @IBOutlet var msgLabel: UILabel!
     @IBOutlet var togglePlanesButton: UIButton!
     @IBOutlet weak var helpButton: UIButton!
     @IBOutlet weak var sendMapButton: UIButton!
@@ -99,11 +100,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func showMessage(text: String) {
         if Enable_show_message {
             self.roomIDLabel.isHidden = false
-            self.roomIDLabel.text = " " + text + " "
+            self.msgLabel.isHidden = false
+            self.msgLabel.text = " " + text + " "
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 // Put your code which should be executed with a delay here
                 if self.connectionState {
-                    self.roomIDLabel.isHidden = true
+//                    self.msgLabel.isHidden = true
                 } else {
                     self.roomIDLabel.text = " ID: " + self.roomId + " "
                 }
@@ -2915,6 +2917,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             togglePlanesButton.setTitle("Show".localized, for: .normal)
             helpButton.isHidden = true
             roomIDLabel.isHidden = true
+            msgLabel.isHidden = true
             sendMapButton.isHidden = true
             mappingStatusLabel.isHidden = true
             sessionInfoView.isHidden = true
@@ -2934,6 +2937,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             togglePlanesButton.setTitle("Hide".localized, for: .normal)
             helpButton.isHidden = false
             roomIDLabel.isHidden = false
+            msgLabel.isHidden = false
             sessionInfoView.isHidden = false
             restartButton.isHidden = false
             multipeerButton.isHidden = false
@@ -2983,6 +2987,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             self.roomId = String(format: "%04d", Int(arc4random_uniform(10000)))
             self.roomIDLabel.isHidden = false
             self.roomIDLabel.text = " ID: " + self.roomId + " "
+            self.msgLabel.isHidden = false
             self.connectionState = false
             var jsonDic = Dictionary<String, Any>()
             jsonDic["roomId"] = self.roomId
@@ -2999,11 +3004,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         socket.on("from_server") { data, ack in
             if self.connectionState == false {
                 self.roomIDLabel.isHidden = false
+                self.msgLabel.isHidden = false
                 self.showMessage(text: "Connected".localized)
                 self.connectionState = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                     // 3.0秒後に実行したい処理
-                    self.roomIDLabel.isHidden = true
+//                    self.roomIDLabel.isHidden = true
+//                    self.msgLabel.isHidden = true
                 }
             }
             if let msg = data[0] as? String {
