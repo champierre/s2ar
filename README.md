@@ -40,7 +40,7 @@ Demo Movies
 
 5. Special blocks for S2AR are available under "More Blocks" category. Drag "Connect with ID:" block to Scripts Area, and input ID appeared in S2AR app, then click the block.
 
-  ![](images/connect.png)
+  ![](images/en/connect.png)
 
 6. Back to S2AR on iOS device, find any surface then tap on it. Coordinate axes should appear there. This will be origin point(x:0, y:0, z:0).
 
@@ -48,17 +48,17 @@ Demo Movies
 
 7. On ScratchX, drag "set cube at x:1 y: 0 z: 1" block to Scripts Area, then click the block. You will see a gray block is set near to the origin point.
 
-  ![](images/set_cube_at.png)
+  ![](images/en/set_cube.png)
 
   ![](images/set_cube_s2ar.png)
 
 8. Use "set color to" block to change the block color.
 
-  ![](images/set_color.png)
+  ![](images/en/set_color.png)
 
 9. Use "reset" to delete all blocks.
 
-  ![](images/reset.png)
+  ![](images/en/reset.png)
 
 ## Sample Scratch Script
 
