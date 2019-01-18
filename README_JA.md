@@ -308,6 +308,18 @@ Scratchでゲームを作り、それをS2AR内蔵モデルを使って ARに変
 
 コスチューム b を選ぶと、スプライトの形が変わります。
 
+21. 連結ブロック
+
+Scratchで連結ブロックを積み上げて、AR工作することができます。色は 256x256x256(約 16万色)から選ぶことが可能です。プログラム化することで、自動でいくつでも（デバイスの能力の許す限り）ブロックを積み上げることができます。
+
+![](images/ja/connection_block.png)
+
+![](images/ss_connection_block.png)
+
+サイズは2x1x1,、2x1x0.5、1x1x1,、1x1x0.5、向きはX方向、Y方向で、６種類から選んでください。
+
+![](images/ss_connection_block_pattern.png)
+
 ## サンプルプロジェクト
 
 ![](images/random_tower_script.png)
