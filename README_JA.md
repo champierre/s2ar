@@ -316,7 +316,7 @@ Scratchで連結ブロックを積み上げて、AR工作することができ�
 
 ![](images/ss_connection_block.png)
 
-サイズは2x1x1,、2x1x0.5、1x1x1,、1x1x0.5、向きはX方向、Y方向で、６種類から選んでください。
+サイズは2x1x1,、2x1x0.5、1x1x1,、1x1x0.5、向きはX方向、Z方向で、６種類から選んでください。
 
 ![](images/ss_connection_block_pattern.png)
 
