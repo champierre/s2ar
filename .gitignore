@@ -36,5 +36,3 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-#
-ios_app/s2ar.xcodeproj/project.pbxproj
