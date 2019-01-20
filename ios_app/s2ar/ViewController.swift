@@ -22,6 +22,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     var originPosition: SCNVector3!
     
     var cubeNode: SCNNode!
+    var cylinderNode: SCNNode!
     var cubeNodes: [String:SCNNode] = [:]
     var cubeNodes2: [String:SCNNode] = [:]
     var cubeNodes3: [String:SCNNode] = [:]
@@ -204,22 +205,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     func setConnectionBlock(x: Float, y: Float, z: Float, d: String, s:String) {
         if (originPosition == nil) {
             //error message
@@ -231,7 +216,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let _x: Float = round(2.0 * x) / 2.0
         let _y: Float = round(2.0 * y) / 2.0
         let _z: Float = round(2.0 * z) / 2.0
+        basicShape = d + s
         
+        // func for projection
         func setProjection(a: Float, b:Float, c: Float) {
             // check setted cube
             if cubeNodes.keys.contains(String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)) || cubeNodes2.keys.contains(String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)) || cubeNodes3.keys.contains(String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)) {
@@ -240,77 +227,139 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             }
             
             // set cube
-            cubeNode = SmallCylinderNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            cylinderNode = SmallCylinderNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
             
-            cubeNode.position = SCNVector3Make(
+            cylinderNode.position = SCNVector3Make(
                 originPosition.x + (_x + a) * CUBE_SIZE,
                 originPosition.y + (_y + b) * CUBE_SIZE,
                 originPosition.z + (_z + c) * CUBE_SIZE
             )
-            sceneView.scene.rootNode.addChildNode(cubeNode)
+            sceneView.scene.rootNode.addChildNode(cylinderNode)
             
-            //record cube position to delete
+            //record cube position to delete and reproduce
+            /* ベースブロックと一緒に突起も復元するため、以下のコードは削除しよい。あとで見直した時に迷わないようにコメントとして残す。
             data_all_cubes.append(String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
+            */
             switch layer {
             case "2":
-                cubeNodes2[String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)] = cubeNode
+                cubeNodes2[String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)] = cylinderNode
             case "3":
-                cubeNodes3[String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)] = cubeNode
+                cubeNodes3[String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)] = cylinderNode
             default:
-                cubeNodes[String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)] = cubeNode
+                cubeNodes[String(_x + a) + "_" + String(_y + b) + "_" + String(_z + c)] = cylinderNode
             }
-            
         }
-
+        
+        // set connection-block
         // check setted cube
         if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
             // remove cube if contains
             self.removeCube(x: _x, y: _y, z: _z)
         }
-
-        if d == "x" {
-            if s == "2x1x1" {
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
+        
+        // set cube
+        if s == "0.5x0.5x0.5" {
+            cubeNode = ConnectionBlockNode7(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            
+            cubeNode.position = SCNVector3Make(
+                originPosition.x + (_x + 0.25) * CUBE_SIZE,
+                originPosition.y + (_y + 0.25) * CUBE_SIZE,
+                originPosition.z + (_z + 0.25) * CUBE_SIZE
+            )
+            sceneView.scene.rootNode.addChildNode(cubeNode)
+            
+            //record cube position to delete and reproduce
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
+            switch layer {
+            case "2":
+                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            case "3":
+                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            default:
+                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            }
+            
+            // projection
+            setProjection(a: 0.25, b: 0.58, c: 0.25)
+        } else if s == "0.5x0.5x1" {
+            cubeNode = ConnectionBlockNode6(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            
+            cubeNode.position = SCNVector3Make(
+                originPosition.x + (_x + 0.25) * CUBE_SIZE,
+                originPosition.y + (_y + 0.5) * CUBE_SIZE,
+                originPosition.z + (_z + 0.25) * CUBE_SIZE
+            )
+            sceneView.scene.rootNode.addChildNode(cubeNode)
+            
+            //record cube position to delete and reproduce
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
+            switch layer {
+            case "2":
+                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            case "3":
+                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            default:
+                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            }
+            
+            // projection
+            setProjection(a: 0.25, b: 1.08, c: 0.25)
+        } else if s == "1x1x0.5" {
+            cubeNode = ConnectionBlockNode5(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            
+            cubeNode.position = SCNVector3Make(
+                originPosition.x + (_x + 0.5) * CUBE_SIZE,
+                originPosition.y + (_y + 0.25) * CUBE_SIZE,
+                originPosition.z + (_z + 0.5) * CUBE_SIZE
+            )
+            sceneView.scene.rootNode.addChildNode(cubeNode)
+            
+            //record cube position to delete and reproduce
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
+            switch layer {
+            case "2":
+                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            case "3":
+                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            default:
+                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            }
+            
+            // projection
+            for i in 0 ... 1 {
+                for j in 0 ... 1 {
+                    setProjection(a: 0.25 +  0.5 * Float(i), b: 0.58, c: 0.25 + 0.5 * Float(j))
                 }
-                
-                // set cube
-                cubeNode = ConnectionBlockNode1(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
-                
-                cubeNode.position = SCNVector3Make(
-                    originPosition.x + (_x + 1.0) * CUBE_SIZE,
-                    originPosition.y + (_y + 0.5) * CUBE_SIZE,
-                    originPosition.z + (_z + 0.5) * CUBE_SIZE
-                )
-                sceneView.scene.rootNode.addChildNode(cubeNode)
-                
-                //record cube position to delete
-                data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
-                switch layer {
-                case "2":
-                    cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                case "3":
-                    cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                default:
-                    cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            }
+        } else if s == "1x1x1" {
+            cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            
+            cubeNode.position = SCNVector3Make(
+                originPosition.x + (_x + 0.5) * CUBE_SIZE,
+                originPosition.y + (_y + 0.5) * CUBE_SIZE,
+                originPosition.z + (_z + 0.5) * CUBE_SIZE
+            )
+            sceneView.scene.rootNode.addChildNode(cubeNode)
+            
+            //record cube position to delete and reproduce
+            data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
+            switch layer {
+            case "2":
+                cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            case "3":
+                cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            default:
+                cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
+            }
+            
+            // projection
+            for i in 0 ... 1 {
+                for j in 0 ... 1 {
+                    setProjection(a: 0.25 +  0.5 * Float(i), b:1.08, c: 0.25 + 0.5 * Float(j))
                 }
-                
-                // projection
-                for i in 0 ... 3 {
-                    for j in 0 ... 1 {
-                        setProjection(a: 0.25 +  0.5 * Float(i), b: 1.08, c: 0.25 + 0.5 * Float(j))
-                    }
-                }
-            } else if s == "2x1x0.5" {
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
+            }
+        } else if s == "2x1x0.5" {
+            if d == "x" {
                 cubeNode = ConnectionBlockNode3(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
                 
                 cubeNode.position = SCNVector3Make(
@@ -320,7 +369,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 )
                 sceneView.scene.rootNode.addChildNode(cubeNode)
                 
-                //record cube position to delete
+                //record cube position to delete and reproduce
                 data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
                 switch layer {
                 case "2":
@@ -337,118 +386,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         setProjection(a: 0.25 +  0.5 * Float(i), b: 0.58, c: 0.25 + 0.5 * Float(j))
                     }
                 }
-            } else if s == "1x1x1" {
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
-                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
-                
-                cubeNode.position = SCNVector3Make(
-                    originPosition.x + (_x + 0.5) * CUBE_SIZE,
-                    originPosition.y + (_y + 0.5) * CUBE_SIZE,
-                    originPosition.z + (_z + 0.5) * CUBE_SIZE
-                )
-                sceneView.scene.rootNode.addChildNode(cubeNode)
-                
-                //record cube position to delete
-                data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
-                switch layer {
-                case "2":
-                    cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                case "3":
-                    cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                default:
-                    cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                }
-                
-                // projection
-                for i in 0 ... 1 {
-                    for j in 0 ... 1 {
-                        setProjection(a: 0.25 +  0.5 * Float(i), b:1.08, c: 0.25 + 0.5 * Float(j))
-                    }
-                }
-            } else {// s = "1x1x0.5"
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
-                cubeNode = ConnectionBlockNode5(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
-                
-                cubeNode.position = SCNVector3Make(
-                    originPosition.x + (_x + 0.5) * CUBE_SIZE,
-                    originPosition.y + (_y + 0.25) * CUBE_SIZE,
-                    originPosition.z + (_z + 0.5) * CUBE_SIZE
-                )
-                sceneView.scene.rootNode.addChildNode(cubeNode)
-                
-                //record cube position to delete
-                data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
-                switch layer {
-                case "2":
-                    cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                case "3":
-                    cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                default:
-                    cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                }
-                
-                // projection
-                for i in 0 ... 1 {
-                    for j in 0 ... 1 {
-                        setProjection(a: 0.25 +  0.5 * Float(i), b: 0.58, c: 0.25 + 0.5 * Float(j))
-                    }
-                }
-            }
-        } else { // d = "z"
-            if s == "2x1x1" {
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
-                cubeNode = ConnectionBlockNode2(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
-                
-                cubeNode.position = SCNVector3Make(
-                    originPosition.x + (_x + 0.5) * CUBE_SIZE,
-                    originPosition.y + (_y + 0.5) * CUBE_SIZE,
-                    originPosition.z + (_z + 1.0) * CUBE_SIZE
-                )
-                sceneView.scene.rootNode.addChildNode(cubeNode)
-                
-                //record cube position to delete
-                data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
-                switch layer {
-                case "2":
-                    cubeNodes2[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                case "3":
-                    cubeNodes3[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                default:
-                    cubeNodes[String(_x) + "_" + String(_y) + "_" + String(_z)] = cubeNode
-                }
-                
-                // projection
-                for i in 0 ... 3 {
-                    for j in 0 ... 1 {
-                        setProjection(a: 0.25 +  0.5 * Float(j), b: 1.08, c: 0.25 + 0.5 * Float(i))
-                    }
-                }
-            } else if s == "2x1x0.5" {
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
+            } else {// d == "z"
                 cubeNode = ConnectionBlockNode4(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
                 
                 cubeNode.position = SCNVector3Make(
@@ -458,7 +396,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 )
                 sceneView.scene.rootNode.addChildNode(cubeNode)
                 
-                //record cube position to delete
+                //record cube position to delete and reproduce
                 data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
                 switch layer {
                 case "2":
@@ -475,24 +413,19 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                         setProjection(a: 0.25 +  0.5 * Float(j), b: 0.58, c: 0.25 + 0.5 * Float(i))
                     }
                 }
-            } else if s == "1x1x1" {
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
-                cubeNode = CubeNode(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            }
+        } else {// s == "2x1x1"
+            if d == "x" {
+                cubeNode = ConnectionBlockNode1(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
                 
                 cubeNode.position = SCNVector3Make(
-                    originPosition.x + (_x + 0.5) * CUBE_SIZE,
+                    originPosition.x + (_x + 1.0) * CUBE_SIZE,
                     originPosition.y + (_y + 0.5) * CUBE_SIZE,
                     originPosition.z + (_z + 0.5) * CUBE_SIZE
                 )
                 sceneView.scene.rootNode.addChildNode(cubeNode)
                 
-                //record cube position to delete
+                //record cube position to delete and reproduce
                 data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
                 switch layer {
                 case "2":
@@ -504,29 +437,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 
                 // projection
-                for i in 0 ... 1 {
+                for i in 0 ... 3 {
                     for j in 0 ... 1 {
-                        setProjection(a: 0.25 +  0.5 * Float(i), b:1.08, c: 0.25 + 0.5 * Float(j))
+                        setProjection(a: 0.25 +  0.5 * Float(i), b: 1.08, c: 0.25 + 0.5 * Float(j))
                     }
                 }
-            } else {// s = "1x1x0.5"
-                // check setted cube
-                if cubeNodes.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes2.keys.contains(String(x) + "_" + String(_y) + "_" + String(_z)) || cubeNodes3.keys.contains(String(_x) + "_" + String(_y) + "_" + String(_z)) {
-                    // remove cube if contains
-                    self.removeCube(x: _x, y: _y, z: _z)
-                }
-                
-                // set cube
-                cubeNode = ConnectionBlockNode5(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
+            } else {// d == "z"
+                cubeNode = ConnectionBlockNode2(CUBE_SIZE: CUBE_SIZE, red: red, green: green, blue: blue, alpha: alpha, material: material, rotationX: rotationX, rotationY: rotationY, rotationZ: rotationZ)
                 
                 cubeNode.position = SCNVector3Make(
                     originPosition.x + (_x + 0.5) * CUBE_SIZE,
-                    originPosition.y + (_y + 0.25) * CUBE_SIZE,
-                    originPosition.z + (_z + 0.5) * CUBE_SIZE
+                    originPosition.y + (_y + 0.5) * CUBE_SIZE,
+                    originPosition.z + (_z + 1.0) * CUBE_SIZE
                 )
                 sceneView.scene.rootNode.addChildNode(cubeNode)
                 
-                //record cube position to delete
+                //record cube position to delete and reproduce
                 data_all_cubes.append(String(_x) + "_" + String(_y) + "_" + String(_z) + "_" + String(red) + "_" + String(green) + "_" + String(blue) + "_" + String(alpha) + "_" + String(CUBE_SIZE/0.01) + "_" + basicShape + "_" + material + "_" + String(rotationX) + "_" + String(rotationY) + "_" + String(rotationZ))
                 switch layer {
                 case "2":
@@ -538,30 +464,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
                 
                 // projection
-                for i in 0 ... 1 {
+                for i in 0 ... 3 {
                     for j in 0 ... 1 {
-                        setProjection(a: 0.25 +  0.5 * Float(i), b: 0.58, c: 0.25 + 0.5 * Float(j))
+                        setProjection(a: 0.25 +  0.5 * Float(j), b: 1.08, c: 0.25 + 0.5 * Float(i))
                     }
                 }
             }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     func setBox(x: Float, y: Float, z: Float, w: Float, d: Float, h: Float) {
         if (originPosition == nil) {
@@ -3936,7 +3846,34 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 changeCubeSize(magnification: Float(cube_array[7])!)
                 setAlpha(a: Float(cube_array[6])!)
                 setColor(r: Int(cube_array[3])!, g: Int(cube_array[4])!, b: Int(cube_array[5])!)
-                setCube(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!)
+                switch basicShape {
+                case "x0.5x0.5x0.5":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "x", s: "0.5x0.5x0.5")
+                case "z0.5x0.5x0.5":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "z", s: "0.5x0.5x0.5")
+                case "x0.5x0.5x1":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "x", s: "0.5x0.5x1")
+                case "z0.5x0.5x1":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "z", s: "0.5x0.5x1")
+                case "x1x1x0.5":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "x", s: "1x1x0.5")
+                case "z1x1x0.5":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "z", s: "1x1x0.5")
+                case "x1x1x1":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "x", s: "1x1x1")
+                case "z1x1x1":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "z", s: "1x1x1")
+                case "x2x1x0.5":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "x", s: "2x1x0.5")
+                case "z2x1x0.5":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "z", s: "2x1x0.5")
+                case "x2x1x1":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "x", s: "2x1x1")
+                case "z2x1x1":
+                    setConnectionBlock(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!, d: "z", s: "2x1x1")
+                default:
+                    setCube(x: Float(cube_array[0])!, y: Float(cube_array[1])!, z: Float(cube_array[2])!)
+                }
             } else {
                 receivingStatusMessage(text: "unknown data recieved from ".localized + "\(String(describing: sender_id))")
             }
@@ -4253,6 +4190,54 @@ class ConnectionBlockNode5: SCNNode {
     init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotationX: Float, rotationY: Float, rotationZ: Float) {
         super.init()
         let cube = SCNBox(width: CGFloat(CUBE_SIZE), height: 0.5 * CGFloat(CUBE_SIZE), length: CGFloat(CUBE_SIZE), chamferRadius: 0.02 * CGFloat(CUBE_SIZE))
+        if material == "none" {
+            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            cube.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
+        geometry = cube
+        let rotX = SCNMatrix4MakeRotation(Float.pi * rotationX / 180, 1, 0, 0)
+        let rotY = SCNMatrix4MakeRotation(Float.pi * rotationY / 180, 0, 1, 0)
+        let rotZ = SCNMatrix4MakeRotation(Float.pi * rotationZ / 180, 0, 0, 1)
+        let rotXY = SCNMatrix4Mult(rotY, rotX)
+        self.transform = SCNMatrix4Mult(rotZ, rotXY)
+    }
+}
+
+// Connection-block-5.5x0.5x1（x,z共通）
+class ConnectionBlockNode6: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotationX: Float, rotationY: Float, rotationZ: Float) {
+        super.init()
+        let cube = SCNBox(width: 0.5 * CGFloat(CUBE_SIZE), height: CGFloat(CUBE_SIZE), length: 0.5 * CGFloat(CUBE_SIZE), chamferRadius: 0.02 * CGFloat(CUBE_SIZE))
+        if material == "none" {
+            cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
+        } else {
+            cube.firstMaterial?.diffuse.contents  = UIImage(named: "material/" + material + ".jpg")
+        }
+        geometry = cube
+        let rotX = SCNMatrix4MakeRotation(Float.pi * rotationX / 180, 1, 0, 0)
+        let rotY = SCNMatrix4MakeRotation(Float.pi * rotationY / 180, 0, 1, 0)
+        let rotZ = SCNMatrix4MakeRotation(Float.pi * rotationZ / 180, 0, 0, 1)
+        let rotXY = SCNMatrix4Mult(rotY, rotX)
+        self.transform = SCNMatrix4Mult(rotZ, rotXY)
+    }
+}
+
+// Connection-block-5.5x0.5x0.5（x,z共通）
+class ConnectionBlockNode7: SCNNode {
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(CUBE_SIZE: Float, red: Int, green: Int, blue: Int, alpha: Float, material: String, rotationX: Float, rotationY: Float, rotationZ: Float) {
+        super.init()
+        let cube = SCNBox(width: 0.5 * CGFloat(CUBE_SIZE), height: 0.5 * CGFloat(CUBE_SIZE), length: 0.5 * CGFloat(CUBE_SIZE), chamferRadius: 0.02 * CGFloat(CUBE_SIZE))
         if material == "none" {
             cube.firstMaterial?.diffuse.contents  = UIColor(red: CGFloat(red) / 255, green: CGFloat(green) / 255, blue: CGFloat(blue) / 255, alpha: CGFloat(alpha))
         } else {
