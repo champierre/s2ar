@@ -471,6 +471,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 }
             }
         }
+        // basicShape を戻す
+        basicShape = "cube"
     }
     
     func setBox(x: Float, y: Float, z: Float, w: Float, d: Float, h: Float) {
