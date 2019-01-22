@@ -3217,6 +3217,46 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                     } else {
                         self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
                     }
+                case "set_color_hexadecimal":
+                    let hexa = units[1]
+                    if hexa == nil {
+                        //error message
+                        self.showMessage(text: "Invalid value".localized)
+                    } else {
+                        if hexa.count == 3 {
+                            if (Int(hexa.prefix(1) + hexa.prefix(1), radix: 16) != nil) &&
+                                (Int(hexa.substring(1..<2) + hexa.substring(1..<2), radix: 16) != nil) &&
+                                (Int(hexa.suffix(1) + hexa.suffix(1), radix: 16) != nil) {
+                                    self.setColor(r: Int(hexa.prefix(1) + hexa.prefix(1), radix: 16)!,
+                                        g: Int(hexa.substring(1..<2) + hexa.substring(1..<2), radix: 16)!,
+                                        b: Int(hexa.suffix(1) + hexa.suffix(1), radix: 16)!)
+                            } else {
+                                //error message
+                                self.showMessage(text: "Invalid value".localized)
+                            }
+                        } else if hexa.count == 6 {
+                            if (Int(hexa.prefix(2), radix: 16) != nil) &&
+                                (Int(hexa.substring(2...3), radix: 16) != nil) &&
+                                (Int(hexa.suffix(2), radix: 16) != nil) {
+                                self.setColor(r: Int(hexa.prefix(2), radix: 16)!,
+                                              g: Int(hexa.substring(2...3), radix: 16)!,
+                                              b: Int(hexa.suffix(2), radix: 16)!)
+                            } else {
+                                //error message
+                                self.showMessage(text: "Invalid value".localized)
+                            }
+                        } else {
+                            //error message
+                            self.showMessage(text: "Invalid value".localized)
+                        }
+                    }
+//                    if hexa == nil || hexa.count == 3 || hexa.count == 6 {
+//                        //error message
+//                        self.showMessage(text: "Invalid value".localized)
+//                    } else {
+//                        if
+//                        self.setColor(r: Int(r!), g: Int(g!), b: Int(b!))
+//                    }
                 case "set_alpha":
                     let a = Float(units[1])
                     if a == nil {
@@ -3921,5 +3961,42 @@ extension String
     var localized: String
     {
         return NSLocalizedString(self, tableName: nil, bundle: Bundle.main, value: "", comment: self)
+    }
+    
+    func substring(_ r: CountableRange<Int>) -> String {
+        
+        let length = self.count
+        let fromIndex = (r.startIndex > 0) ? self.index(self.startIndex, offsetBy: r.startIndex) : self.startIndex
+        let toIndex = (length > r.endIndex) ? self.index(self.startIndex, offsetBy: r.endIndex) : self.endIndex
+        
+        if fromIndex >= self.startIndex && toIndex <= self.endIndex {
+            return String(self[fromIndex..<toIndex])
+        }
+        
+        return String(self)
+    }
+    
+    func substring(_ r: CountableClosedRange<Int>) -> String {
+        
+        let from = r.lowerBound
+        let to = r.upperBound
+        
+        return self.substring(from..<(to+1))
+    }
+    
+    func substring(_ r: CountablePartialRangeFrom<Int>) -> String {
+        
+        let from = r.lowerBound
+        let to = self.count
+        
+        return self.substring(from..<to)
+    }
+    
+    func substring(_ r: PartialRangeThrough<Int>) -> String {
+        
+        let from = 0
+        let to = r.upperBound
+        
+        return self.substring(from..<to)
     }
 }
