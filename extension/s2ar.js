@@ -44,11 +44,6 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
-      ext.set_connection_block = function(x, y, z, d, s) {
-        let command = "set_connection_block:" + x + ":" + y + ":" + z + ":" + d + ":" + s;
-        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
-      }
-
       ext.set_cylinder = function(x, y, z, r, h, a) {
         let command = "set_cylinder:" + x + ":" + y + ":" + z + ":" + r + ":" + h + ":" + a;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
@@ -166,7 +161,6 @@
           connect: 'ID: %s で接続する',
           change_cube_size: 'ブロックサイズの変更。拡大倍率を %n',
           set_cube: 'ブロックを置く。x座標を %n 、y座標を %n 、z座標を %n',
-          set_connection_block: '連結ブロックを置く。x座標を %n y座標を %n z座標を %n, 向きを %m.block_direction サイズを %m.block_size',
           set_box: '直方体を置く。x座標を %n 、y座標を %n 、z座標を %n 、幅を %n 、奥行を %n 、高さを %n',
           set_cylinder: '円柱を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %m.axes 軸',
           set_hexagon: '六角柱を置く。x座標を %n 、y座標を %n 、z座標を %n 、半径を %n 、高さを %n 、 %m.axes 軸',
@@ -196,7 +190,6 @@
           connect: 'Connect with ID: %s',
           change_cube_size: 'change cube size maginification: %n',
           set_cube: 'set cube at x: %n y: %n z: %n',
-          set_connection_block: 'set connection block at x: %n y: %n z: %n, direction: %m.block_direction size: %m.block_size',
           set_box: 'set box at x: %n y: %n z: %n wide: %n depth: %n height: %n',
           set_cylinder: 'set cylinder at x: %n y: %n z: %n radius: %n height: %n axis: %m.axes',
           set_hexagon: 'set hexagon at x: %n y: %n z: %n radius: %n height: %n axis: %m.axes',
@@ -229,7 +222,6 @@
           [' ', locale[lang].connect, 'connect', '', ''],
           [' ', locale[lang].change_cube_size, 'change_cube_size', 1],
           [' ', locale[lang].set_cube, 'set_cube', 1, 0, 1],
-          [' ', locale[lang].set_connection_block, 'set_connection_block', 2, 0, 2, 'x', '2x1x1'],
           [' ', locale[lang].set_box, 'set_box', 2, 0, 2, 2, 2, 2],
           [' ', locale[lang].set_cylinder, 'set_cylinder', 3, 0, 3, 4, 4, 'y'],
           [' ', locale[lang].set_hexagon, 'set_hexagon', 4, 10, 10, 6, 4, 'y'],
@@ -263,8 +255,6 @@
           costume: ['a', 'b'],
           color: ['red', 'green', 'blue', 'yellow', 'cyan', 'magenta', 'white', 'black'],
           direction: ['+y', '+x', '+z', '-y', '-x', '-z'],
-          block_direction: ['x', 'z'],
-          block_size: ['2x1x1', '2x1x0.5', '1x1x1', '1x1x0.5', '0.5x0.5x1', '0.5x0.5x0.5'],
         }
       };
 
