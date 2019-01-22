@@ -74,6 +74,10 @@ S2AR は [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8) よ
 
   ![](images/ja/set_color.png)
 
+  １６進数で色を指定するときは、こちらのブロックを使ってください。（例　赤色は ff0000）
+
+  ![](images/ja/set_color_using_hexadecimal_numbers.png)
+
   ![](images/ss_set_color.png)
 
 9. 「ブロックを消す」で、ブロックを一つ削除できます。
