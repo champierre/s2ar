@@ -292,7 +292,7 @@ S2AR には仮想オブジェクトの作成を助ける多くの機能が搭載
 
 Scratchでゲームを作り、それをS2AR内蔵モデルを使って ARに変換できます。スプライトの位置やイベント通知を利用して、ARゲームを作成できます。スプライトと同じ座標にARモデルを作成する例を示します。待つ秒数はゲームの種類によって調整してください。
 
-![](images/ja/github_space_invader.gif)
+![](images/github_space_invader.gif)
 
 ![](images/ja/scratch_game.png)
 
