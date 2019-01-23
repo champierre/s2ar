@@ -42,9 +42,9 @@ S2AR は [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8) よ
 
   ![](images/ss_connection_id.png)
 
-2. PC（Mac、Widows）でインターネットブラウザ（Chrome ブラウザを推奨）を開き、[ScratchX ウェブサイト](http://scratchx.org/) に接続します。
+2. PC（Mac、Widows）でインターネットブラウザ（Chrome ブラウザを推奨）を開き、[ScratchX ウェブサイト](https://scratchx.org/) に接続します。
 
-  [![](images/scratchx.png)](http://scratchx.org/)
+  [![](images/scratchx.png)](https://scratchx.org/)
 
 3. "Open Extension URL" をクリックします。入力欄に "https://champierre.github.io/s2ar/extension/s2ar.js" を入力し、"Open" をクリックします。
 

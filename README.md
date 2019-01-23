@@ -26,13 +26,13 @@ Demo Movies
 
 1. On iOS device, start S2AR and you will find ID(connection ID) appeared in the bottom bar.
 
-2. On PC, open a browser then connect to http://scratchx.org/.
+2. On PC, open a browser then connect to https://scratchx.org/.
 
   ![](images/scratchx.png)
 
 3. On ScratchX website, click "Open Extension URL", paste "https://champierre.github.io/s2ar/extension/s2ar.js" in URL field and click "Open".
 
-  ![](images/scratchx1.png)
+  [![](images/scratchx.png)](https://scratchx.org/)
 
 4. Click "I understand, continue" button on Warning dialog.
 
