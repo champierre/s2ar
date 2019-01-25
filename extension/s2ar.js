@@ -109,6 +109,11 @@
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
       }
 
+      ext.set_color_hexadecimal = function(hexa) {
+        let command = "set_color_hexadecimal:" + hexa;
+        socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
+      }
+
       ext.set_alpha = function(a) {
         let command = "set_alpha:" + a;
         socket.emit("from_client", JSON.stringify({roomId: roomId, command: command}));
@@ -170,6 +175,7 @@
           molecular_structure: '分子構造モデルを作成。x座標を %n 、y座標を %n 、z座標を %n 、拡大倍率を %n 、MLDファイル %s',
           ar_game: 'スプライトを作成。X座標: %n Y座標: %n Z座標: %n スプライト: %m.sprite コスチューム： %m.costume 色: %m.color 向き: %m.direction',
           set_color: 'ブロックの色を変える。r: %n g: %n b: %n',
+          set_color_hexadecimal: 'ブロックの色を変える。# %s （16進数）',
           set_alpha: 'ブロックの透明度を変える。alpha: %n',
           change_layer: 'ARのレイヤを変える。レイヤ: %m.layer',
           change_shape: '基本形状を変える。 %m.shape',
@@ -198,6 +204,7 @@
           molecular_structure: 'molecular structure at x: %n y: %n z: %n magnification: %n mld file: %s',
           ar_game: 'spawn sprite at x: %n y: %n z: %n sprite: %m.sprite costume: %m.costume color: %m.color direction: %m.direction',
           set_color: 'set color to r: %n g: %n b: %n',
+          set_color_hexadecimal: 'set color to # %s using hexadecimal numbers',
           set_alpha: 'set transparency to alpha: %n',
           change_layer: 'change AR layer: %m.layer',
           change_shape: 'change basic shape: %m.shape',
@@ -229,6 +236,7 @@
           [' ', locale[lang].molecular_structure, 'molecular_structure', 0, 10, 0, 10, 'methane.mld'],
           [' ', locale[lang].ar_game, 'ar_game', 0, 0, 0, 'spaceship', 'a', 'red', '+y'],
           [' ', locale[lang].set_color, 'set_color', 255, 255, 255],
+          [' ', locale[lang].set_color_hexadecimal, 'set_color_hexadecimal', 'ff0000'],
           [' ', locale[lang].set_alpha, 'set_alpha', 1.0],
           [' ', locale[lang].change_layer, 'change_layer', '1'],
           [' ', locale[lang].change_shape, 'change_shape', 'cube'],
