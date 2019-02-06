@@ -38,6 +38,10 @@ S2AR は [App Store](https://itunes.apple.com/jp/app/s2ar/id1316847947?mt=8) よ
 
 ## 使用法（基本）
 
+初めてご使用になる場合、最初のセットアップの部分にやや手こずると思うので、解説動画をご参照ください。
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/bYoa5OtEPbk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 1. iOSデバイス（iPhone、iPad）で S2AR を起動します。アプリの中央下に表示される ID（接続 ID）を確認しておきます。
 
   ![](images/ss_connection_id.png)
